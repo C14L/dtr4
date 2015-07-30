@@ -1,0 +1,179 @@
+
+body {
+    font: normal 16px/1em Arial,sans-serif; /* Tahoma,Verdana, */
+    background-color: #fbb; /* #d0d0d0 #f3f3f3; */
+    padding-top: 52px;
+}
+
+textarea, input[type="text"], input[type="password"], input[type="date"], input[type="email"] {
+    font: normal 16px/1em sans-serif;
+}
+
+a.username {
+    color: #c60;
+    text-decoration: none;
+}
+a.hashtag {
+    color: #06c;
+    text-decoration: none;
+}
+
+a.nav-link {
+    opacity: 0.5;
+    line-height: 42px;
+    font-size: 1rem;
+    display: inline-block; 
+    margin: 0; padding: 0 15px 0 30px;
+    color: #000; 
+    text-decoration: none;
+    background-position: 8px 12px;
+    background-repeat: no-repeat;
+    transition: 0.5s;
+}
+
+a.nav-link:hover {
+    opacity: 0.9;
+    transition: 0.2s;
+}
+
+a.nav-link.search {
+    background-image: url(themify-icons/SVG/search.svg)
+}
+a.nav-link.talk {
+    background-image: url(themify-icons/SVG/announcement.svg)
+}
+a.nav-link.unread {
+    background-image: url(themify-icons/SVG/email.svg)
+}
+a.nav-link.inbox {
+    background-image: url(themify-icons/SVG/comment-alt.svg)
+}
+a.nav-link.outbox {
+    background-image: url(themify-icons/SVG/upload.svg)
+}
+a.nav-link.favs {
+    background-image: url(themify-icons/SVG/pin-alt.svg)
+}
+a.nav-link.matches {
+    background-image: url(themify-icons/SVG/heart.svg)
+}
+a.nav-link.liked, a.nav-link.likedyou {
+    background-image: url(themify-icons/SVG/face-smile.svg)
+}
+a.nav-link.lists {
+    background-image: url(themify-icons/SVG/folder.svg)
+}
+a.nav-link.newpics {
+    background-image: url(themify-icons/SVG/image.svg)
+}
+a.nav-link.hotpics {
+    background-image: url(themify-icons/SVG/shine.svg)
+}
+a.nav-link.settings {
+    background-image: url(themify-icons/SVG/settings.svg)
+}
+a.nav-link.profile {
+    background-image: url(themify-icons/SVG/user.svg)
+}
+a.nav-link.blocked {
+    background-image: url(themify-icons/SVG/na.svg)
+}
+
+a.nav-indicator {
+    display: inline-block; 
+    vertical-align: top;
+    height: 36px; line-height: 36px;
+    border-radius: 21px/18px;
+    font-size: 1rem;
+    margin: 3px; padding: 0 15px 0 35px;
+    color: #000;
+    font-weight: bold;
+    text-decoration: none;
+    background-color: #0f0;
+    background-position: 12px 9px;
+    background-repeat: no-repeat;
+    transition: 0.5s;
+}
+
+a.nav-indicator.hidden {
+    opacity: 0;
+}
+
+a.nav-indicator.unread-messages {
+    background-color: #ccf;
+    background-image: url(themify-icons/SVG/email.svg)
+}
+a.nav-indicator.new-matches {
+    background-color: #fcc;
+    background-image: url(themify-icons/SVG/heart.svg)
+}
+
+nav.main {
+    position: fixed; top: 0; right: 0; left: 0; height: 42px;
+    background-color: #fff; 
+    box-shadow: 0 0 3px 0 rgba(0,0,0,0.3);
+    z-index: 100;
+    vertical-align: top; font-size: 0;
+}
+
+nav.main a.home {
+    display: inline-block;
+    vertical-align: top;
+    color: #c33;
+    font-family: serif;
+    font-size: 2rem;
+    font-weight: bold;
+    font-style: italic;
+    text-decoration: none;
+    line-height: 42px;
+    padding-left: 24px;
+    padding-right: 30px;
+}
+
+footer {
+    clear: both;
+    font-size: 0.9rem; color: #999;
+    display: block;
+    text-align: right;
+    margin-top: 0; padding: 25px 25px 15px 25px;
+}
+
+/* ------- */
+
+/* Three Dots*/
+.loading-spinner {
+    display:inline-block;
+    font-size:0px;
+    padding:0px;
+}
+.loading-spinner span {
+    vertical-align:middle;
+    border-radius:100%;
+    background:#999;
+    display:inline-block;
+    width:10px;
+    height:10px;
+    margin:3px 2px;
+    -webkit-animation:kf-loading-spinner 0.8s linear infinite alternate;
+    animation:kf-loading-spinner 0.8s linear infinite alternate;
+}
+.loading-spinner span:nth-child(1) {
+    -webkit-animation-delay:-0.8;
+    animation-delay:-0.8s;
+}
+.loading-spinner span:nth-child(2) {
+    -webkit-animation-delay:-0.53333s;
+    animation-delay:-0.53333s;
+}
+.loading-spinner span:nth-child(3) {
+    -webkit-animation-delay:-0.26666s;
+    animation-delay:-0.26666s;
+}
+@keyframes kf-loading-spinner {
+    from {transform: scale(0, 0);}
+    to {transform: scale(1, 1);}
+}
+@-webkit-keyframes kf-loading-spinner {
+    from {-webkit-transform: scale(0, 0);}
+    to {-webkit-transform: scale(1, 1);}
+}

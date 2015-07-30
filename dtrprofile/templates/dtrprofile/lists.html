@@ -1,0 +1,54 @@
+{% extends "dtrprofile/base.html" %}
+
+{% block title %}Your Lists{% endblock %}
+
+{% block head %}
+
+<link href="/static/lists.css" rel="stylesheet" type="text/css">
+<script>
+
+login_required();
+
+$(document).ready(function(){
+    load_list();
+    $(window).on('hashchange', function(e){ load_list() });
+});
+
+function load_list(){
+    var hash = window.location.hash;
+
+    $('#list-opts a').removeClass('selected');
+    $('#list-opts a[href="' + hash + '"]').addClass('selected');
+    $('#list-content').html('<span class="loading">Loading...</span>');
+
+    $.get('/api/v1/lists', { q: hash.substr(1) }, function(data){
+        $('#list-content').html('<ul></ul>');
+        var html = '';
+    }).error(function(err){
+        var txt = 'ERROR ' + err.status + ': ' + err.statusText;
+        $('#list-content').html('<span class="error">' + txt + '</span>');
+    });
+
+}
+
+</script>
+
+{% endblock %}
+
+{% block main %}
+
+<div class="list-opts" id="list-opts">
+  <a href="#matches" class="nav-link matches">matches</a>
+  <a href="#likeme" class="nav-link likeme">like me</a>
+  <a href="#viewedme" class="nav-link viewedme">viewed me</a>
+  <a href="#mylikes" class="nav-link mylikes">my likes</a>
+  <a href="#myviews" class="nav-link myviews">my views</a>
+  <a href="#myfavs" class="nav-link myfavs">my favorites</a>
+  <a href="#blocked" class="nav-link blocked">blocked</a>
+</div>
+
+<div class="list-content" id="list-content">
+  <!-- Render here the contents of tht currently selected list -->
+</div>
+
+{% endblock %}

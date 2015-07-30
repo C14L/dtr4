@@ -1,0 +1,31 @@
+{% extends "dtrbase.html" %}
+{% load i18n %}
+{% block title %}Foros de plática en El Ligue.com{% endblock %}
+{% block body_classes %}forum-archive{% endblock %}
+{% block head %}
+<style>
+h1 { text-align: center; }
+.li { list-style: none; padding:0; margin: 1rem; }
+.li>li { display: inline-block; }
+.li>li>a { display: inline-block; padding: 0.25rem 0.5rem; margin: 0.25rem; }
+</style>
+{% endblock %}
+{% block main %}
+
+<div class="wrapper main-wrapper">
+    <section class="nice card">
+        <h1>Hay {{ count }} hilos con {{ recount }} respuestas en el foro</h1>
+        <ul class="li">
+            {% for p in pages %}
+                <li><a class="small btn" href="/{{ p }}">{{ p }}</a></li>
+            {% endfor %}
+        </ul>
+        {% if user.is_authenticated %}{% else %}
+            <div style="padding: 1rem 0; text-align: center;">
+                <a class="btn attention" href="/" title="{% trans 'Join our free dating community.' %}">{% trans 'Join our free dating community.' %}</a>
+            </div>
+        {% endif %}
+    </section>
+</div>
+
+{% endblock %}

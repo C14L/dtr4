@@ -1,0 +1,82 @@
+{% load i18n %}<!DOCTYPE html>
+{% spaceless %}
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}{% endblock %} ~o EL LIGUE</title>
+        <meta name="description" value="{% block description %}{% endblock %}">
+        <link rel="icon" href="{{STATIC_URL}}img/icon.png" type="image/png">
+        <script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-273063-2', 'elligue.com');
+ga('send', 'pageview');
+        </script>
+        <style>
+html, body { font: normal 16px/1em Arial,sans-serif; background-color: #EAEAEA; margin: 0; padding: 0; }
+header { background-color: #F44336; color: #FFFFFF; margin: 0; padding: 0 30px; font-family: sans-serif; line-height: 60px; }
+header a { text-decoration: inherit; color: inherit; }
+header .logo { font-size: 32px; font-weight: bold; }
+header nav { display: block; float: right; font-size: 20px; }
+header nav a { display: inline-block; margin-left: 20px; }
+main section { display: block; width: 800px; margin: 0 auto; padding: 0; }
+footer { display: block; margin: 30px 0 0 0; padding: 10px 20px; background-color: #333333; color: #EAEAEA; }
+footer a { text-decoration: inherit; color: inherit; }
+footer section { margin: 20px 0; font-size: 0.85rem; }
+
+.signup-link { clear: both; margin: 0; padding: 30px 0; text-align: center; }
+.signup-link a { font-size: 20px; }
+.card { display: block; background-color: #FFFFFF; overflow: hidden; margin: 0; padding: 0; box-shadow: 3px 3px 5px rgba(0,0,0,0.3);  }
+section.card { margin: 0 auto; padding: 20px; }
+.userlist { overflow: hidden; }
+.userlist .item { display: block; background-color: #FFFFFF; width: 180px; height: 280px; overflow: hidden; margin: 0 20px 20px 0; padding: 0; box-shadow: 3px 3px 5px rgba(0,0,0,0.3); float: left; color: inherit; text-decoration: inherit; }
+.userlist .item img { display: block; width: inherit; }
+.userlist .item .header { display: block; margin: 0; padding: 10px; }
+.userlist .item .header .username { display: block; font-size: 20px; margin-bottom: 5px; }
+.userlist .item .header .about { display: block; font-size: 0.90rem; color: #555555; min-height: 48px; }
+.userlist .item .header .about .gender {  }
+.userlist .item .header .about .age {  }
+.userlist .item .header .about .crc {  }
+.userlist .item .header .westernzodiac { color: #999999; float: right; font-size: 0.85rem; }
+
+        </style>
+        {% block head %}{% endblock %}
+    </head>
+    <body class="{% block body_classes %}{% endblock %}">
+        <header>
+            <a class="logo" href="/">EL LIGUE</a>
+            <nav>
+                <a href="/accounts/login/">Login</a>
+                <a href="/accounts/signup/">Sign up</a>
+            </nav>
+        </header>
+        <main id="main">
+            {% block main %}{% endblock %}
+        </main>
+        <footer id="footer">
+            <section class="cols col-1">
+                <a href="{% url 'dtrseo_users_alphabetically' %}">Browse</a> |
+                <a href="{% url 'dtrseo_users_f_m' %}">{% trans 'Find women looking for men' %}</a> |
+                <a href="{% url 'dtrseo_users_m_f' %}">{% trans 'Find men looking for women' %}</a> |
+                <a href="{% url 'dtrseo_users_f_pics' %}">{% trans 'Photos of women' %}</a> |
+                <a href="{% url 'dtrseo_users_m_pics' %}">{% trans 'Photos of men' %}</a> |
+                <a href="{% url 'dtrseo_country_list' %}">Encontrar amigos</a> |
+                <a href="/citymxmdf/mexico-d-f.html">Amigos en Mexico DF</a>
+            </section>
+            <section class="cols col-2">
+                <span>{% for a in 'abcdefghijklmnopqrstuvwxyz_'|make_list %}<a href="/browse.php?begin={{ a }}">{{ a|upper }}</a> &middot; {% endfor %}</span>
+            </section>
+            <section class="cols col-3">
+                &copy;2015 | 
+                <a rel="nofollow" href="http://C14L.com/impressum.html">Imprint</a> |
+                <a rel="nofollow" href="/static/tos.es.html">Terms of Service</a> |
+                <a rel="nofollow" href="/static/privacy.es.html">Data Privacy</a>
+            </section>
+        </footer>
+    </body>
+    {% block htmlend %}{% endblock %}
+</html>
+{% endspaceless %}

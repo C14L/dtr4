@@ -1,0 +1,36 @@
+{% extends "dtrbase.html" %}
+{% load i18n %}
+{% block title %}{% trans "Browse users alphabetically" %}{% endblock %}
+{% block body_classes %}browse-users-alphabetically{% endblock %}
+{% block main %}
+
+<section>
+    <h1>{% blocktrans %}Online dating profiles with "{{ letter }}"{% endblocktrans %}</h1>
+</section>
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+{% if userprofiles %}
+    <section class="usercard-1-list userlist">
+        {% for profile in userprofiles %}
+            <a href="/accounts/login/?next=/app/profile/{{ profile.user.username }}" class="usercard-1-item item" title="{{ profile.user.username }}">
+                <img class="pic" src="{{ profile.pic_url_m }}">
+                <span class="header">
+                    <span class="username">{{ profile.user.username }}</span>
+                    <span class="about">
+                        <span class="gender">{{ profile.get_gender_display }}</span>, 
+                        <span class="age">{{ profile.age }}</span>,
+                        <span class="crc">{{ profile.crc }}</span>
+                    </span>
+                    <span class="westernzodiac">{{ profile.get_western_zodiac_display }} {{ profile.get_western_zodiac_symbol }}</span>
+                </span>
+            </a>
+        {% endfor %}
+    </section>
+{% else %}
+    <p>{% trans 'There are no users with this letter.' %}</p>
+{% endif %}
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+{% endblock %}

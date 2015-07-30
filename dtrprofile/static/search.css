@@ -1,0 +1,155 @@
+
+.search.content-wrapper {
+  width: 1000px; 
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-opts {
+  margin: 0; margin-bottom: 5px; padding: 0;
+  background-color: #fff; 
+  box-shadow: 0 0 3px 0 rgba(0,0,0,0.3);
+  border-radius: 3px;
+}
+
+
+/* ========================================================================== */
+
+
+.search-form {
+  margin: 0; padding: 0;
+  text-align: center;
+}
+
+.search-form > div {
+  display: inline-block;
+  margin: 0; padding: 15px 0;
+  cursor: pointer;
+}
+
+
+.search-form input[type="number"] {
+  border: 0;
+  font-size: 1rem;
+  line-height: 1rem;
+  padding: 5px;
+  width: 2.5rem;
+  background-color: #eee;
+}
+
+.search-form input[type="number"]:hover {
+}
+
+.search-form > .gender > select {
+  font-size: 1rem;
+  line-height: 1rem;
+  padding: 5px;
+  background: #eee;
+  border: 0; outline: 0;
+}
+
+.search-form .options-box {
+    width: 400px;
+    position: absolute;
+    background-color: #fff; 
+    box-shadow: 0 0 10px #000;
+    margin: 0; padding: 0; 
+}
+
+
+.search-form > .city > .city-opts.options-box {
+  padding: 10px 0;
+}
+
+.search-form > .city > .city-opts.options-box > div {
+  padding: 10px;
+}
+
+.search-form > .city > .city-opts.options-box > div > select {
+  font-size: 1rem;
+  width: 350px;
+}
+
+.search-form input[type="submit"] {
+  cursor: pointer;
+  float: right;
+  width: 40px; height: 40px;
+  border: 0; margin: 10px;
+  background-color: #fff;
+  background-image: url(themify-icons/SVG/search.svg);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 1.25rem;
+
+}
+
+/* ========================================================================== */
+
+
+.search-results.list {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
+
+.search-results.list > .useritem {
+  padding: 0; margin: 5px 0;
+  overflow: hidden;
+  background-color: #fff; 
+  box-shadow: 0 0 3px 0 rgba(0,0,0,0.3);
+  border-radius: 3px;
+  width: 192px; 
+}
+
+.search-results.list > .useritem > .is-like {
+  display: block;
+  position: absolute; 
+  padding: 0 0.5rem;
+  margin-top: calc(192px - 2rem); margin-left: 0;
+  background-color: #fff;
+  color: #c33;
+  font-size: 2rem;
+  line-height: 1em;
+  opacity: 0;
+  transition: 0.5s;
+  cursor: pointer;
+  border-radius: 0 3px 0 0;
+}
+
+.search-results.list > .useritem > a.userpic {
+  display: block; 
+  width: 192px; height: 192px;
+  background-color: #ccc;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.search-results.list > .useritem > a.username {
+  display: block;
+  font-size: 1rem;
+  line-height: 1rem;
+  margin-left: 10px;
+  padding-top: 0.5rem;
+}
+
+.search-results.list > .useritem > .asl {
+  display: block;
+  font-size: .85rem;
+  line-height: 1rem;
+  color: #333;
+  margin-left: 10px;
+  white-space: nowrap;
+  padding-bottom: 0.5rem;
+}
+
+.search-results.list > .useritem > .asl > .crc {
+}
+
+.search-results.list > .useritem > .last-active {
+  display: none;
+  float: right;
+  color: #333;
+  background-color: #fff;
+  font-size: 0.9rem;
+}

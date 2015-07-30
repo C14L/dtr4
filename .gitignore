@@ -1,0 +1,4 @@
+# More in: ~/dev/global-settings/.gitignore
+
+ng-app/libs/
+static_files/

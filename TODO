@@ -1,0 +1,119 @@
+
+=== BLOCKING ===================================================================
+
+GIT: Remove IPs and domains, if possible.
+
+PRODUCTION: For some reason its still producing HTTP 500 responses. Now installed on Python3.2/Django1.8 but on local its not possible to use 3.2 but on production when using 3.4 it can't install Pillow for some reasion, probably some Ubuntu 12.04 library incompatible or so, on local with Ubuntu 14.04 it works. Can't find any error messages, nothing in error_log or access_log or anywhere. --> Maybe deploy locally with Apache2 to see errors...
+
+=== FIXME ======================================================================
+
+HOMEPAGE: For anon users, do not redirect to login page, but show a nice homepage with forms for login and signup, and some text and picture content about the site, both for user and SEO.
+
+EMAIL: Send email to user when they get a new message, like, or friend request. But don't send more than one email per hour. If he user gets a new message but a mail was already sent within the last hour, then just skip the mail for the new message. --> Use a database table, e.g. "dtrprofile_usermail" or something, to remember when the last email was sent to each user, so to look up if a particular user is allowed to get a new mail. Do NOT store any email preferences (like do they want to receive notifications? etc) because there is no obligation to set an email address. If they provide an email address, just assume that they do want to get notifications.
+
+EMAIL: Send email to all users, once per week, about new signups from their city, and other site specific news.
+
+SEARCH: MSIE10/MSIE11 bug doesn't show pics in user boxes (e.g. in search, or user lists), just the boxes with username etc.
+
+SEARCH: For new user, search should be set to match their "gender" settings; e.g. if the authuser is a "woman who likes men" then the first-time search should be automatically set for "men who like women", and the search city should be set to the same city as authuser. The age range can be left from 18 to 99.
+
+SEARCH: MSIE10 bug doesn't show search results user boxes next to each other. They are shown as one box per line instead.
+
+FLAGS: (client-side) When authuser confirms a friend request, the profileuser is correctly added to the "friends" list, but is not removed from the "friend invites received" list. The profileuser should be removed from that list, because the request is not open anymore.
+
+PROFILE: Watermark all images. Do NOT watermark raw/ images, only the different sizes derrived from them.
+
+TALK: Make "talk" readable for anon user too. All talk pages should be readable for anon user, so that search engines can index the content too. Currently, anon users are redirected to the login page. Example while logged out: http://localhost:8001/app/talk/topic/wondering
+
+PROFILE: On profile view, make pics more easily deletable for mods.
+
+PROFILE: in profile header, make the indicators like 'interested in you' etc clickable and open a tooltip menu with the option to confirm 'friends' or 'interest' etc right there. so no need to look for it in the unintuitive overflow menu.
+
+PROFILE: in profile settings, the Country/City value does not get updated when submitting an empty value.
+
+LISTS: some lists, only empty lists!, eg /app/lists/matches do not load every second time they are opened, the loading indicator animation just stays a long time. uses unusual high cpu time too. then in the console, there is a net::SOMETHING error. when navigated away and opened a third time, it shows no error again. controller and template are not the problem, must be somewhere in the factory.
+
+TALK 2015-07-20: Weird DB error with on_delete=models.SET_NULL in Talk >>> When a user is deleted, the related Talk objects should be set to NULL, but instead I get a database error when I try to set them to NULL manually or automatically. >>> IntegrityError at /api/v1/profile/CmdrBratwurst.json (1452, 'Cannot add or update a child row: a foreign key constraint fails (`elligue4`.`dtrprofile_talk`, CONSTRAINT `dtrprofile_talk_user_id_56da8d1e8b93abcf_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`))') >>> So now, instead, just delete all messages, public and private, when a user account is deleted.
+
+=== NICE-TO-HAVE ===============================================================
+
+PROFILE: A user can limit private messages so that only they can first-contact others, but others can not first-contact them. Especially for sexy women so that they don't get flooded by billions of dumb-guy messages.
+
+TALK: On new user signup, auto-post a message "#Welcome @username from #City #Country. Use hashtag #Intro to indroduce yourself!" or something like that. >>> See dtrprofile/signals.py to implement it.
+
+PROFILE: the picslist above profile should be loaded each time and based on asl values from the profile being viewed. And it should not only load the profile pic, but any pic from a user's collection. Just to have more diversity. But only show each user once.
+
+APPBAR: use "$watch" on the length of Inbox "unread" and the other appbar indicator values, to update immediately on change
+
+PHOTOS: Make another command script that checks that all UserPic entries have their raw/ image files, and every raw/ image file has a UserPic entry.
+
+HTML: put a fixed almost transparent button in the lower corner to "go to top of page" if user scrolled down more than a little
+
+DEPLOY: add django_compressor to the main template, see http://django-compressor.readthedocs.org/en/latest/usage/
+
+PROFILE: add the csrfmiddlewaretoken on picture uploads, not sure yet how
+
+ACCOUNT: make 'account settings' work. Its hidden for now, add those settings later.
+ACCOUNT: implement "Who can send you messages?" in account settings, so that only the selected group of users can send Inbox messages
+
+PHOTOS: make a section to see one random picture of a random user who matches the search criteria, and let user decide YES or NO, like tinder. a YES would add a "like" flag on the picture owner. collect the picture IDs the user has already seen in a new db table, so that they don't see the same piture again.
+
+I18N: make get_choice_tr() a $rootScope method too, like tr() is, so it will be accessible from templates.
+
+TEMPLATES: Where possible, use ng-bind instead of inline {{ }} to show content.
+TEMPLATES: use github.com/Pasvaz/bindonce to remove unnecessary watchers.
+
+=== DONE / WONT ================================================================
+
+WONT URL: Maybe make language setting dependent on URL, so instead of "app" in the UR paths, use "en" or "es", etc. Example: like http://example.com/app/search --> http://localhost:8001/es/search NOPE, just keep it in Spanish all instead.
+DONE SEO: Reduce the number of displayed countries in /gente-por-pais.php page, only use American countries, plus maybe Spain, Italy, Portugal, etc.
+DONE SEO: Check if dtrseo is well translated.
+DONE SEARCH: In Spanish, the search bar is too wide --> Remove the age [min] to [max] part, can be added later again if there are really that many users that age becomes an important criteria to search for.
+DONE I18N: Translation for "choice" strings still mising.
+DONE I18N: convert all strings to $scope.tr() calls and make translations. --> Mostly done. BUG: Doesn't colltect tr() strings when there is dynamic insert, e.g. tr("color is {0}.", ['red']) etc. Needs to learn to ignore any [] after the string. --> Also, rename the management command (filename) to a shorter one.
+DONE SEO: Make the basic old pages work (alphabetical user index, pages per country and city).
+DONE SMALL BUG: In settings-profile when submit prfile data update, the browser also displays a request to fill in a picture file. The update works regardless, just a cosmetic annoyance.
+DONE SIGNUP: Make after-signup flow, starting with 'fill in your data' page where the user has to fill in the PNASL data minimum. --> only needs a frontend, the backend should handle it fine. --> This must make sure that we get complete PNASL (pic, name, age, sex, location) data from the user.
+DONE PROFILE: Clean up gender settings. Remove any "others who like *" or "* who like others". They are all empty anyways. Also, combine "asexual" and "others" into just "others" for anything outside the four named settings. There should be only 5 options: "men who like women", "men who like men", "women who like men", "women who like women", "others". --> Also, every user that has no gender setting is set to "other" automatically.
+DONE PROFILE: Add some actual ad banner.
+DONE PROFILE: Even if no friends show "friends" section, but write that "no friends".
+DONE PROFILE: Auto-find user location doesn't work anymore. In Profile > Edit click the button "find my location" and then allow the page to query user location. >>> Expected: the browser reports user location and the page finds and sets the nearest city. >>> Actual result: the spinner keeps moving and nothing is set automatically. 
+DONE BUG: edit profile doesn't save dob. That seems to cause --> SEARCH: Verify that the listing is ordered by last_active. --> ANOTHER BUG: UserProfile model method could not find related geoname AltNames. Casued by django.utils.translation.get_language() returns language codes that include country codes, so "en-us" and not just "en", so the language was not found in AltNames table.
+DONE TALK: Add a "block" flag to posts by blocked user: Add "block" flag to each post, if post author was blocked by authuser. Do it in a separate method that can be called to fix a single post or a list of posts.
+DONE TALK: Hide posts by users that are blocked by authuser. 
+DONE TALK: Actually limit text length to 500 chars.
+DONE SETTINGS/PASSWORD/EMAIL: Make the /accounts/* pages templates pretty.
+DONE PROFILE: Pretty-up the inbox/privmsg area. Put msg textarea at top again and have msgs flow downward. On own profile, pretty-up list of profile edit options.
+DONE TALK: If a user doesn't have any 'matches' or 'friends' when selecting those streams, the loading indicator will stay. There should be a 'no messages found' or something instead.
+WONT ERROR HANDLING: Make a '404 not found' overlay or something to show automatically when the api returns a 404. --> handle individually, each section should react differently to missing data.
+DONE PROFILE: on authuser's profile, remove the message area (can't message themself) and add the "edit profile" opentions (edit, pics, design, etc) instead.
+DONE PROFILE: when loading profile results in HTTP 404 from the API, display a "not found" message.
+DONE APPBAR: Remove "profile" link dropdown and make the icon simply link to authuser's profile.
+DONE APPBAR: Remove hamburger menu, no left sidebar needed!
+WONT PHOTOS: Command make_user_pics dies if a raw/ pic file doesn't exist. It should handle such an error by deleting the UserPic entry for the non-existant raw/ file. --> Make another command script that checks that all UserPic entries have their raw/ image files, and every raw/ image file has a UserPic entry.
+DONE PHOTOS: b4 next conversion/import, set picture size "small" to "75 x 75" pixels!!!
+DONE TALK: combine "recent hashtags" and "recent users" to show only once per item. not possible on SQlite. move to mysql and do it there. before that, first fix the PHOTOS import script (see above!)
+DONE SEARCH: blocked users should not show up in the search results
+DONE do not show a profile to authuser, if authuser was blocked by profileuser
+DONE have a broad page title show in the appbar, like "profile" or "favorites" or "outbox"
+DONE implement globa translation/translate function tr() that uses TR_LANGUAGE array to translate strings. TR_LANGUAGE should be an array of { 'msgid':'', 'msgstr':'' } values, to somewhat resemble poedit translations.
+DONE TALK: make talk show the @username and #hashtag streams.
+DONE TALK: make talk show the "group" streams
+DONE TALK: make talk cache the major "group" streams.
+DONE PROFILE: add is-online/idle statis to Lists items.
+DONE PROFILE / TALK: use the current ligue code to make youtube links, imgur links etc work again as video included inline on talk and profie pages. *not* on inbox messages.
+DONE IMPORT: currently it imports old friend relations as "likes". change it to import olf friend relations as "friend".
+DONE IMPORT: currently does not import "lookingfor" value. the new version should have a "lookingfor" as well, and the old value should be imported.
+DONE IMPORT: currently imports deleted? messages, all sorts of spammy messages. should not import messages marked deleted or from users marked deleted or blocked.
+TALK: #hashtags should NOT be case sensitive! Currently the are, change that. Probably @usernames too.
+PROFILE: display a list of their friends on a user profile.
+SITE: use proper routes: /app/ for all in-app (ng intercepted) routes. /api/ for all api calls. /static/ all assets. /pics/ for all user uploaded images.
+PROFILE SETTINGS: make the "lookingfor" value editable
+CSS: Make pictures uniform everywhere. Not round but square with roudned corners.
+PROFILE: make the profilr design more similar to the current elligue profile. try to make current css stylesheets work in the new lig without modification.
+PHOTOS: Make script to re-create all user pics, to have them on-server in square size for small and medium.
+TR: load translation files here. use a js to read lang cookie, then load tr file by inserting a script tag into the dom.
+WONT APPBAR: Join all Lists links again into one icon item.
+DONE TALK: When posting images or anything that gets translated by textfiler(), then it is shown DOUBLE at first, until the page is reloaded. Probably because the temporary added item added by addPost() is not properly removed when the proper posted item is loaded from the server. --> addPost gets ONLY the new post back from the server and the controller adds it the the renered post list. since it now has an ID attached, it gets integreated fine in the flow when other posts are fetched from the server. no dupes anymore.
+PHOTOS: Make a photos page, with all user uploaded pictures, most recent first, linking to a user's profile page. Especially for admins so that they can delete new pictures that break the rules.
+ACCOUNT: Implement "delete user", both for own account and for authuser.is_staff users.

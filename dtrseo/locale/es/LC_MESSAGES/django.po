@@ -1,0 +1,237 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-07-28 12:41+0000\n"
+"PO-Revision-Date: 2014-05-22 10:03+0100\n"
+"Last-Translator: Christian Steimel <me@C14L.com>\n"
+"Language-Team: es <poedit@C14L.com>\n"
+"Language: es_MX\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: /home/chris/dev/new/dater3/dtr3/dtrseo\n"
+
+#: dtrseo/templates/dtrbase.html:62
+#, fuzzy
+#| msgid "Find women who are looking for men"
+msgid "Find women looking for men"
+msgstr "Buscar mujeres que quieren encontrar a un novio."
+
+#: dtrseo/templates/dtrbase.html:63
+#, fuzzy
+#| msgid "Find men who are looking for women"
+msgid "Find men looking for women"
+msgstr "Buscar hombres que quieren encontrar una novia"
+
+#: dtrseo/templates/dtrbase.html:64
+msgid "Photos of women"
+msgstr ""
+
+#: dtrseo/templates/dtrbase.html:65
+msgid "Photos of men"
+msgstr ""
+
+#: dtrseo/templates/dtrseo/forum_archive.html:25
+msgid "Join our free dating community."
+msgstr "Participa en nuestro sitio web de citas en linea gratuita"
+
+#: dtrseo/templates/dtrseo/list_of_country.html:11
+msgid "Conocer Gente en mi País"
+msgstr "Conocer Gente en mi País"
+
+#: dtrseo/templates/dtrseo/list_of_letters.html:3
+#: dtrseo/templates/dtrseo/list_of_users_by_letter.html:3
+msgid "Browse users alphabetically"
+msgstr "Amigos y amigas por apodo"
+
+#: dtrseo/templates/dtrseo/list_of_letters.html:18
+#, python-format
+msgid "Usuarios con %(upperletter)s%(uppera)s..."
+msgstr "Usuarios con %(upperletter)s%(uppera)s..."
+
+#: dtrseo/templates/dtrseo/list_of_users_by_altname_url.html:34
+#, fuzzy
+#| msgid ""
+#| "There many more women looking for a man in out online dating community. "
+#| "Simply sign up and participate. No need to write boring dating profiles "
+#| "or send out hundreds of messages in the hopes to get a few replies. Our "
+#| "online dating community works differently. Much simpler, much less "
+#| "hassle, much more fun. Try it if you want to find women looking for a man."
+msgid ""
+"There many more women looking for a man in out online dating community. "
+"Simply sign up and participate. No need to write boring dating profiles or "
+"send out hundreds of messages in the hopes to get a few replies. Our online "
+"dating community works differently. Much simpler, much less hassle, much "
+"more fun. Try it!"
+msgstr ""
+"Muchas mujeres buscan a un hombre a través de nuestro portal de citas en "
+"linea. Es muy cencillo. Sólo regístra tu nombre de usuario y participa. No "
+"es necesario llenar encuestas o escribir largos textos sobre tí. Los "
+"perfiles de usuario en nuestro sitio web se llenan automaticamente, mientras "
+"participas y platicas con miles de mujeres interesantes de cerca de tu "
+"ciudad. Nuestra comunidad de citas online funciona diferente a los demas. Es "
+"mas cencillo de usar y con menos líos. Pruébalo, ya llevamos mas de diéz "
+"años en línea y: es completa- y absolutamente gratis encontrar la mujer de "
+"tus sueños aqui."
+
+#: dtrseo/templates/dtrseo/list_of_users_by_letter.html:8
+#, python-format
+msgid "Online dating profiles with \"%(letter)s\""
+msgstr "Perfiles de cupido con \"%(letter)s\""
+
+#: dtrseo/templates/dtrseo/list_of_users_by_letter.html:31
+msgid "There are no users with this letter."
+msgstr "No hay nombres de usuario con esta letra."
+
+#: dtrseo/templates/dtrseo/list_of_users_f_m.html:3
+#: dtrseo/templates/dtrseo/list_of_users_f_pics.html:3
+#: dtrseo/templates/dtrseo/list_of_users_m_pics.html:3
+msgid "Find Women Looking For Men"
+msgstr "Encuentra mujeres que buscan novio"
+
+#: dtrseo/templates/dtrseo/list_of_users_f_m.html:9
+msgid "Find women who are looking for men"
+msgstr "Buscar mujeres que quieren encontrar a un novio."
+
+#: dtrseo/templates/dtrseo/list_of_users_f_m.html:10
+msgid ""
+"Feel at home in our dating community. A different approach to online dating. "
+"Meet women looking for a boyfriend or a husband online. No need to write "
+"boring dating profiles or to send out hundreds of messages to women to find "
+"a relationship. Just sign up and be part of the online community. The best "
+"dating matches will just magically pop up."
+msgstr ""
+"¡Bienvenido a nuestra comunidad para encontrar amigos y el amor de tu vida! "
+"Nuestro sitio de dating funciona un poco diferente a los demás. No es "
+"necesario escribir largos textos en tu perfil de dating, ni tampoco tienes "
+"que escribir cientos de mensajes para ver quien responde. Es mas cecillo "
+"encontrar una relación romantica en nuestra comunidad de dating. Simplemente "
+"regístrate y participa. Los mejores cupidos para ti apareceran "
+"automaticamente."
+
+#: dtrseo/templates/dtrseo/list_of_users_f_m.html:35
+msgid ""
+"There many more women looking for a man in out online dating community. "
+"Simply sign up and participate. No need to write boring dating profiles or "
+"send out hundreds of messages in the hopes to get a few replies. Our online "
+"dating community works differently. Much simpler, much less hassle, much "
+"more fun. Try it if you want to find women looking for a man."
+msgstr ""
+"Muchas mujeres buscan a un hombre a través de nuestro portal de citas en "
+"linea. Es muy cencillo. Sólo regístra tu nombre de usuario y participa. No "
+"es necesario llenar encuestas o escribir largos textos sobre tí. Los "
+"perfiles de usuario en nuestro sitio web se llenan automaticamente, mientras "
+"participas y platicas con miles de mujeres interesantes de cerca de tu "
+"ciudad. Nuestra comunidad de citas online funciona diferente a los demas. Es "
+"mas cencillo de usar y con menos líos. Pruébalo, ya llevamos mas de diéz "
+"años en línea y: es completa- y absolutamente gratis encontrar la mujer de "
+"tus sueños aqui."
+
+#: dtrseo/templates/dtrseo/list_of_users_f_pics.html:8
+msgid "Photos of Women Looking for Love"
+msgstr "Fotos de mujeres que buscan amor"
+
+#: dtrseo/templates/dtrseo/list_of_users_f_pics.html:33
+msgid ""
+"Photos of women on thousands of dating profiles. But our dating community is "
+"not about dating profiles and photos of women, it is about the community. "
+"Meet interesting women easily by participating and become part of the "
+"community. All members have photos."
+msgstr ""
+"Encuentra fotos de mujeres en miles de perfiles de dating. Pero lo "
+"importante aquí no son los perfiles ni las fotos de mujeres, sino la "
+"comunidad para poder conocerse en un lugar agradable y seguro. Puedes "
+"encontrar mujeres guapas e interesantes fáclimente, volviéndote una parte de "
+"nuestra comunidad. Todas las mujeres tienen foto."
+
+#: dtrseo/templates/dtrseo/list_of_users_m_f.html:3
+msgid "Find Men Looking For Women"
+msgstr "Encuentra a un hombre que busca novia"
+
+#: dtrseo/templates/dtrseo/list_of_users_m_f.html:8
+msgid "Find men who are looking for women"
+msgstr "Buscar hombres que quieren encontrar una novia"
+
+#: dtrseo/templates/dtrseo/list_of_users_m_f.html:9
+msgid ""
+"Feel comfortable and at home in our dating community! We have a somewhat "
+"different approach to online dating. You can meet a boyfriend or a husband "
+"online without boring dating profiles or hundreds of always the same "
+"messages. Find men who are looing for a long-term relationship or marriage. "
+"Just sign up to become part of our large online community, with thousands of "
+"men looking to meet women. Participate and the best dating matches will "
+"\"magically\" in your list of \"user you like\". Online dating can be that "
+"simple."
+msgstr ""
+"Siéntate a gusto y segura en nuestra comunidad de citas en línea. No es un "
+"sitio de dating como los demás, sino que lo importate para nosotros es la "
+"comunidad y que todos se puedan conocer primero. Puedes encontrar novio o un "
+"futuro marido sin la necesidad de leer miles de perfiles de usuario, ni "
+"responder a siempre los mismos mensajes. Simplemente regístrate y házte "
+"parte de nuestra comunidad de personas que están en búsqueda de su media "
+"naranja. Participando, las personas que mas te gustan aparecen \"mágicamente"
+"\" en tu liste de \"usuarios que te gustan\". Cencillo, entretenido, y "
+"eficaz."
+
+#: dtrseo/templates/dtrseo/list_of_users_m_f.html:34
+msgid ""
+"Find more men looking for women after you sign up. Find near your city who "
+"are looking for a relationship. Simply sign up and participate in our dating "
+"community, and the web site will find the best matches for your personality. "
+"There is no need to write any boring dating profiles. Our online dating "
+"community works very differently. Its much simpler, with much less hassle, "
+"and much more fun. Try it and  find men looking for a woman."
+msgstr ""
+"Encuentra mas hombre que están buscando novia después de registrar tu própio "
+"perfil. Hay muchos chicos que buscan novia cerca de tu cuidad. Házte parte "
+"de nuestra comunidad de citas en línea y participa para conocer hombres "
+"interesantes. Particiando, nuestro sitio web automaticamente encuentra los "
+"hombres que mas te gustan y te los presenta. Es muy diferente a cualquier "
+"otro sitio web de citas. Muy cencillo y sin líos, pero muy entretenido. "
+"Pruébalo y encuentra hombres guapos que quieren encontrar novia."
+
+#: dtrseo/templates/dtrseo/list_of_users_m_pics.html:8
+msgid "Photos of Men Looking for Love"
+msgstr "Fotos de hombre que buscan amor"
+
+#: dtrseo/templates/dtrseo/list_of_users_m_pics.html:33
+msgid ""
+"Photos of men and thousands of dating profiles in our dating community. But "
+"we are a different type of dating website. Its not about dating profiles and "
+"photos of men, it is about the community and participating in it, to meet "
+"that special guy. Thousands of interesting men with photos are already a "
+"member."
+msgstr ""
+"Fotos de hombres en miles de perfiles de dating en nuestra comunidad de "
+"citas en línea. Aquí es seguro y entretenido encontrar el amor de tu vida. "
+"Nuestra comunidad para encontrar amor funciona de una manera diferente. No "
+"hay largos textos en los perfiles de dating. A través de participar en la "
+"comunidad, el sitio te presenta los hombres que mas te gustan, no solamente "
+"por sus fotos sino también por su persona. Cada hombre tiene fotos en su "
+"perfil."
+
+#~ msgid "Sign up"
+#~ msgstr "Registrar"
+
+#~ msgid "Find pretty women in %(crc)s for relationship."
+#~ msgstr "Encuentra a chicas guapas en %(crc)s para novia y amor."
+
+#~ msgid "Meet pretty women in our free dating community in %(crc)s."
+#~ msgstr ""
+#~ "Conoce a mujeres guapas de %(crc)s en nuestra comunidad de amigos y "
+#~ "cupido en %(crc)s."
+
+#~ msgid "Meet handsome men in %(crc)s for marriage."
+#~ msgstr "Encuentra hombres guapos en %(crc)s para matrimonio."
+
+#~ msgid "Meet men in our free dating community in %(crc)s."
+#~ msgstr "Encuentra a hombres en nuestra comunidad de dating en %(crc)s."

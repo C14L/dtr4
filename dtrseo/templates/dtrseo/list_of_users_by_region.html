@@ -1,0 +1,25 @@
+{% extends "dtrbase.html" %}
+{% load i18n %}
+{% block title %}Gente de {{ region.name }} ({{ country.name }}){% endblock %}
+{% block body_classes %}list-of-users-by-region{% endblock %}
+{% block main %}
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+<section class="card">
+    <h1>Encuentra amor y amigos en {{ region.name }}, {{ country.name }}</h1>
+    <p><strong>Encontrar amor online en {{ region.name }}, {{ country.name }}</strong>, para chatear online y conocerse en la vida real. Si todavía no eres parte de nuestra comunidad de dating, puedes crear tu propio perfil ahora mismo. No tarda ni un minuto, es completamente gratis, y puedes chatear y conocer gente de {{ region.name }} y de todo <a href="{% url 'dtrseo_users_by_country' country.slug %}">{{ country.name }}</a>.</p>
+
+    {% if cities %}
+    <div style="-webkit-column-count:2; -moz-column-count:2; column-count:2; column-gap:1rem;">
+        {% for item in cities %}
+        <p><a href="{% url 'dtrseo_users_by_altname_url' item.url %}">Amigos en {{ item.name }}</a></p>
+        <p class="micro">Encuentra amor y amigos en {{ item.name }}.</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+</section>
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+{% endblock %}

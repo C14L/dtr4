@@ -1,0 +1,358 @@
+.profile.main {
+  margin: 55px auto 15px auto; width: 980px;
+  background-color: #fff;
+  box-shadow: 0 0 3px 0 rgba(0,0,0,0.3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.profile.messages {
+  width: 480px; height: 520px;
+  overflow: hidden;
+}
+
+.profile.messages > .form {
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  overflow: hidden;
+}
+
+.profile.messages > .form > textarea {
+  display: block; 
+  width: calc(100% - 70px); height: 64px;
+  border: 0; outline: 0; 
+  padding: 0px 60px 5px 10px; margin: 0;
+  font-size: 1.15rem; 
+  font-weight: normal;
+  line-height: 1.25em;
+  box-shadow: 0 0 5px rgba(255,255,255,.7);
+  background-color: #fff;
+  background-size: 70px 70px;
+  background-repeat: no-repeat;
+  background-position: 100% 0px;
+  float: left;
+  resize: none;
+}
+
+.profile.messages > .form > input[type="submit"] {
+  float: left;
+  width: 100px;
+  margin-left: -105px;
+  margin-top: 45px;
+  opacity: 0.75;
+  transition: 0.2s;
+  cursor: pointer;
+}
+.profile.messages > .form > input[type="submit"]:hover,
+.profile.messages > .form > input[type="submit"]:focus {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+.profile.messages > .list {
+  width: 100%; height: 450px;
+  padding: 0;
+  overflow-y: scroll;
+}
+
+.profile.messages > .list > .item {
+  margin: 20px; padding: 20px;
+  background-color: #fff;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 15px;
+}
+
+.profile.messages > .list > .item > .timestamp {
+  font-size: 0.85rem; color: #888; display: block;
+}
+
+.profile.messages > .list > .item > .text {
+  display: block;
+  line-height: 1.5rem;
+  overflow: hidden;
+}
+
+.profile.messages > .list > .item > .userpic {
+  width: 50px; height: 50px;
+  box-shadow: 0 0 3px rgba(0,0,0,0.3);
+  border-radius: 3px;
+}
+
+.profile.messages > .list > .item.sent {
+  border-color: transparent;
+  box-shadow: 2px 2px 3px rgba(0,0,0,0.2);
+  background-color: #eee;
+  margin-right: 80px;
+}
+
+.profile.messages > .list > .item.sent > .text {
+    color: #666;
+}
+
+.profile.messages > .list > .item.sent > .userpic {
+  float: right; 
+  position: relative; margin-top: -5px; margin-right: -80px;
+  border-radius: 3px;
+}
+
+.profile.messages > .list > .item.recv {
+  border-color: transparent;
+  box-shadow: 2px 2px 3px rgba(0,0,0,0.2);
+  background-color: #ddf;
+  margin-left: 60px;
+}
+
+.profile.messages > .list > .item.recv > .userpic {
+  float: left;
+  position: relative; margin-top: -5px; margin-left: -60px;
+}
+
+.profile.picdata {
+  width: 500px;
+  margin: 0; float: left;
+  background-color: #fff; 
+  box-shadow: 0 0 3px 0 rgba(0,0,0,0.3);
+  border-radius: 0 3px 3px 0;
+  overflow: hidden;
+}
+
+.profile.picdata > .userpic.large {
+  float: left;
+  width: 400px; height: 400px; 
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  font-size: 0px;
+  cursor: pointer;
+  display: block;
+}
+
+.profile.picdata > .userpic.small {
+  display: inline-block; width: 99px; height: 99px; 
+  vertical-align: top;
+  cursor: pointer;
+  border-bottom: 1px solid #fff;
+  border-left: 1px solid #fff;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  
+  font-size: 100px; /* what the ...? */
+}
+
+.profile.picdata > .userpic.small:nth-child(5) {
+  width: 99px; height: 100px;
+  border-bottom: 0;
+}
+
+.profile.picdata > .userpic.small:nth-child(6),
+.profile.picdata > .userpic.small:nth-child(7),
+.profile.picdata > .userpic.small:nth-child(8),
+.profile.picdata > .userpic.small:nth-child(9),
+.profile.picdata > .userpic.small:nth-child(10) {
+  border: 0;
+  border-top: 1px solid #fff;
+  border-right: 1px solid #fff;
+  float: left;
+}
+
+.profile.picdata > .userpic.small:nth-child(9) {
+  width: 100px; height: 99px;
+}
+
+.profile.picdata > .userpic.small:nth-child(10) {
+  border-right: 0;
+}
+
+.profile.header {
+  margin: 0; padding: 15px;
+  background-color: #fff; 
+  box-shadow: 0 0 3px 0 rgba(0,0,0,0.3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.profile.header .like-btn {
+  float: right;
+  font-size: 3.5rem;
+  line-height: 1em;
+  padding: 5px 10px 0 0;
+  color: #c33;
+  opacity: 0.1;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.profile.header .like-btn:before {
+  content: '❤';
+}
+
+.profile.header .like-btn:hover {
+  opacity: 0.5;
+  transition: 0.3s;
+}
+
+.profile.header .like-btn:active {
+  opacity: 1;
+}
+
+.profile.header .like-btn.is-like {
+  opacity: 1;
+  transform: scale(1.25);
+}
+
+.profile.header .like-btn.is-like.is-match:after {
+  color: #933; text-shadow: 0 0 5px #fff;
+  content: '❤';
+  position: absolute; left: 25%; top: 20%;
+  transform: scale(0.75);
+}
+
+.profile.header .username {
+  font-size: 2rem;
+  line-height: 1em;
+  margin-bottom: 0.5rem;
+}
+
+.profile.header .asl {
+  font-size: 1.25rem;
+  line-height: 1em;
+  color: #333;
+}
+
+/* ========================================================================== */
+
+.profile.details {
+  padding: 0 15px;
+}
+
+.profile.details hgroup {
+  margin: 0 -15px; padding: 0 15px;
+  border-bottom: 1px solid #ccc;
+}
+
+.profile.details > hgroup > h2 {}
+
+.profile.details > hgroup > p {}
+
+.profile.details .data-list {
+  width: 400px;
+}
+
+.profile.details .data-list dl {
+  margin: 0; padding: 0.75rem 0.25rem;
+  display: block;
+  border-top: 1px solid #ccc;
+  line-height: 1em;
+}
+
+.profile.details .data-list dl:first-child {
+  border-top: 0;
+}
+
+.profile.details .data-list dl > dt {
+  margin: 0; padding: 0;
+  color: #999;
+  display: inline-block;
+  width: 50%;
+  line-height: 1em;
+}
+
+.profile.details .data-list dl > dd {
+  margin: 0; padding: 0;
+  display: inline-block;
+  width: 50%;
+  line-height: 1em;
+}
+
+/* ========================================================================== */
+
+.profilelinks.list {
+  position: absolute;
+  padding: 0; margin: -65px 20px 0 20px;
+  font-size: 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.profilelinks.list > .useritem {
+  overflow: hidden;
+  background-color: #fff; 
+  box-shadow: 0 0 3px 0 rgba(0,0,0,0.3);
+  display: inline-block;
+  vertical-align: top;
+  width: 50px; height: 50px;
+  border-radius: 3px;
+  padding: 0px; margin: 3px;
+}
+
+.profilelinks.list > .useritem > a.userpic {
+  display: block;
+  overflow: hidden;
+  width: 50px; height: 50px;
+  background-color: #ccc;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.profilelinks.list > .useritem > a.username,
+.profilelinks.list > .useritem > .asl {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1em;
+  padding: 0 5px; margin: 0;
+  overflow: hidden;
+  text-align: center;
+}
+.profilelinks.list > .useritem > a.username {
+  font-size: 1rem;
+  line-height: 1.15em;
+  padding: 5px;
+}
+
+.profilelinks.list > .useritem > .asl {
+  color: #333;
+}
+
+.profilelinks.list > .useritem > .last-active {
+  display: none;
+}
+
+.profilelinks.list {
+  transition: 0.3s;
+}
+
+.profilelinks.list:hover {
+  transition: 0.2s;
+  margin-left: -10px;
+}
+
+.profilelinks.list > .useritem {
+  transition: 0.3s;
+}
+.profilelinks.list > .useritem > .userpic {
+  transition: 0.3s;
+}
+
+.profilelinks.list > .useritem:hover {
+  transition: 0.2s;
+  width: 150px; height: 200px;
+}
+.profilelinks.list > .useritem:hover > .userpic {
+  transition: 0.2s;
+  width: 150px; height: 150px;
+}
+
+.profilelinks.list > .useritem:hover a.username,
+.profilelinks.list > .useritem:hover .asl {
+  display: block;
+}
+
+footer {
+    clear: both;
+    font-size: 0.9rem; color: #999;
+    display: block;
+    text-align: right;
+    margin-top: 0; padding: 25px 25px 15px 25px;
+}

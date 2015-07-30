@@ -1,0 +1,39 @@
+{% extends "dtrbase.html" %}
+{% load i18n %}
+{% block title %}{% endblock %}
+{% block description %}{% endblock %}
+{% block canonical %}{% url 'dtrseo_users_by_altname_url' city.url %}{% endblock %}
+{% block body_classes %}list-of-users-by-altname-url{% endblock %}
+{% block main %}
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+<section>
+<h1>Encuentra amor in {{ city.name }}</h1>
+<p>Encontrar amor en {{ city.name }} y todo {{ region.name }} es posible en nuestra comunidad de platicar, ligar, y encontrarse en la vida real.</p>
+</section>
+
+<section class="usercard-1-list userlist">
+    {% for profile in userprofiles %}
+        <a href="/accounts/login/?next=/app/profile/{{ profile.user.username }}" class="usercard-1-item item" title="{{ profile.user.username }}">
+            <img class="pic" src="{{ profile.pic_url_m }}">
+            <span class="header">
+                <span class="username">{{ profile.user.username }}</span>
+                <span class="about">
+                    <span class="gender">{{ profile.get_gender_display }}</span>, 
+                    <span class="age">{{ profile.age }}</span>,
+                    <span class="crc">{{ profile.crc }}</span>
+                </span>
+                <span class="westernzodiac">{{ profile.get_western_zodiac_display }} {{ profile.get_western_zodiac_symbol }}</span>
+            </span>
+        </a>
+    {% endfor %}
+</section>
+
+<section>
+<p>{% blocktrans %}There many more women looking for a man in out online dating community. Simply sign up and participate. No need to write boring dating profiles or send out hundreds of messages in the hopes to get a few replies. Our online dating community works differently. Much simpler, much less hassle, much more fun. Try it!{% endblocktrans %}</p>
+</section>
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+{% endblock %}

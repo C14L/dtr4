@@ -1,0 +1,35 @@
+{% extends "dtrbase.html" %}
+{% load i18n %}
+{% block title %}Conocer amigos en {{ city.name }}{% endblock %}
+{% block body_classes %}es-citymx{% endblock %}
+{% block main %}
+
+<section class="card">
+<h1>Encontrar amigos y amigas en {{ city.name }}</h1>
+<p>En El Ligue puedes encontrar amigos y amigas en México y también encontrar a tu pareja de {{ city.crc }}. Es sencillo encontrar personas de {{ city.crc }} y en El Ligue es totalmente gratis! Incluso es gratis escribir mensajes a otros usuarios y chatear con gente de {{ city.name }} y de todo México.</p>
+</section>
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+<section class="usercard-1-list userlist">
+    {% for profile in userprofiles %}
+        <a href="/accounts/login/?next=/app/profile/{{ profile.user.username }}" class="usercard-1-item item" title="{{ profile.user.username }}">
+            <img class="pic" src="{{ profile.pic_url_m }}">
+            <span class="header">
+                <span class="username">{{ profile.user.username }}</span>
+                <span class="about">
+                    <span class="gender">{{ profile.get_gender_display }}</span>, 
+                    <span class="age">{{ profile.age }}</span>,
+                    <span class="crc">{{ profile.crc }}</span>
+                </span>
+                <span class="westernzodiac">{{ profile.get_western_zodiac_display }} {{ profile.get_western_zodiac_symbol }}</span>
+            </span>
+        </a>
+    {% endfor %}
+</section>
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+<div class="more-mx-cities"><strong>Encontrar amigos y amigas en todo México: </strong> <a href="/citymxaca/acapulco.html" title="Ver chavos y chavas de Acapulco...">Acapulco</a> ~ <a href="/citymxcam/campeche.html" title="Ver chavos y chavas de Campeche...">Campeche</a> ~ <a href="/citymxcan/cancun.html" title="Ver chavos y chavas de Cancún...">Cancún</a> ~ <a href="/citymxchi/chihuahua.html" title="Ver chavos y chavas de Chihuahua...">Chihuahua</a> ~ <a href="/citymxjua/ciudad-juarez.html" title="Ver chavos y chavas de Ciudad Juárez...">Ciudad Juárez</a> ~ <a href="/citymxcue/cuernavaca.html" title="Ver chavos y chavas de Cuernavaca...">Cuernavaca</a> ~ <a href="/citymxgua/guadalajara.html" title="Ver chavos y chavas de Guadalajara...">Guadalajara</a> ~ <a href="/citymxher/hermosillo.html" title="Ver chavos y chavas de Hermosillo...">Hermosillo</a> ~ <a href="/citymxleo/leon.html" title="Ver chavos y chavas de León...">León</a> ~ <a href="/citymxmaz/mazatlan.html" title="Ver chavos y chavas de Mazatlán...">Mazatlán</a> ~ <a href="/citymxmer/merida.html" title="Ver chavos y chavas de Mérida...">Mérida</a> ~ <a href="/citymxmex/mexicali.html" title="Ver chavos y chavas de Mexicali...">Mexicali</a> ~ <a href="/citymxmdf/mexico-d-f.html" title="Ver chavos y chavas de Mexico D.F....">Mexico D.F.</a> ~ <a href="/citymxmty/monterrey.html" title="Ver chavos y chavas de Monterrey...">Monterrey</a> ~ <a href="/citymxnog/nogales.html" title="Ver chavos y chavas de Nogales...">Nogales</a> ~ <a href="/citymxlar/nuevo-laredo.html" title="Ver chavos y chavas de Nuevo Laredo...">Nuevo Laredo</a> ~ <a href="/citymxoax/oaxaca.html" title="Ver chavos y chavas de Oaxaca...">Oaxaca</a> ~ <a href="/citymxpac/pachuca.html" title="Ver chavos y chavas de Pachuca...">Pachuca</a> ~ <a href="/citymxpue/puebla.html" title="Ver chavos y chavas de Puebla...">Puebla</a> ~ <a href="/citymxqro/queretaro.html" title="Ver chavos y chavas de Querétaro...">Querétaro</a> ~ <a href="/citymxslp/san-luis-potosi.html" title="Ver chavos y chavas de San Luís Potosí...">San Luís Potosí</a> ~ <a href="/citymxtam/tampico.html" title="Ver chavos y chavas de Tampico...">Tampico</a> ~ <a href="/citymxtap/tapachula.html" title="Ver chavos y chavas de Tapachula...">Tapachula</a> ~ <a href="/citymxtij/tijuana.html" title="Ver chavos y chavas de Tijuana...">Tijuana</a> ~ <a href="/citymxtol/toluca.html" title="Ver chavos y chavas de Toluca...">Toluca</a> ~ <a href="/citymxtor/torreon.html" title="Ver chavos y chavas de Torreón...">Torreón</a> ~ <a href="/citymxtux/tuxtla-gutierrez.html" title="Ver chavos y chavas de Tuxtla Gutiérrez...">Tuxtla Gutiérrez</a> ~ <a href="/citymxver/veracruz.html" title="Ver chavos y chavas de Veracruz...">Veracruz</a> ~ <a href="/citymxvil/villahermosa.html" title="Ver chavos y chavas de Villahermosa...">Villahermosa</a> ~ <a href="/citymxxal/xalapa.html" title="Ver chavos y chavas de Xalapa...">Xalapa</a> ~ <a href="/citymxzac/zacatecas.html" title="Ver chavos y chavas de Zacatecas...">Zacatecas</a></div>
+
+{% endblock %}

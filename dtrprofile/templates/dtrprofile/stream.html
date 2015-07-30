@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<!-- 
+
+Design mockup for the user message stream. The stream should integrate all
+user written public messages and make it easy to switch between seeing messages
+from "everybody", "interesting people", "friends", "one particular person".
+
+Started: 2014-08-09
+
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Public Messages Stream</title>
+    <link href="nav.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="/app/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="nav.js"></script>
+    <script type="text/javascript">
+
+var filter_hashtag = []; // List of hashtags to use as filter.
+var filter_user = []; // List of usernames to use as filter.
+
+// Store here new posts that are not yet displayed.
+// User has to click "show X new posts" to display them
+// before the other posts, and then they are removed from
+// this buffer once rendered. ## NEWEST FIRST! ##
+var new_posts_buffer = [
+
+        '<div class="item post-4392" data-post-id="4392"><a href="/u/cst" class="userpic"><img src="/p/cst_100x100.jpg"></a><a href="/u/cst" class="username">cst</a><div class="timestamp" data-timestamp="1407772594"></div><div class="content"> Hello #everybody, this is my first post, yey! </div><div class="nav"><a href="#reply" class="reply">reply</a><a href="#fav" class="like">like</a><a href="#report" class="report">report</a></div><form class="addpost js-addpost reply" method="post" action=""> <textarea name="content" placeholder="write a public reply..."></textarea> <input type="submit" value="publish"> <span class="charcount js-charcount">500</span> </form></div>', 
+
+        '<div class="item post-3992" data-post-id="3992"><a href="/u/SomebodyOutThere" class="userpic"><img src="/p/profile_pic_4_200.jpg"></a><a href="/u/SomebodyOutThere" class="username">SomebodyOutThere</a><div class="timestamp" data-timestamp="1407772514"></div><div class="content"> @NochJemand_100 @300_und_dann Sed do eiusmod tempor #incididunt enim ad minim veniam, quis nostrud exercitation ullamco laboris in reprehenderit fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui est #laborum. </div><div class="nav"><a href="#reply" class="reply">reply</a><a href="#fav" class="like">like</a><a href="#report" class="report">report</a></div><form class="addpost js-addpost reply" method="post" action=""> <textarea name="content" placeholder="write a public reply..."></textarea> <input type="submit" value="publish"> <span class="charcount js-charcount">500</span> </form></div>', 
+
+        '<div class="item post-3766" data-post-id="3766"><a href="/u/SomeOtherUser" class="userpic"><img src="/p/profile_pic_1_200.jpg"></a><a href="/u/SomeOtherUser" class="username">SomeOtherUser</a><div class="timestamp" data-timestamp="1407772414"></div><div class="content"> @SomebodyOutThere Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. #muchwisdom #sampletext </div><div class="nav"><a href="#reply" class="reply">reply</a><a href="#fav" class="like">like</a><a href="#report" class="report">report</a></div><form class="addpost js-addpost reply" method="post" action=""> <textarea name="content" placeholder="write a public reply..."></textarea> <input type="submit" value="publish"> <span class="charcount js-charcount">500</span> </form></div>',
+        ];
+
+var MAX_POST_LENGTH = 500;
+var RE_HASHTAG = /([\s^])\#(\w{2,50})(?=[\W$])/gi;
+var RE_USERNAME = /([\s^])\@(\w{2,30})(?=[\W$])/gi;
+
+function makePostContentLinks(){
+    // Convert @username and #hashtag into links.
+    $('.stream .item .content').each(function(i, obj){
+        // Only fix up every post once!
+        if( typeof( $(obj).attr('data-original') ) == 'undefined' ) {
+            var s = $(obj).html();
+            // Remember original content, included hashtags and usernames (seperated by space).
+            $(obj).attr('data-original', s);
+            $(obj).attr('data-hashtags', (s.match(RE_HASHTAG) || []).join(' '));
+            $(obj).attr('data-usernames', (s.match(RE_USERNAME) || []).join(' '));
+            // Replace hashtags and usernames in content with html links, link picture urls, etc.
+            s = s.replace(RE_HASHTAG, '$1<a class="hashtag" href="/stream/tag/$2">#$2</a>', 'g');
+            s = s.replace(RE_USERNAME, '$1<a class="username" href="/u/$2">@$2</a>', 'g');
+            // Update DOM.
+            $(obj).html(s);
+        }
+    });
+}
+
+function checkNewPosts(){
+    //
+    // Load new posts from server and append them onto "new_posts_buffer".
+    // ...
+    //
+    var len = new_posts_buffer.length
+    $('.more.new').slideDown('slow').find('.count').html(len);
+}
+
+function showNewPosts(e) {
+    e.preventDefault(); e.stopPropagation();
+    //
+    // Once a user clicks on the "view X new posts" link, prepend all posts 
+    // currently in "new_posts_buffer" at the top of the rendered posts list,
+    // clearing the array "new_posts_buffer" and hiding the "view X new posts" 
+    // link.
+    //
+    $('.stream .item').first().before(new_posts_buffer.join(''));
+    $('.more.new').hide().find('.count').html('0');
+    new_posts_buffer = [];
+    makePostContentLinks();
+    updateTimeDeltas();
+}
+
+function addReplyPostForm(e) {
+    e.preventDefault(); e.stopPropagation();
+
+    var o = e.target;
+    var postObj = $(o).parents('div.item');
+    var postId = $(postObj).attr('data-post-id');
+    var postContentObj = $(postObj).find('.content');
+    var postUsername = $(postObj).find('.username').text();
+
+    if ( $(o).hasClass('reply') ) {
+        var initialContent = '';
+        initialContent += ' @' + postUsername + ' ';
+        initialContent += $(postContentObj).attr('data-hashtags') || '';
+        //initialContent += ' ' + $(postContentObj).attr('data-usernames') || '';
+        $('.stream form.js-addpost').removeClass('visible');
+        $(postObj).find('form.js-addpost').addClass('visible').find('textarea').text(initialContent).focus();
+    }
+}
+
+$(document).ready(function(){
+    makePostContentLinks();
+    checkNewPosts();
+
+    $('.more.new').on('click', 'a', function(e){ showNewPosts(e) });
+
+    $('div.sidecol').on('click', 'button.js-show-addpost', function(e){
+        e.preventDefault(); e.stopPropagation();
+        $('.stream form.js-addpost').removeClass('visible');
+        $('.stream > form.js-addpost').addClass('visible').find('textarea').focus();
+    });
+
+    $('.stream').on('click', '.item .nav a', function(e){ addReplyPostForm(e); });
+
+    $('.stream form.js-addpost textarea').on('keyup', function(e){
+        var len = $(this).val().length;
+        $(this).siblings('.js-charcount').html(MAX_POST_LENGTH - len);
+    });
+
+});
+    </script>
+    <style type="text/css">
+
+div.sidecol {
+}
+
+div.leftcol {
+    width: 150px;
+    float: left;
+}
+
+div.rightcol {
+    width: 230px;
+    float: right;
+    margin: 0 0 0 20px; padding: 0;
+}
+
+div.sidecol button.show-addpost {
+    background-color: #c90;
+    border: 0; outline: 0;
+    margin: 15px; padding: 1rem 2rem;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.15rem;    
+    cursor: pointer;
+}
+
+div.sidecol button.show-addpost:hover {
+    background-color: #a70;
+}
+
+div.sidecol div.hashtag-list {
+    padding: 15px;
+    color: #999;
+    background-color: #fff; 
+    box-shadow: 0 0 3px 0 rgba(0,0,0,0.3);
+    border-radius: 3px;
+}
+
+div.sidecol div.hashtag-list h3 {
+}
+
+div.sidecol div.hashtag-list a {
+    display: block;
+    text-decoration: none;
+    line-height: 1.5em;
+    color: inherit;
+}
+
+div.sidecol div.hashtag-list a:hover {
+    color: #99f;
+}
+
+div.sidecol div.hashtag-list a:before {
+    content: '#';
+}
+
+div.stream {
+    width: 600px; min-height: 600px;
+    margin: 0 250px 0 150px;
+    background-color: #fff; 
+    box-shadow: 0 0 3px 0 rgba(0,0,0,0.3);
+    border-radius: 3px;
+}
+
+div.stream div.more {
+    margin: 0; padding: 1rem;
+    text-align: center;
+}
+
+div.stream div.more.new {
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    display: none;
+}
+
+div.stream div.more.new.visible {
+    display: block;
+}
+
+div.stream div.more.old {
+}
+
+div.stream div.tagfilter {
+    background-color: #99f;
+    color: #fff;
+    margin: 0; padding: 1rem;
+    border-bottom: 1px solid #ccc;
+}
+
+div.stream div.tagfilter a {
+    color: inherit;
+}
+
+div.stream div.tagfilter a.hashtag {
+    font-weight: bold;
+    display: block;
+    text-align: center;
+}
+
+div.stream div.tagfilter a.remove {
+    float: right;
+    font-size: 0.8rem;
+}
+
+div.stream form.addpost {
+    padding: 0; margin: 0;
+    background-color: #eee;
+    height: 0; overflow: hidden;
+    transition: 0.3s;
+}
+
+div.stream form.addpost.visible {
+    height: auto;
+    padding: 10px;
+    transition: 0.3s;
+}
+
+div.stream form.addpost textarea {
+    display: block; width: calc(100% - 84px); height: 74px;
+    border: 0; outline: 0; padding: 5px 0 5px 84px;
+    font-size: 1.15rem; 
+    font-weight: normal;
+    line-height: 1.25em;
+    box-shadow: 0 0 5px rgba(255,255,255,.7);
+    background: #fff url(/p/cst_100x100.jpg) left center no-repeat;
+    background-size: 64px 64px;
+    background-position: 10px 10px;
+}
+
+div.stream form.addpost span.charcount {
+    color: #999;
+    margin: 10px 0 0 0; padding: 0.5rem 1.5rem;
+    float: right;
+}
+
+div.stream form.addpost input[type="submit"] {
+    background-color: rgba(0,0,0,0.15);
+    border: 0; outline: 0;
+    margin: 10px 0 0 0; padding: 0.5rem 1.5rem;
+    color: #fff;
+    font-weight: normal;
+    font-size: 1rem;    
+    float: right;
+    transition: 0.2s;
+}
+
+div.stream form.addpost input[type="submit"]:hover {
+    background-color: rgba(0,0,0,0.2);
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+div.stream div.select {
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    font-size: 0rem;
+    line-height: 0;
+}
+
+div.stream div.select a {
+    font-size: 0.825rem;
+    line-height: 1em;
+    text-align: center;
+    width: 20%;
+    opacity: 0.5;
+    display: inline-block;
+    margin: 0; padding: 8px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #666;
+    background-color: #fff;
+    transition: 0.3s;
+}
+
+div.stream div.select a:first-child {
+    margin-left: 0;
+}
+
+div.stream div.select a.selected {
+    opacity: 0.8;
+    border-bottom: 3px solid #993;
+}
+
+div.stream div.select a:hover {
+    opacity: 1;
+    transition: 0.3s;
+}
+
+div.stream div.item {
+    margin: 0; padding: 20px;
+    overflow: hidden;
+    border-bottom: 1px solid #ccc;
+}
+
+div.stream div.item .userpic { 
+    display: block; width: 64px; height: 64px;
+    margin-right: 15px;
+    float: left; 
+    border-radius: 3px;
+    box-shadow: 0 0 3px 0 rgba(0,0,0,0.3);
+}
+
+div.stream div.item .userpic img { 
+    width: 64px; height: 64px;
+    border: 0;
+}
+
+div.stream div.item > .username {
+    display: inline-block;
+    color: #222;
+    font-weight: bold;
+}
+
+div.stream div.item .timestamp {
+    display: inline-block;
+    color: #999;
+    margin-left: 0.75rem;
+}
+
+div.stream div.item .content {
+    display: block;
+    margin: 10px 0 10px 80px;
+    line-height: 1.25em;
+    font-size: 1.15rem;
+    color: #222;
+}
+
+div.stream div.item .content a {
+    transition: 0.3s;
+}
+
+div.stream div.item .content:hover a {
+    transition: 0.3s;
+}
+
+div.stream div.item .nav {
+    display: block;
+    margin: 10px 0 10px 80px;
+}
+
+div.stream div.item .nav a {
+    display: inline-block;
+    color: #999;
+    margin-left: 1em;
+}
+
+div.stream div.item .nav a:first-child {
+    margin-left: 0;
+}
+
+
+    </style>
+  </head>
+  <body class="favorites-view">
+    <nav class="main" id="nav"></nav>
+    
+    <div class="wrapper">
+        <div class="leftcol sidecol"></div>
+        <div class="rightcol sidecol">
+            <button class="show-addpost js-show-addpost">write post</button>
+            <div class="hashtag-list">
+                <h3>popular tags</h3>
+                <a href="/stream/tag/loremipsum">loremipsum</a>
+                <a href="/stream/tag/sampletext">sampletext</a>
+                <a href="/stream/tag/muchwisdom">muchwisdom</a>
+                <a href="/stream/tag/sowieso">sowieso</a>
+                <a href="/stream/tag/warumnichtfreitags">warumnichtfreitags</a>
+            </div>
+        </div>
+
+        <div class="stream maincol">
+            
+            <form class="addpost js-addpost" method="post" action="">
+                <textarea name="content" placeholder="write a public post..."></textarea>
+                <input type="submit" value="publish">
+                <span class="charcount js-charcount">500</span>
+            </form>
+            
+            <div class="select">
+                <a href="#" title="Show posts from everybody.">all</a>
+                <a class="selected" href="#" title="Show posts only from people who match my search options.">matches</a>
+                <a href="#" title="Show posts only from people I find interesting.">interesting</a>
+                <a href="#" title="Show posts only from my friends.">friends</a>
+                <a href="#" title="Show only public posts addressed to you.">to me</a>
+            </div>
+
+            <div class="tagfilter">
+                <a href="/app/stream.html" class="remove">remove</a>
+                <a href="/stream/tag/sampletext" class="hashtag">#sampletext</a>
+            </div>
+
+            <div class="more new">
+                <a href="#">view <span class="count">5</span> new posts</a>
+            </div>
+
+            <div class="item post-4824" data-post-id="4824">
+                <a href="/u/SomebodyOutThere" class="userpic"><img src="/p/cst_100x100.jpg"></a>
+                <a href="/u/SomebodyOutThere" class="username">SomebodyOutThere</a>
+                <div class="timestamp" data-timestamp="1407583193"></div>
+                <div class="content"> @SomeOtherUser @AndSomeOtherUser Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. #loremipsum #sampletext </div>
+                <div class="nav"><a href="#" class="reply">reply</a><a href="#fav" class="like">like</a><a href="/stream/context/952169" class="context" title="Show some 3 ancestors this post is a reply too (if any), and all direct children (if any).">context</a><a href="#report" class="report">report</a></div>
+                <form class="addpost js-addpost reply" method="post" action=""> <textarea name="content" placeholder="write a public reply..."></textarea> <input type="submit" value="publish"> <span class="charcount js-charcount">500</span> </form>
+            </div>
+
+            <div class="item post-4772" data-post-id="4772">
+                <a href="/u/SomeOtherUser" class="userpic"><img src="/p/silenat_100x100.jpg"></a>
+                <a href="/u/SomeOtherUser" class="username">SomeOtherUser</a>
+                <div class="timestamp" data-timestamp="1407582702"></div>
+                <div class="content"> @SomebodyOutThere Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. #muchwisdom #sampletext </div>
+                <div class="nav"><a href="#reply" class="reply">reply</a><a href="#fav" class="like">like</a><a href="#report" class="report">report</a></div>
+                <form class="addpost js-addpost reply" method="post" action=""> <textarea name="content" placeholder="write a public reply..."></textarea> <input type="submit" value="publish"> <span class="charcount js-charcount">500</span> </form>
+            </div>
+
+            <div class="item post-4721" data-post-id="4721">
+                <a href="/u/SomebodyOutThere" class="userpic"><img src="/p/cst_100x100.jpg"></a>
+                <a href="/u/SomebodyOutThere" class="username">SomebodyOutThere</a>
+                <div class="timestamp" data-timestamp="1407573193"></div>
+                <div class="content"> @SomeOtherUser Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. #sampletext </div>
+                <div class="nav"><a href="#reply" class="reply">reply</a><a href="#fav" class="like">like</a><a href="#report" class="report">report</a></div>
+                <form class="addpost js-addpost reply" method="post" action=""> <textarea name="content" placeholder="write a public reply..."></textarea> <input type="submit" value="publish"> <span class="charcount js-charcount">500</span> </form>
+            </div>
+
+            <div class="more old">
+                <a href="#older">view older posts</a>
+            </div>
+        </div>
+    </div>
+    <footer>© 2014 Christian Steimel -- All rights reserved.</footer>
+  </body>
+</html>

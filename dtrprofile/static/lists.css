@@ -1,0 +1,26 @@
+.loading { color: #999; }
+.error { color: #f99; }
+
+.list-opts {
+  max-width: 960px; 
+  padding: 0 20px; margin: 0 auto;
+  background-color: #fff; 
+  vertical-align: top; font-size: 0; 
+  text-align: center;
+}
+
+.list-opts a {
+  font-size: 1rem; text-decoration: none; color: #000; 
+  opacity: 1;
+}
+
+.list-opts a.selected {
+  background-color: #f00; color: #fff; 
+}
+
+.list-content { 
+  min-height: 200px; 
+  max-width: 980px; 
+  padding: 10px; margin: 20px auto; 
+  background-color: #fff; 
+}

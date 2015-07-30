@@ -1,0 +1,39 @@
+{% extends "dtrbase.html" %}
+{% load i18n %}
+{% block title %}{% trans "Find Men Looking For Women" %}{% endblock %}
+{% block body_classes %}browse-users-m-f{% endblock %}
+{% block main %}
+
+<section>
+<h1>{% trans 'Find men who are looking for women' %}</h1>
+<p>{% blocktrans %}Feel comfortable and at home in our dating community! We have a somewhat different approach to online dating. You can meet a boyfriend or a husband online without boring dating profiles or hundreds of always the same messages. Find men who are looing for a long-term relationship or marriage. Just sign up to become part of our large online community, with thousands of men looking to meet women. Participate and the best dating matches will "magically" in your list of "user you like". Online dating can be that simple.{% endblocktrans %}</p>
+</section>
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+<section class="usercard-1-list userlist">
+    {% for profile in userprofiles %}
+        <a href="/accounts/login/?next=/app/profile/{{ profile.user.username }}" class="usercard-1-item item" title="{{ profile.user.username }}">
+            <img class="pic" src="{{ profile.pic_url_m }}">
+            <span class="header">
+                <span class="username">{{ profile.user.username }}</span>
+                <span class="about">
+                    <span class="gender">{{ profile.get_gender_display }}</span>, 
+                    <span class="age">{{ profile.age }}</span>,
+                    <span class="crc">{{ profile.crc }}</span>
+                </span>
+                <span class="westernzodiac">{{ profile.get_western_zodiac_display }} {{ profile.get_western_zodiac_symbol }}</span>
+            </span>
+        </a>
+    {% endfor %}
+</section>
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+<section>
+<p>{% blocktrans %}Find more men looking for women after you sign up. Find near your city who are looking for a relationship. Simply sign up and participate in our dating community, and the web site will find the best matches for your personality. There is no need to write any boring dating profiles. Our online dating community works very differently. Its much simpler, with much less hassle, and much more fun. Try it and  find men looking for a woman.{% endblocktrans %}</p>
+</section>
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+{% endblock %}

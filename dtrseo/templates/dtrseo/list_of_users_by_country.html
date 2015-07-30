@@ -1,0 +1,22 @@
+{% extends "dtrbase.html" %}
+{% load i18n %}
+{% block title %}Conocer gente de {{ country.name }}{% endblock %}
+{% block body_classes %}list-of-users-by-country{% endblock %}
+{% block main %}
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+<section class="nice card">
+    <h1>Conocer amigos de {{ country.name }}</h1>
+    <p>Conoce chavas y chavos de {{ country.name }} y encuentra nuevos amigos y quiza el amor de tu vida. Si todavía no eres parte de nuestra comunidad, ¡regístrate ahora! Es muy fácil y no tarda ni un minuto. También, es completamente gratis chatear y conocer gente de {{ country.name }} y de todo el mundo.</p>
+    <div style="-webkit-column-count:2; -moz-column-count:2; column-count:2; column-gap:1rem;">
+        {% for region in region_altnames %}
+        <p><a href="{% url 'dtrseo_users_by_country_region' country.slug region.slug %}">Amigos en {{ region.name }}</a></p>
+        <p class="micro">Encuentra amor y amigos en {{ region.name }}.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+{% endblock %}

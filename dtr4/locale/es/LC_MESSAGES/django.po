@@ -1,0 +1,859 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-07-28 12:41+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: dtr4/settings_single_choices.py:37
+msgid "friends only"
+msgstr "sólo amigos"
+
+#: dtr4/settings_single_choices.py:38
+msgid "serious relationship"
+msgstr "relación seria"
+
+#: dtr4/settings_single_choices.py:39
+msgid "casual dating"
+msgstr "citas casuales"
+
+#: dtr4/settings_single_choices.py:40
+msgid "passion"
+msgstr "pasión"
+
+#: dtr4/settings_single_choices.py:41
+msgid "casual sex"
+msgstr "sexo casual"
+
+#: dtr4/settings_single_choices.py:42
+msgid "not sure yet"
+msgstr "todavía no sé"
+
+#: dtr4/settings_single_choices.py:43
+msgid "marriage"
+msgstr "matrimonio"
+
+#: dtr4/settings_single_choices.py:48
+msgid "man who likes women"
+msgstr "hombre interesado en mujeres"
+
+#: dtr4/settings_single_choices.py:49
+msgid "man who likes men"
+msgstr "hombre interesado en hombres"
+
+#: dtr4/settings_single_choices.py:51
+msgid "woman who likes men"
+msgstr "mujer interesada en hombres"
+
+#: dtr4/settings_single_choices.py:52
+msgid "woman who likes women"
+msgstr "mujer interesada en mujeres"
+
+#: dtr4/settings_single_choices.py:58 dtr4/settings_single_choices.py:86
+#: dtr4/settings_single_choices.py:138 dtr4/settings_single_choices.py:149
+#: dtr4/settings_single_choices.py:319 dtr4/settings_single_choices.py:612
+msgid "other"
+msgstr "otro"
+
+#: dtr4/settings_single_choices.py:62
+msgid "men who like women"
+msgstr "hombres interesados en mujeres"
+
+#: dtr4/settings_single_choices.py:63
+msgid "men who like men"
+msgstr "hombres interesados en hombres"
+
+#: dtr4/settings_single_choices.py:65
+msgid "women who like men"
+msgstr "mujeres interesadas en hombres"
+
+#: dtr4/settings_single_choices.py:66
+msgid "women who like women"
+msgstr "mujeres interesadas en mujeres"
+
+#: dtr4/settings_single_choices.py:72
+msgid "others"
+msgstr "otros"
+
+#: dtr4/settings_single_choices.py:76 dtr4/settings_single_choices.py:77
+msgid "man"
+msgstr "hombre"
+
+#: dtr4/settings_single_choices.py:79 dtr4/settings_single_choices.py:80
+msgid "woman"
+msgstr "mujer"
+
+#: dtr4/settings_single_choices.py:104 dtr4/settings_single_choices.py:105
+msgid "he"
+msgstr "el"
+
+#: dtr4/settings_single_choices.py:107 dtr4/settings_single_choices.py:108
+msgid "she"
+msgstr "ella"
+
+#: dtr4/settings_single_choices.py:114
+msgid "they"
+msgstr "ellos"
+
+#: dtr4/settings_single_choices.py:118 dtr4/settings_single_choices.py:119
+msgid "his"
+msgstr "su"
+
+#: dtr4/settings_single_choices.py:121 dtr4/settings_single_choices.py:122
+msgid "her"
+msgstr "su"
+
+#: dtr4/settings_single_choices.py:128
+msgid "their"
+msgstr "su"
+
+#: dtr4/settings_single_choices.py:132 dtr4/settings_single_choices.py:142
+msgid "black"
+msgstr "negro"
+
+#: dtr4/settings_single_choices.py:133
+msgid "blue"
+msgstr "azul"
+
+#: dtr4/settings_single_choices.py:134 dtr4/settings_single_choices.py:144
+msgid "brown"
+msgstr "marrón"
+
+#: dtr4/settings_single_choices.py:135
+msgid "green"
+msgstr "verde"
+
+#: dtr4/settings_single_choices.py:136 dtr4/settings_single_choices.py:147
+msgid "grey"
+msgstr "gris"
+
+#: dtr4/settings_single_choices.py:137
+msgid "hazel"
+msgstr "avellano"
+
+#: dtr4/settings_single_choices.py:143
+msgid "blonde"
+msgstr "rubio"
+
+#: dtr4/settings_single_choices.py:145
+msgid "brunette"
+msgstr "rubio oscuro"
+
+#: dtr4/settings_single_choices.py:146
+msgid "red"
+msgstr "rojo"
+
+#: dtr4/settings_single_choices.py:148
+msgid "white"
+msgstr "blanco"
+
+#: dtr4/settings_single_choices.py:150
+msgid "bald"
+msgstr "calvo"
+
+#: dtr4/settings_single_choices.py:154
+msgid "divorced"
+msgstr "divorciado"
+
+#: dtr4/settings_single_choices.py:155
+msgid "married"
+msgstr "casado"
+
+#: dtr4/settings_single_choices.py:156
+msgid "separated"
+msgstr "separado"
+
+#: dtr4/settings_single_choices.py:157
+msgid "single"
+msgstr "soltero"
+
+#: dtr4/settings_single_choices.py:158
+msgid "widowed"
+msgstr "viudo"
+
+#: dtr4/settings_single_choices.py:159
+msgid "open relationship"
+msgstr "relación abierta"
+
+#: dtr4/settings_single_choices.py:160
+msgid "poly relationship"
+msgstr "relación poli"
+
+#: dtr4/settings_single_choices.py:164
+msgid "no"
+msgstr "no"
+
+#: dtr4/settings_single_choices.py:165
+msgid "yes, they live with me"
+msgstr "sí, viven conmigo"
+
+#: dtr4/settings_single_choices.py:166
+msgid "yes, but they do not live with me"
+msgstr "sí, pero no viven conmigo"
+
+#: dtr4/settings_single_choices.py:170 dtr4/settings_single_choices.py:178
+msgid "yes, definitely"
+msgstr "sí, definitivamente"
+
+#: dtr4/settings_single_choices.py:171
+msgid "yes, I think so"
+msgstr "creo que sí"
+
+#: dtr4/settings_single_choices.py:172 dtr4/settings_single_choices.py:179
+msgid "not sure"
+msgstr "no estoy seguro"
+
+#: dtr4/settings_single_choices.py:173
+msgid "probably not"
+msgstr "tal vez no"
+
+#: dtr4/settings_single_choices.py:174 dtr4/settings_single_choices.py:180
+msgid "no, definitely not"
+msgstr "no, definitivamente"
+
+#: dtr4/settings_single_choices.py:184
+msgid "heavy smoker"
+msgstr "fumo mucho"
+
+#: dtr4/settings_single_choices.py:185
+msgid "regular smoker"
+msgstr "fumo regularmente"
+
+#: dtr4/settings_single_choices.py:186
+msgid "rarely smoke"
+msgstr "fumo solo a veces"
+
+#: dtr4/settings_single_choices.py:187 dtr4/settings_single_choices.py:197
+#: dtr4/settings_single_choices.py:206
+msgid "only socially"
+msgstr "solo cuando estoy con amigos"
+
+#: dtr4/settings_single_choices.py:188
+msgid "trying to quit"
+msgstr "intentando dejar de fumar"
+
+#: dtr4/settings_single_choices.py:189
+msgid "non smoker"
+msgstr "no fumo"
+
+#: dtr4/settings_single_choices.py:190 dtr4/settings_single_choices.py:199
+#: dtr4/settings_single_choices.py:208
+msgid "never-ever"
+msgstr "nunca jamás"
+
+#: dtr4/settings_single_choices.py:194 dtr4/settings_single_choices.py:203
+msgid "daily"
+msgstr "a diario"
+
+#: dtr4/settings_single_choices.py:195 dtr4/settings_single_choices.py:204
+msgid "very often"
+msgstr "mucho"
+
+#: dtr4/settings_single_choices.py:196 dtr4/settings_single_choices.py:205
+msgid "rarely"
+msgstr "raras veces"
+
+#: dtr4/settings_single_choices.py:198 dtr4/settings_single_choices.py:207
+msgid "mostly never"
+msgstr "casi nunca"
+
+#: dtr4/settings_single_choices.py:212
+msgid "never had a serious relationship"
+msgstr "nunca tuve una relación seria"
+
+#: dtr4/settings_single_choices.py:213
+msgid "only for some months"
+msgstr "solo algunos meses"
+
+#: dtr4/settings_single_choices.py:214
+msgid "more than a year"
+msgstr "mas de un año"
+
+#: dtr4/settings_single_choices.py:215
+msgid "more than three years"
+msgstr "mas de tres años"
+
+#: dtr4/settings_single_choices.py:216
+msgid "more than five years"
+msgstr "mas de cinco años"
+
+#: dtr4/settings_single_choices.py:217
+msgid "more than seven years"
+msgstr "mas de siete años"
+
+#: dtr4/settings_single_choices.py:218
+msgid "more than nine years"
+msgstr "mas de nueve años"
+
+#: dtr4/settings_single_choices.py:222
+msgid "gorgeous"
+msgstr "extremadamente atractivo"
+
+#: dtr4/settings_single_choices.py:223
+msgid "very attractive"
+msgstr "muy atractivo"
+
+#: dtr4/settings_single_choices.py:224
+msgid "attractive"
+msgstr "atractivo"
+
+#: dtr4/settings_single_choices.py:225 dtr4/settings_single_choices.py:233
+#: dtr4/settings_single_choices.py:244
+msgid "average"
+msgstr "promedio"
+
+#: dtr4/settings_single_choices.py:226
+msgid "below average"
+msgstr "no muy atractivo"
+
+#: dtr4/settings_single_choices.py:227
+msgid "awfull"
+msgstr "terrible"
+
+#: dtr4/settings_single_choices.py:231
+msgid "mostly bones"
+msgstr "sólo huesos"
+
+#: dtr4/settings_single_choices.py:232
+msgid "slim"
+msgstr "delgado"
+
+#: dtr4/settings_single_choices.py:234
+msgid "good curves"
+msgstr "algunas curvas"
+
+#: dtr4/settings_single_choices.py:235
+msgid "overweight"
+msgstr "gordito"
+
+#: dtr4/settings_single_choices.py:236
+msgid "some muscles"
+msgstr "musuloso"
+
+#: dtr4/settings_single_choices.py:237
+msgid "only muscles"
+msgstr "sólo mùsculos"
+
+#: dtr4/settings_single_choices.py:241
+msgid "muscles"
+msgstr "musculoso"
+
+#: dtr4/settings_single_choices.py:242
+msgid "very fit"
+msgstr "muy en forma"
+
+#: dtr4/settings_single_choices.py:243
+msgid "fit"
+msgstr "en forma"
+
+#: dtr4/settings_single_choices.py:245
+msgid "a little lazy"
+msgstr "debería de moverme mas"
+
+#: dtr4/settings_single_choices.py:246
+msgid "very lazy"
+msgstr "nunca me muevo"
+
+#: dtr4/settings_single_choices.py:250
+msgid "daily doing sports"
+msgstr "practico deportes diariamente"
+
+#: dtr4/settings_single_choices.py:251
+msgid "do sports regularly"
+msgstr "practico deportes regularmente"
+
+#: dtr4/settings_single_choices.py:252
+msgid "sometimes do sports"
+msgstr "a veces hago deportes"
+
+#: dtr4/settings_single_choices.py:253
+msgid "only watch sports"
+msgstr "sólo veo deportes en la tele"
+
+#: dtr4/settings_single_choices.py:257
+msgid "not religious"
+msgstr "no religioso"
+
+#: dtr4/settings_single_choices.py:258
+msgid "atheist"
+msgstr "ateísmo"
+
+#: dtr4/settings_single_choices.py:259
+msgid "agnostic"
+msgstr "agnóstico"
+
+#: dtr4/settings_single_choices.py:260
+msgid "christian: roman catholic"
+msgstr "cristiano: Católico Romano"
+
+#: dtr4/settings_single_choices.py:264
+msgid "christian: protestant"
+msgstr "cristiano: Protestante"
+
+#: dtr4/settings_single_choices.py:266
+msgid "christian: other"
+msgstr "cristiano: Otro"
+
+#: dtr4/settings_single_choices.py:270
+msgid "islam"
+msgstr "islám"
+
+#: dtr4/settings_single_choices.py:274
+msgid "jewish"
+msgstr "judio"
+
+#: dtr4/settings_single_choices.py:275
+msgid "bahai"
+msgstr ""
+
+#: dtr4/settings_single_choices.py:278
+msgid "buddhism"
+msgstr "budismo"
+
+#: dtr4/settings_single_choices.py:281
+msgid "hinduism"
+msgstr "hinduismo"
+
+#: dtr4/settings_single_choices.py:282
+msgid "sikhism"
+msgstr "sikhismo"
+
+#: dtr4/settings_single_choices.py:283
+msgid "shinto"
+msgstr "shintoismo"
+
+#: dtr4/settings_single_choices.py:284
+msgid "confucianism"
+msgstr "confucianismo"
+
+#: dtr4/settings_single_choices.py:285
+msgid "taoism"
+msgstr "taoismo"
+
+#: dtr4/settings_single_choices.py:286
+msgid "jainism"
+msgstr "jainismo"
+
+#: dtr4/settings_single_choices.py:287
+msgid "zoroastrianism"
+msgstr "zoroastrianismo"
+
+#: dtr4/settings_single_choices.py:288
+msgid "rastafarian"
+msgstr "rastafariano"
+
+#: dtr4/settings_single_choices.py:289
+msgid "wicca"
+msgstr "wicca"
+
+#: dtr4/settings_single_choices.py:290
+msgid "spiritualist"
+msgstr "espeíritualismo"
+
+#: dtr4/settings_single_choices.py:291
+msgid "indigenous animism"
+msgstr "animismo indígena"
+
+#: dtr4/settings_single_choices.py:292
+msgid "my own religious beliefs"
+msgstr "mis propias creencias religiosas"
+
+#: dtr4/settings_single_choices.py:293
+msgid "other religious belief"
+msgstr "otras creencias religiosas"
+
+#: dtr4/settings_single_choices.py:297 dtr4/settings_single_choices.py:304
+msgid "very serious"
+msgstr "muy serio"
+
+#: dtr4/settings_single_choices.py:298 dtr4/settings_single_choices.py:305
+msgid "somewhat serious"
+msgstr "algo serio"
+
+#: dtr4/settings_single_choices.py:299 dtr4/settings_single_choices.py:306
+msgid "not serious"
+msgstr "no muy serio"
+
+#: dtr4/settings_single_choices.py:300 dtr4/settings_single_choices.py:307
+msgid "do not care at all"
+msgstr "no me importa"
+
+#: dtr4/settings_single_choices.py:311
+msgid "some high school"
+msgstr "secundaria"
+
+#: dtr4/settings_single_choices.py:312
+msgid "high school graduated"
+msgstr "preparatoria"
+
+#: dtr4/settings_single_choices.py:313
+msgid "some college"
+msgstr "diplomado empezado"
+
+#: dtr4/settings_single_choices.py:314
+msgid "college graduated"
+msgstr "diplomado graduado"
+
+#: dtr4/settings_single_choices.py:315
+msgid "some university"
+msgstr "universidad empezado"
+
+#: dtr4/settings_single_choices.py:316
+msgid "university graduate"
+msgstr "universidad graduado"
+
+#: dtr4/settings_single_choices.py:317
+msgid "master program graduate"
+msgstr "maestría"
+
+#: dtr4/settings_single_choices.py:318
+msgid "doctorate"
+msgstr "doctorado"
+
+#: dtr4/settings_single_choices.py:323
+msgid "aries"
+msgstr "aries"
+
+#: dtr4/settings_single_choices.py:324
+msgid "taurus"
+msgstr "tauro"
+
+#: dtr4/settings_single_choices.py:325
+msgid "gemini"
+msgstr "gémini"
+
+#: dtr4/settings_single_choices.py:326
+msgid "cancer"
+msgstr "cáncer"
+
+#: dtr4/settings_single_choices.py:327
+msgid "leo"
+msgstr "leo"
+
+#: dtr4/settings_single_choices.py:328
+msgid "virgo"
+msgstr "virgo"
+
+#: dtr4/settings_single_choices.py:329
+msgid "libra"
+msgstr "libra"
+
+#: dtr4/settings_single_choices.py:330
+msgid "scorpio"
+msgstr "escorpión"
+
+#: dtr4/settings_single_choices.py:331
+msgid "sagittarius"
+msgstr "sagitario"
+
+#: dtr4/settings_single_choices.py:332
+msgid "capricorn"
+msgstr "capricornio"
+
+#: dtr4/settings_single_choices.py:333
+msgid "aquarius"
+msgstr "acuario"
+
+#: dtr4/settings_single_choices.py:334
+msgid "pisces"
+msgstr "piscis"
+
+#: dtr4/settings_single_choices.py:346
+msgid "rat"
+msgstr "rata"
+
+#: dtr4/settings_single_choices.py:347
+msgid "ox"
+msgstr "buey"
+
+#: dtr4/settings_single_choices.py:348
+msgid "tiger"
+msgstr "tigre"
+
+#: dtr4/settings_single_choices.py:349
+msgid "rabbit"
+msgstr "conejo"
+
+#: dtr4/settings_single_choices.py:350
+msgid "dragon"
+msgstr "dragón"
+
+#: dtr4/settings_single_choices.py:351
+msgid "snake"
+msgstr "serpiente"
+
+#: dtr4/settings_single_choices.py:352
+msgid "horse"
+msgstr "caballo"
+
+#: dtr4/settings_single_choices.py:353
+msgid "goat"
+msgstr "cabra"
+
+#: dtr4/settings_single_choices.py:354
+msgid "monkey"
+msgstr "mono"
+
+#: dtr4/settings_single_choices.py:355
+msgid "rooster"
+msgstr "gallo"
+
+#: dtr4/settings_single_choices.py:356
+msgid "dog"
+msgstr "perro"
+
+#: dtr4/settings_single_choices.py:357
+msgid "pig"
+msgstr "cerdo"
+
+#: dtr4/settings_single_choices.py:572
+msgid "anything"
+msgstr "cualquier cosa"
+
+#: dtr4/settings_single_choices.py:573
+msgid "balanced"
+msgstr "balanceado"
+
+#: dtr4/settings_single_choices.py:574
+msgid "lots of meat"
+msgstr "muchas carnes"
+
+#: dtr4/settings_single_choices.py:575
+msgid "mostly vegetarian"
+msgstr "principalmente vegetariano"
+
+#: dtr4/settings_single_choices.py:576
+msgid "strictly vegetarian"
+msgstr "estríctamente vegetariano"
+
+#: dtr4/settings_single_choices.py:577
+msgid "mostly vegan"
+msgstr "principalmente vegano"
+
+#: dtr4/settings_single_choices.py:578
+msgid "strictly vegan"
+msgstr "estríctamente vegano"
+
+#: dtr4/settings_single_choices.py:579
+msgid "mostly kosher/halal"
+msgstr "principalmente kosher/halal"
+
+#: dtr4/settings_single_choices.py:580
+msgid "strictly kosher/halal"
+msgstr "estríctamente kosher/halal"
+
+#: dtr4/settings_single_choices.py:584
+msgid "administration"
+msgstr "administración"
+
+#: dtr4/settings_single_choices.py:585
+msgid "art"
+msgstr "artes"
+
+#: dtr4/settings_single_choices.py:586
+msgid "banking"
+msgstr "banca"
+
+#: dtr4/settings_single_choices.py:587
+msgid "construction"
+msgstr "construcción"
+
+#: dtr4/settings_single_choices.py:588
+msgid "education"
+msgstr "educación"
+
+#: dtr4/settings_single_choices.py:589
+msgid "engineering"
+msgstr "ingeniería"
+
+#: dtr4/settings_single_choices.py:590
+msgid "entertainment"
+msgstr "entretenimiento"
+
+#: dtr4/settings_single_choices.py:591
+msgid "government"
+msgstr "gobierno"
+
+#: dtr4/settings_single_choices.py:592
+msgid "hospitality"
+msgstr "hotelería"
+
+#: dtr4/settings_single_choices.py:593
+msgid "internet"
+msgstr "internet"
+
+#: dtr4/settings_single_choices.py:594
+msgid "law"
+msgstr "leyes"
+
+#: dtr4/settings_single_choices.py:595
+msgid "medicine"
+msgstr "medicina"
+
+#: dtr4/settings_single_choices.py:596
+msgid "marketing"
+msgstr "mercadotecnia"
+
+#: dtr4/settings_single_choices.py:597
+msgid "military"
+msgstr "militar"
+
+#: dtr4/settings_single_choices.py:598
+msgid "finance"
+msgstr "finanzas"
+
+#: dtr4/settings_single_choices.py:599
+msgid "management"
+msgstr "gerencia"
+
+#: dtr4/settings_single_choices.py:600
+msgid "music"
+msgstr "música"
+
+#: dtr4/settings_single_choices.py:601
+msgid "politics"
+msgstr "política"
+
+#: dtr4/settings_single_choices.py:603
+msgid "sales"
+msgstr "ventas"
+
+#: dtr4/settings_single_choices.py:604
+msgid "science"
+msgstr "ciencias"
+
+#: dtr4/settings_single_choices.py:607
+msgid "technology"
+msgstr "tecnología"
+
+#: dtr4/settings_single_choices.py:609
+msgid "transportation"
+msgstr "transporte"
+
+#: dtr4/settings_single_choices.py:611
+msgid "writing"
+msgstr "escritor"
+
+#: dtrprofile/account_adapter.py:25
+msgid "Usernames can only contain letters, digits and @/./+/-/_."
+msgstr ""
+
+#: dtrprofile/account_adapter.py:35
+msgid "Username can not be used. Please use other username."
+msgstr ""
+
+#: dtrprofile/account_adapter.py:45
+msgid "This username is already taken. Please choose another."
+msgstr ""
+
+#: dtrprofile/signals.py:28
+#, python-brace-format
+msgid ""
+"#Welcome @{username} from #{city} #{country}. Use hashtag #Intro to "
+"indroduce yourself!"
+msgstr ""
+
+#: templates/account/email/email_confirmation_message.txt:1
+#, python-format
+msgid ""
+"User %(user_display)s at %(site_name)s has given this as an email address.\n"
+"\n"
+"To confirm this is correct, go to %(activate_url)s\n"
+msgstr ""
+
+#: templates/account/email/email_confirmation_subject.txt:3
+#: templates/account/email_confirm.html:5
+#: templates/account/email_confirm.html:9
+msgid "Confirm E-mail Address"
+msgstr ""
+
+#: templates/account/email/password_reset_key_message.txt:1
+#, python-format
+msgid ""
+"You're receiving this e-mail because you or someone else has requested a "
+"password for your user account at %(site_domain)s.\n"
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
+msgstr ""
+
+#: templates/account/email/password_reset_key_message.txt:6
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr ""
+
+#: templates/account/email/password_reset_key_message.txt:8
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "Password Reset E-mail"
+msgstr ""
+
+#: templates/account/email_confirm.html:15
+#, python-format
+msgid ""
+"Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail "
+"address for user %(user_display)s."
+msgstr ""
+
+#: templates/account/email_confirm.html:19
+msgid "Confirm"
+msgstr ""
+
+#: templates/account/email_confirm.html:26
+#, python-format
+msgid ""
+"This e-mail confirmation link expired or is invalid. Please <a href="
+"\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+msgstr ""
+
+#: templates/account/login.html:5 templates/account/login.html.py:33
+msgid "Sign In"
+msgstr ""
+
+#: templates/account/login.html:13
+msgid "Or sign in directly"
+msgstr ""
+
+#: templates/account/login.html:26
+msgid "Remember Me"
+msgstr ""
+
+#: templates/account/login.html:34
+msgid "Forgot Password?"
+msgstr ""
+
+#: templates/account/login.html:38
+msgid ""
+"Don't have an account? Login with Facebook above or <a href=\"/accounts/"
+"signup/\">Sign Up</a>"
+msgstr ""
+
+#: templates/account/signup.html:4
+msgid "Signup"
+msgstr ""
+
+#: templates/account/signup.html:23
+msgid "Sign Up"
+msgstr ""
+
+#: templates/account/signup.html:26
+msgid "Already have an account?"
+msgstr ""
+
+#: templates/account/signup.html:26
+msgid "sign in"
+msgstr ""

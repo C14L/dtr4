@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block head_title %}{% endblock %}</title>
+    {% block extra_head %}{% endblock %}
+    <link rel="stylesheet" type="text/css" href='/static/account.css'>
+    <script type="text/javascript" src="/static/utils.js"></script>
+    <script>console.log('# lg == ' + get_cookie('lg') + ' #')</script>
+  </head>
+  <body class="{% block body_classes %}{% endblock %}">
+
+    <form onsubmit="set_cookie('lg','en')" class="set-language" action="/i18n/setlang/" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="language" value="en"><input type="submit" value="English">
+    </form>
+    <form onsubmit="set_cookie('lg','es')" class="set-language" action="/i18n/setlang/" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="language" value="es"><input type="submit" value="Espanol">
+    </form>
+    
+    <div class="sitename">El Ligue</div>
+
+    {% block body %}
+
+<!--
+      {% if messages %}
+          <div>
+              <strong>Messages:</strong>
+              <ul>
+                  {% for message in messages %}
+                      <li>{{message}}</li>
+                  {% endfor %}
+              </ul>
+          </div>
+      {% endif %}
+-->
+    <div class="inset">
+      {% block content %}{% endblock %}
+    </div>
+    {% endblock %}
+  
+    {% block extra_body %}{% endblock %}
+    <footer>
+      <section>
+        <a href="{% url 'dtrseo_users_alphabetically' %}">Browse</a> |
+        <a href="{% url 'dtrseo_users_f_m' %}">Mujeres buscando hombres</a> |
+        <a href="{% url 'dtrseo_users_m_f' %}">Hombres buscando mujeres</a> |
+        <a href="{% url 'dtrseo_users_f_pics' %}">Fotos de mujeres</a> |
+        <a href="{% url 'dtrseo_users_m_pics' %}">Fotos de hombres</a> |
+        <a href="{% url 'dtrseo_country_list' %}">Encontrar amigos</a> |
+        <a href="/citymxmdf/mexico-d-f.html">Amigos en Mexico DF</a>
+      </section>
+      <section>
+        <span>{% for a in 'abcdefghijklmnopqrstuvwxyz_'|make_list %}<a href="/browse.php?begin={{ a }}">{{ a|upper }}</a> &middot; {% endfor %}</span>
+      </section>
+      <section>
+        &copy;2015 | 
+        <a rel="nofollow" href="http://C14L.com/impressum.html">Imprint</a> |
+        <a rel="nofollow" href="/static/tos.es.html">Terms of Service</a> |
+        <a rel="nofollow" href="/static/privacy.es.html">Data Privacy</a>
+      </section>
+    </footer>
+  </body>
+  <script src="/static/libs/angularjs/angular.js"></script>
+  <script src="/static/libs/angularjs/angular-route.js"></script>
+  <script src="/static/libs/angularjs/angular-resource.js"></script>
+  <script src="/static/libs/markdownjs.min.js"></script>
+  <script src="/static/libs/picviewer.js"></script>
+  <script src="/static/dtr-services.js"></script>
+  <script src="/static/dtr-controllers.js"></script>
+</html>

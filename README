@@ -1,0 +1,45 @@
+
+Setup dev on local box
+======================
+
+## Create virtual environment:
+$ mkdir /opt/elligue/venv/dtr4
+$ virtualenv --python=python3.2 /opt/elligue/venv/dtr4
+$ source /opt/elligue/venv/dtr4/bin/activate
+$ cd /opt/elligue/dtr4 && pip install --upgrade pip && pip install -r requirements.txt
+
+## Copy or link image procssing libs over, required by PIL:
+~$ sudo apt-get install libjpeg-dev
+~$ ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /opt/elligue/venv/dtr4/lib/ && ln -s /usr/lib/x86_64-linux-gnu/libfreetype.so.6 /opt/elligue/venv/dtr4/lib/ && ln -s /usr/lib/x86_64-linux-gnu/libz.so /opt/elligue/venv/dtr4/lib/
+
+## Sync "raw/" from backup user media files with dev environment user media files:
+~$ rsync -av /home/chris/v600/elligue_backups/userpics_backup/raw/ /home/chris/dev-data/elligue/userpics/raw/
+
+## Reset database:
+~$ MANAGE DATABASE WITH "Parallels Panel" OR THAT SHIT WILL 
+   DELETE THE DATABASE NEXT TIME ITS USED TO CREATE A DATABASE
+   IT DID DELETE THE preguntame DATABASE WHEN I CREATED ANOTHER
+   UNRELATED DATABASE FOR A DIFFERENT USER !!! 
+
+## Run import scripts for old data (only on local box!):
+~$ cd ./dtr4
+~$ ./manage.py migrate
+~$ ./manage.py import_cities                # takes > 2 hours
+~$ ./manage.py import_profiles              # takes > 3 hours
+--> Dump local db contents
+--> Upload to server
+--> import db content. 
+--> re-create images from raw/
+~$ ./manage.py make_user_pics               # takes > 3 hours
+
+Update TR and CHOICES translation texts
+=======================================
+
+./manage.py makemessages -l "es"    # Extracts new strings from all sourc files.
+./manage.py compilemessages         # Converts .po --> .mo for all settings.LOCALE_PATHS
+./manage.py make_translate          # Creates translated JS files for all choice lists in 
+                                    # dtr4.settings_single_choices.JS_TRANSLATIONS_CHOICES
+                                    # Also, extracts new tr() strings from ng-apps/ template
+                                    # files and re-creates the translations JS files, 
+                                    # conserving existing translations that still exist in 
+                                    # the source template files.

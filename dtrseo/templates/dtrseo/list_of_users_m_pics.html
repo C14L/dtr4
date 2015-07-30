@@ -1,0 +1,38 @@
+{% extends "dtrbase.html" %}
+{% load i18n %}
+{% block title %}{% trans "Find Women Looking For Men" %}{% endblock %}
+{% block body_classes %}browse-users-f-m{% endblock %}
+{% block main %}
+
+<section>
+    <h1>{% trans 'Photos of Men Looking for Love' %}</h1>
+</section>
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+<section class="usercard-1-list userlist">
+    {% for profile in userprofiles %}
+        <a href="/accounts/login/?next=/app/profile/{{ profile.user.username }}" class="usercard-1-item item" title="{{ profile.user.username }}">
+            <img class="pic" src="{{ profile.pic_url_m }}">
+            <span class="header">
+                <span class="username">{{ profile.user.username }}</span>
+                <span class="about">
+                    <span class="gender">{{ profile.get_gender_display }}</span>, 
+                    <span class="age">{{ profile.age }}</span>,
+                    <span class="crc">{{ profile.crc }}</span>
+                </span>
+                <span class="westernzodiac">{{ profile.get_western_zodiac_display }} {{ profile.get_western_zodiac_symbol }}</span>
+            </span>
+        </a>
+    {% endfor %}
+</section>
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+<section>
+<p>{% blocktrans %}Photos of men and thousands of dating profiles in our dating community. But we are a different type of dating website. Its not about dating profiles and photos of men, it is about the community and participating in it, to meet that special guy. Thousands of interesting men with photos are already a member.{% endblocktrans %}</p>
+</section>
+
+<div class="signup-link"><a href="/">¡Suscríbete también!</a></div>
+
+{% endblock %}

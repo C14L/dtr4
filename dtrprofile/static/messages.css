@@ -1,0 +1,103 @@
+
+.messages.content-wrapper {
+  width: 800px; margin: 0 auto; padding: 0;
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 0 0 3px 0 rgba(0,0,0,0.3);
+}
+
+.messages.list {
+}
+
+.messages.list > .item {
+  display: block; overflow: hidden;
+  color: #222; text-decoration: none;
+  margin: 0; padding: 10px;
+  cursor: pointer;
+  border-top: 1px dotted #ccc;
+}
+
+.messages.list > .item:first-child {
+  border-top-style: solid;
+}
+
+.messages.list > .item > .userpic {
+  display: block; width: 75px; height: 75px; float: left;
+}
+
+.messages.list > .item > .userpic > img {
+  width: 75px; height: 75px; border: 0;
+}
+
+.messages.list > .item > :not(.userpic) {
+  margin: 0;
+}
+
+.messages.list > .item > .username {
+  display: inline-block;
+  color: #c60;
+  text-decoration: none;
+  margin-left: 15px;
+}
+
+.messages.list > .item > .asl {
+  display: inline-block;
+  color: #999;
+}
+
+.messages.list > .item > .asl > span:not(:first-child) {
+  margin-left: 0.5rem;
+}
+
+.messages.list > .item > .timestamp {
+  color: #999;
+  display: block;
+  float: right;
+  font-size: 0.85rem;
+}
+
+.messages.list > .item.unread > .timestamp {
+  color: #c33;
+  font-weight: bold;
+}
+
+.messages.list > .item > .text {
+  display: block;
+  line-height: 1.5em;
+  margin-top: 0.5rem;
+  margin-left: 90px;
+  overflow: hidden;
+}
+
+.messages.list > .item .mark-read,
+.messages.list > .item .mark-unread {
+  color: #999;
+  font-size: 0.85rem;
+  float: right;
+}
+
+.messages.list > .item.is-read .mark-read,
+.messages.list > .item.is-unread .mark-unread {
+  display: none;
+}
+
+.messages.list > .item.is-unread .mark-read,
+.messages.list > .item.is-read .mark-unread {
+  display: block;
+}
+
+.messages.list > .item.is-unread {
+  background-color: #eef;
+}
+
+.messages.list > .item.user-deleted {
+}
+
+.messages.list > .item.user-deleted .userpic {
+  display: none;
+}
+.messages.list > .item.user-deleted .username {
+  color: #ccc;
+  margin-left: 60px;
+}
+
