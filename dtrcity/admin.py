@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.contrib import admin
 from dtrcity.models import Country, Region, City, AltName
 

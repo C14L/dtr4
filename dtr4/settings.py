@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Django settings for dtr4 project using Django 1.8.3.
 https://docs.djangoproject.com/en/1.8/topics/settings/
@@ -26,7 +28,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'es'
 LANGUAGE = LANGUAGE_CODE[:2] # I added this. Remove?
 LANGUAGE_COOKIE_NAME = 'lg' # language cookie, default: "django_language"
 # Suggested in: https://docs.djangoproject.com/en/1.7/topics/i18n/translation/
@@ -167,18 +169,17 @@ else:
 #}
 
 # Session config
-SESSION_CACHE_ALIAS = 'default'
+SESSION_COOKIE_DOMAIN = 'antrito.com'
 SESSION_COOKIE_AGE = 60*60*24*30*12 # 1 year
-SESSION_COOKIE_NAME = 'sessionid' # default
-SESSION_COOKIE_PATH = '/' # default
-SESSION_COOKIE_SECURE = False # TODO: set to True when moving to https
+#SESSION_COOKIE_NAME = 'sessionid' # default
+#SESSION_COOKIE_PATH = '/' # default
+#SESSION_COOKIE_SECURE = False # TODO: set to True when moving to https
+if DEBUG:
+    SESSION_COOKIE_DOMAIN = None # no restriction on dev
 # For memcached use 'django.contrib.sessions.backends.cache'
 # Django default: 'django.contrib.sessions.backends.db'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-if PRODUCTION:
-    SESSION_COOKIE_DOMAIN = 'elligue.com'
-else:
-    SESSION_COOKIE_DOMAIN = None # no restriction on dev
+SESSION_CACHE_ALIAS = 'default'
 
 # AllAuth settings
 LOGIN_URL = '/accounts/login/'

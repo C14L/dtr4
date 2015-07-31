@@ -11,10 +11,13 @@ Alias /favicon.ico /opt/elligue/www/favicon.ico
 Alias /favicon.png /opt/elligue/www/favicon.png
 Alias /google01852a34070a364b.html /opt/elligue/www/google01852a34070a364b.html
 Alias /MJ12_F66E2694E95DB57A462E367D5F69090B.txt /opt/elligue/www/MJ12_F66E2694E95DB57A462E367D5F69090B.txt
+
 Alias /static/ /opt/elligue/dtr4/static_files/
+Alias /pics/ /var/elligue/userpics/
+AliasMatch ^/app/ /opt/elligue/dtr4/static_files/index.html
 
 WSGIScriptAlias / /opt/elligue/dtr4/dtr4/wsgi.py
-WSGIDaemonProcess elliguecom python-path=/opt/elligue/dtr4:/opt/elligue/venv/dtr4/lib64/python3.4/site-packages
+WSGIDaemonProcess elliguecom python-path=/opt/elligue/dtr4:/opt/elligue/venv/dtr4/lib/python3.2/site-packages
 WSGIProcessGroup elliguecom
 
 <Directory /opt/elligue/dtr4/static_files>

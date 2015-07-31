@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Models for all user related data: profile, pic, messages, etc.
 

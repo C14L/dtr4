@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Manage user profiles, pics, messages between users, and more.
 

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import math
 from django.conf import settings
 from django.db import models
