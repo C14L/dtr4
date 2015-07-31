@@ -8,4 +8,5 @@ read -rsp "Press [ENTER] to start..."
 
 #chmod -R 755 ${SRC}
 
-rsync -rtvP --delete --exclude=*.pyc --exclude=*/__pycache__ ${SRC} ${DST}
+rsync -rtvP --delete --exclude=*.pyc --exclude=www --exclude=*/__pycache__ ${SRC} ${DST}
+rsync -rtvP --delete ${SRC}/www ${DST}

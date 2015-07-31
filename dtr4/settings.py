@@ -37,8 +37,7 @@ LANGUAGES = (('en', 'English'), ('es', 'Español'),)
 # Paths to translations files.
 LOCALE_PATHS = (os.path.join(BASE_DIR, 'dtr4/locale'),
                 os.path.join(BASE_DIR, 'dtrseo/locale'), )
-ALLOWED_HOSTS = ['localhost', 'antrito.com', 'www.antrito.com',
-                              'elligue.com', 'www.elligue.com']
+ALLOWED_HOSTS = ['localhost', 'elligue.com', 'www.elligue.com']
 # Block bad User-Agents, list of regexps. default: ()
 # Do this in Apache2 .htaccess file, these should not even make it here.
 DISALLOWED_USER_AGENTS = (re.compile('slurp', re.I), re.compile('baidu', re.I),
@@ -169,7 +168,7 @@ else:
 #}
 
 # Session config
-SESSION_COOKIE_DOMAIN = 'antrito.com'
+SESSION_COOKIE_DOMAIN = 'elligue.com'
 SESSION_COOKIE_AGE = 60*60*24*30*12 # 1 year
 #SESSION_COOKIE_NAME = 'sessionid' # default
 #SESSION_COOKIE_PATH = '/' # default
