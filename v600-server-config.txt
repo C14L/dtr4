@@ -1,5 +1,3 @@
-
-
 ### antrito.com ########################################################
 
 ServerAlias antrito.com
@@ -16,9 +14,9 @@ Alias /static/ /opt/elligue/dtr4/static_files/
 Alias /pics/ /var/elligue/userpics/
 AliasMatch ^/app/ /opt/elligue/dtr4/static_files/index.html
 
-WSGIScriptAlias / /opt/elligue/dtr4/dtr4/wsgi.py
-WSGIDaemonProcess elliguecom python-path=/opt/elligue/dtr4:/opt/elligue/venv/dtr4/lib/python3.2/site-packages
-WSGIProcessGroup elliguecom
+WSGIDaemonProcess elligue4 python-path=/opt/elligue/dtr4:/opt/elligue/venv/dtr4/lib/python2.7/site-packages
+WSGIProcessGroup elligue4
+WSGIScriptAlias / /opt/elligue/dtr4/dtr4/wsgi.py process-group=elligue4
 
 <Directory /opt/elligue/dtr4/static_files>
   #Require all granted
@@ -45,14 +43,13 @@ RewriteCond %{HTTP_HOST} !^antrito\.com$ [NC]
 RewriteCond %{HTTP_HOST} !^$
 RewriteRule ^/?(.*)  http://antrito.com/$1 [L,R=301]
 
-### wsgi.py ############################################################
+
+### TESTING wsgi.py ####################################################
 
 import os
 from django.core.wsgi import get_wsgi_application
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dtr4.settings")
-
 #application = get_wsgi_application()
-
 def application(env, start_response):
     start_response('200 OK', [('Content-Type','text/html')])
     return ["Hello World"]
