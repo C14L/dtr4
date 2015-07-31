@@ -2,7 +2,7 @@
 // 
 //
 
-window.LOG = true;
+window.LOG = false;
 window.BASE_URL = '/app/';
 window.MEDIA_URL = '/pics/';
 window.STATIC_URL = '/static/';
