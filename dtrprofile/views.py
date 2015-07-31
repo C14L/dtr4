@@ -584,7 +584,8 @@ def profile_api_view(request, q, use):
     Return a JSON view with extensive data on one user, either by the user's
     pk or the username.
     '''
-    print('--- profile_api_view(request, q, use): q=="{0}", use=="{1}"'.format(q, use))
+    if settings.DEBUG:
+        print('--- profile_api_view(request, q, use): q=="{0}", use=="{1}"'.format(q, use))
 
     if use == 'username':
         user = get_object_or_404(User, username=q)
@@ -732,7 +733,8 @@ def profile_api_view(request, q, use):
         flags = {}
         if user != request.user:
             # translate the flags into profileuser API flields
-            print('--- profile_api_view(): Build flags between "{0}" and "{1}"...'.format(user.username, request.user.username))
+            if settings.DEBUG:
+                print('--- profile_api_view(): Build flags between "{0}" and "{1}"...'.format(user.username, request.user.username))
 
             for f in UserFlag.get_one_way_flags(request.user, user):
                 name = [x[1] for x in USERFLAG_TYPES if x[0]==f.flag_type][0]
@@ -756,7 +758,8 @@ def profile_api_view(request, q, use):
             user.profile.views_counter += 1
             user.profile.save()
 
-        print('--- profile_api_view(): Build data dict...')
+        if settings.DEBUG:
+            print('--- profile_api_view(): Build data dict...')
         data = {
             "flags": flags,
             # META
@@ -827,13 +830,15 @@ def profile_api_view(request, q, use):
             "western_zodiac": user.profile.western_zodiac,
             "eastern_zodiac": user.profile.eastern_zodiac,
         }
-        print('--- profile_api_view(): mostly done, add some more fields...')
+        if settings.DEBUG:
+            print('--- profile_api_view(): mostly done, add some more fields...')
 
         try:
             data['crc'] = user.profile.crc
         except AttributeError:
             data['crc'] = ''
-        print('--- profile_api_view(): crc added...')
+        if settings.DEBUG:
+            print('--- profile_api_view(): crc added...')
 
         # attach a list of basic user data of profileuser's friends
         data['friends'] = []
@@ -855,7 +860,8 @@ def profile_api_view(request, q, use):
             except: data['dob'] = '';
 
             # tell authuser how many unread mail she has
-            print('--- profile_api_view(): add unread mail count...')
+            if settings.DEBUG:
+                print('--- profile_api_view(): add unread mail count...')
             data['mail_unread_counter'] = UserMsg.objects.filter(is_read=False,
                                  to_user=request.user, is_blocked=False).count()
 
@@ -871,9 +877,11 @@ def profile_api_view(request, q, use):
                                              sender=request.user, receiver=user)
             flag.created = datetime.utcnow().replace(tzinfo=utc)
             flag.save()
-            print('--- profile_api_view(): Flags updated.')
+            if settings.DEBUG:
+                print('--- profile_api_view(): Flags updated.')
 
-        print('--- profile_api_view(): All done, send response.')
+        if settings.DEBUG:
+            print('--- profile_api_view(): All done, send response.')
         return HttpResponse(json.dumps(data),
                             {'content_type':'application/json'})
 
