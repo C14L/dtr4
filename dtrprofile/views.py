@@ -669,17 +669,19 @@ def profile_api_view(request, q, use):
                 print('...saving field {0} == {1}'.format(field, body[field]))
                 setattr(request.user.profile, field, body[field])
         # Set "dob" manually, to catch cases were it is "" empty.
-        if body.get('dob', None) is not None:
-            if body.get('dob') == '':
-                request.user.profile.dob = None
+        dob = body.get('dob', None)
+        if dob is not None:
+            # Verify that dob is well formated
+            re_dob = re.compile(r'^(19|20)[0-9][0-9]-[01][0-9]-[0123][0-9]$')
+            if re_dob.match(dob):
+                request.user.profile.dob = dob
             else:
-                request.user.profile.dob = body.get('dob')
+                request.user.profile.dob = None
         # If style contained some css, then activate it.
         if body.get('style', None) is not None:
             request.user.profile.style_active = body.get('style_active', True)
 
         # all done, save user
-        print("............................ SAVE UPDATED PROFILE VALUES!")
         request.user.profile.save()
         return HttpResponse() # 200
 

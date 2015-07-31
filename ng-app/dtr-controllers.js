@@ -436,6 +436,8 @@ app.controller( 'SettingsProfileController',
                             data[k] = $scope.authuser[k]
                         }
                     } );
+                    // TODO: Check if "dob" field has a valid "date" 
+                    // format. Expected: "YYYY-MM-DD".
                     if( $scope.settingsProfileForm.$dirty ){
                         $scope.isSubmitting = true;
                         $http.post( url, data ).success( function( data ){
