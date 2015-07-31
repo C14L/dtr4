@@ -1,10 +1,6 @@
 
 === BLOCKING ===================================================================
 
-GIT: Remove IPs and domains, if possible.
-
-PRODUCTION: For some reason its still producing HTTP 500 responses. Now installed on Python3.2/Django1.8 but on local its not possible to use 3.2 but on production when using 3.4 it can't install Pillow for some reasion, probably some Ubuntu 12.04 library incompatible or so, on local with Ubuntu 14.04 it works. Can't find any error messages, nothing in error_log or access_log or anywhere. --> Maybe deploy locally with Apache2 to see errors...
-
 === FIXME ======================================================================
 
 HOMEPAGE: For anon users, do not redirect to login page, but show a nice homepage with forms for login and signup, and some text and picture content about the site, both for user and SEO.
@@ -65,6 +61,8 @@ TEMPLATES: use github.com/Pasvaz/bindonce to remove unnecessary watchers.
 
 === DONE / WONT ================================================================
 
+DONE GIT: Remove IPs and domains, if possible.
+DONE PRODUCTION: For some reason its still producing HTTP 500 responses. Now installed on Python3.2/Django1.8 but on local its not possible to use 3.2 but on production when using 3.4 it can't install Pillow for some reasion, probably some Ubuntu 12.04 library incompatible or so, on local with Ubuntu 14.04 it works. Can't find any error messages, nothing in error_log or access_log or anywhere. --> Maybe deploy locally with Apache2 to see errors... --> WSGI can't use different Python versions from different Virtual Envs. Little secret. Changed Python code for 2.7 and run on that version.
 WONT URL: Maybe make language setting dependent on URL, so instead of "app" in the UR paths, use "en" or "es", etc. Example: like http://example.com/app/search --> http://localhost:8001/es/search NOPE, just keep it in Spanish all instead.
 DONE SEO: Reduce the number of displayed countries in /gente-por-pais.php page, only use American countries, plus maybe Spain, Italy, Portugal, etc.
 DONE SEO: Check if dtrseo is well translated.
