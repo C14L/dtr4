@@ -213,6 +213,8 @@ app.controller( 'ProfileController',
                 function( data ){
                     $scope.profileuser = data;
                     appBarTitle.secondary = data.username;
+                    if ( $scope.profileuser['style'] ) 
+                        $scope.profileuser['style_active'] = true;
                 }, 
                 function( err ){
                     $scope.profileuser = { 'doesNotExist': true };
@@ -728,28 +730,28 @@ app.controller( 'SettingsPhotosController',
 );
 
 app.controller( 'SettingsDesignController', 
-    [ '$scope', '$http', '$timeout', 'appBarTitle',
-        function SettingsDesignController( $scope, $http, $timeout, appBarTitle ){
+    [ '$rootScope', '$scope', '$http', '$timeout', 'Profile', 'appBarTitle',
+        function SettingsDesignController( $rootScope, $scope, $http, $timeout, Profile, appBarTitle ){
             appBarTitle.primary = $scope.tr( 'edit' );
             appBarTitle.secondary = $scope.tr( 'design' );
             $scope.currSel = 'design';
-
-            var url = '/api/v1/authuser.json';
             $scope.isSubmitSuccess = false;
             $scope.isSubmitError = false;
             $scope.isSubmitting = false;
-
+            var url = '/api/v1/authuser.json';
             $scope.submitForm = function( ){
                 // save changes in authuser.style to the backend.
                 log( '--- SettingsDesignController.$scope.submitForm() --- called...');
                 $scope.isSubmitting = true;
                 var data = { 'style': $scope.authuser['style'] };
-
                 $http.post( url, data ).success( function( data ){
                     log( '--- SettingsDesignController.$scope.submitForm() --- success!');
                     $scope.isSubmitting = false;
                     $scope.isSubmitSuccess = true;
                     $timeout(function(){ $scope.isSubmitSuccess = false; }, 500);
+                    // remove old vals from Profile buffer
+                    Profile.clearFromBuffer( $scope.authuser.username );
+                    $rootScope.authuser['style'] = $scope.authuser['style'];
                 } ).error( function( err ){
                     log( '--- SettingsDesignController.$scope.submitForm() --- error :(');
                     $scope.isSubmitting = false;
