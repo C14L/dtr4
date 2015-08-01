@@ -1,6 +1,5 @@
 
 <div ng-if="profileuser.style" style="position:fixed; bottom:0; right:0; padding:10px; background-color:#999;">
-{{ profileuser.style_active }}
   <input type="checkbox" ng-model="profileuser.style_active">
 </div>
 <style ng-if="profileuser.style_active && profileuser.style" type="text/css" ng-bind="profileuser.style"></style>
