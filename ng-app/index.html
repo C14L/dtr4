@@ -1,51 +1,48 @@
 <!DOCTYPE html>
 <html ng-app="dtr4">
   <head>
-    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-
     <base href="/app/">
-    
     <title>El Ligue</title>
-
-    <link href="/static/themify-icons/themify-icons.css" rel="stylesheet" type="text/css">
-    <link href="/static/dtr-base.css" rel="stylesheet" type="text/css">
+    <link href="/static/themify-icons/themify-icons.css" type="text/css" rel="stylesheet">
+    <link href="/static/dtr-base.css" type="text/css" rel="stylesheet">
     <link href="/static/dtr-profile.css" type="text/css" rel="stylesheet">
     <link href="/static/dtr-inbox.css" type="text/css" rel="stylesheet">
     <link href="/static/dtr-lists.css" type="text/css" rel="stylesheet">
     <link href="/static/dtr-search.css" type="text/css" rel="stylesheet">
     <link href="/static/dtr-talk.css" type="text/css" rel="stylesheet">
     <link href="/static/dtr-settings.css" type="text/css" rel="stylesheet">
-    <link href="/static/libs/picviewer.css" rel="stylesheet" type="text/css">
-    
-    <script type="text/javascript" src="/static/libs/angularjs/angular.js"></script>
-    <script type="text/javascript" src="/static/libs/angularjs/angular-route.js"></script>
-    <script type="text/javascript" src="/static/libs/angularjs/angular-resource.js"></script>
-    <script type="text/javascript" src="/static/libs/angularjs/angular-sanitize.js"></script>
+    <link href="/static/libs/picviewer.css" type="text/css" rel="stylesheet">
+    <!--
+    XXXscript src="/static/libs/angularjs/angular.js">XXXscript>
+    XXXscript src="/static/libs/angularjs/angular-route.js">XXXscript>
+    XXXscript src="/static/libs/angularjs/angular-resource.js">XXXscript>
+    XXXscript src="/static/libs/angularjs/angular-sanitize.js">XXXscript>
+    -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-resource.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-sanitize.min.js"></script>
     <!-- https://github.com/leon/angular-upload -->
     <script type="text/javascript" src="/static/libs/angular-upload.min.js"></script>
     <!-- https://github.com/Pasvaz/bindonce -->
-    <script type="text/javascript" src="/static/libs/angular-bindonce.min.js"></script>
-
-    <script type="text/javascript" src="/static/libs/markdownjs.min.js"></script>
-    <script type="text/javascript" src="/static/libs/picviewer.js"></script>
-
-    <script type="text/javascript" src="/static/utils.js"></script>
-    <script type="text/javascript" src="/static/textfilter.js"></script>
-    
+    <script src="/static/libs/angular-bindonce.min.js"></script>
+    <script src="/static/libs/markdownjs.min.js"></script>
+    <script src="/static/libs/picviewer.js"></script>
+    <script src="/static/utils.js"></script>
+    <script src="/static/textfilter.js"></script>
     <!-- "choice" translations -->
-    <script type="text/javascript"> document.write('<script type="text/javascript" src="/static/tr-choices-' + (get_cookie('lg')||'en') + '.js"></scri' + 'pt>'); </script>
-
+    <script> document.write('<script type="text/javascript" src="/static/tr-choices-' + (get_cookie('lg')||'en') + '.js"></scri' + 'pt>'); </script>
     <!-- UI translations -->
-    <script type="text/javascript"> document.write('<script type="text/javascript" src="/static/tr-language-' + (get_cookie('lg')||'en') + '.js"></scri' + 'pt>'); </script>
-
+    <script> document.write('<script type="text/javascript" src="/static/tr-language-' + (get_cookie('lg')||'en') + '.js"></scri' + 'pt>'); </script>
     <!-- App -->
-    <script type="text/javascript" src="/static/dtr-app.js"></script>
-    <script type="text/javascript" src="/static/dtr-services.js"></script>
-    <script type="text/javascript" src="/static/dtr-controllers.js"></script>
-    <script type="text/javascript" src="/static/dtr-filters.js"></script>
-    <script type="text/javascript" src="/static/dtr-directives.js"></script>
+    <script src="/static/dtr-app.js"></script>
+    <script src="/static/dtr-services.js"></script>
+    <script src="/static/dtr-controllers.js"></script>
+    <script src="/static/dtr-filters.js"></script>
+    <script src="/static/dtr-directives.js"></script>
   </head>
   <body>
     <nav class="main" ng-controller="IndicatorController">
@@ -102,28 +99,6 @@
 
           <!-- authuser -->
           <a href="{{URLS.BASE}}profile/{{authuser.username}}" class="nav-link nav-profile" title="{{ tr('view profile') }}: {{ authuser.username }}"><span class="ti-user"></span></a>
-          <!--
-          <nav class="overflow nav-link">
-            <span class="ti-user"></span>
-            <input type="checkbox">
-            <ul class="opts">
-              <li><a href="{{URLS.BASE}}profile/{{authuser.username}}"><span class="ti-user"></span> {{tr('view profile')}}</a></li>
-
-              <li><a href="{{URLS.BASE}}settings/profile"><span class="ti-pencil-alt"></span> {{tr('edit profile')}}</a></li>
-
-              <li><a href="{{URLS.BASE}}settings/photos"><span class="ti-id-badge"></span> {{tr('photos')}}</a></li>
-              
-              <li><a href="{{URLS.BASE}}settings/design"><span class="ti-brush-alt"></span> {{tr('design')}}</a></li>
-              
-              <li><a href="{{URLS.BASE}}settings/password"><span class="ti-key"></span> {{tr('security')}}</a></li>
-
-              <li class="sep"></li>
-
-              <li><a href="/static/rules.html"><span class=""></span> {{ tr('site rules') }}</a></li>
-              <li><a href="/static/privacy.html"><span class=""></span> {{ tr('privacy') }}</a></li>
-            </ul>
-          </nav> -->
-
         </div><!-- /nav-link-list -->
       </div><!-- /.wrapper -->
 
@@ -155,7 +130,7 @@
     </nav><!-- /nav.main /IndicatorController scope -->
     <main class="main wrapper" id="main" ng-view="main"></main>
     <footer>
-      ©2014 <span ng-bind="tr('All rights reserved.')"> |
+      ©2015 <span ng-bind="tr('All rights reserved.')"> |
       <a href="/static/rules.html" ng-bind="tr('site rules')"></a> |
       <a href="/static/privacy.html" ng-bind="tr('privacy')"></a>
     </footer>
