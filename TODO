@@ -1,6 +1,8 @@
 
 === URGENT ===================================================================
 
+I18N: Translate calls to $scope.tr() inside Controllers! So far, only tr() calls inside templates are tramslated, oops.
+
 PROFILE: In profile settings controller, check if the "dob" field is well-formated "YYYY-MM-DD" as expected from a HTML5 date field, because some browsers may ignore the date field requirements.
 
 GUI: Show how many people online currently, how many friends online currently, how many matches online.
