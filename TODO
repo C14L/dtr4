@@ -7,6 +7,8 @@ PROFILE: In profile settings controller, check if the "dob" field is well-format
 
 GUI: Show how many people online currently, how many friends online currently, how many matches online.
 
+GUI: Make a "status" page to see how many people are online, how many friends exist, how many matches, how many private messages were written, how many etc.
+
 EMAIL: Send email to user when they get a new message, like, or friend request. But don't send more than one email per hour. If he user gets a new message but a mail was already sent within the last hour, then just skip the mail for the new message. --> Use a database table, e.g. "dtrprofile_usermail" or something, to remember when the last email was sent to each user, so to look up if a particular user is allowed to get a new mail. Do NOT store any email preferences (like do they want to receive notifications? etc) because there is no obligation to set an email address. If they provide an email address, just assume that they do want to get notifications.
 
 EMAIL: Send email to all users, once per week, about new signups from their city, and other site specific news.
@@ -18,6 +20,8 @@ SEARCH: MSIE10/MSIE11 bug doesn't show pics in user boxes (e.g. in search, or us
 SEARCH: MSIE10 bug doesn't show search results user boxes next to each other. They are shown as one box per line instead.
 
 === FIXME ======================================================================
+
+TALK: Make users easily blockable next to their messages. Messages by blocked users are not shown already, but blocking them is still too complicated.
 
 ANGULAR: Check if the current page is in the visible tab of the browser. If it is not, then do not poll for messages / talk / etc. to safe some server time.
 
