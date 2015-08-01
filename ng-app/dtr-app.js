@@ -52,12 +52,11 @@ app.constant( 'search_options', {
 // --- run ---------------------------------------------------------------------
 
 app.run(
-    [ '$rootScope', '$http', 'Authuser', 'Countries', 'Talk',
-        function( $rootScope, $http, Authuser, Countries, Talk ){
+    [ '$rootScope', '$window', '$location', '$http', 'Authuser', 'Countries', 'Talk',
+        function( $rootScope, $window, $location, $http, Authuser, Countries, Talk ){
             $http.defaults.headers.post['X-CSRFToken'] = get_cookie('csrftoken');
             $http.defaults.headers.put['X-CSRFToken'] = get_cookie('csrftoken');
             $http.defaults.headers.delete = { 'X-CSRFToken': get_cookie('csrftoken') };
-
 
             $rootScope.URLS = {
                 'BASE': window.BASE_URL,
@@ -111,7 +110,10 @@ app.run(
                 return msgstr;
             };
 
-
+            // Push URL changes to Google Analytics
+            $rootScope.$on('$routeChangeSuccess', function(event) {
+                $window.ga('send', 'pageview', { page: $location.path() });
+            });
         }
     ]
 );
