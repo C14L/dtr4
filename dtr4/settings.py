@@ -33,6 +33,7 @@ USE_TZ = True
 LANGUAGE_CODE = 'es'
 LANGUAGE = LANGUAGE_CODE[:2] # I added this. Remove?
 LANGUAGE_COOKIE_NAME = 'lg' # language cookie, default: "django_language"
+#LANGUAGE_SESSION_KEY = None
 # Suggested in: https://docs.djangoproject.com/en/1.7/topics/i18n/translation/
 # Do not change! E.g. used to import geonames, all languages a user can select.
 LANGUAGES = (('en', 'English'), ('es', 'Español'),)
@@ -94,6 +95,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.BrokenLinkEmailsMiddleware',
     # Default middleware classes.
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # Enables language selection based on data from the request.
+    # Customizes content for each user. https://docs.djangoproject.com
+    # /en/1.8/ref/middleware/#module-django.middleware.locale
+    # Not needed: Angular does almost all language choice.
+    #'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -101,10 +107,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    # Enables language selection based on data from the request.
-    # Customizes content for each user. https://docs.djangoproject.com
-    # /en/1.8/ref/middleware/#module-django.middleware.locale
-    'django.middleware.locale.LocaleMiddleware',
     # My own: check if authuser was deleted and remove their session.
     'dtrprofile.middleware.CheckAuthUserAccountIsActive',
     # My own: update UserProfile.last_active for authuser.
