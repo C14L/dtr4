@@ -605,7 +605,16 @@ app.controller( 'SettingsDetailsController',
                     var data = {};
                     var url = '/api/v1/authuser.json';
                     angular.forEach( $scope.settingsDetailsForm, function( v, k ){
-                        if( v.$dirty ){ data[k] = $scope.authuser[k] };
+                        if ( v.$dirty ) {
+                            data[k] = $scope.authuser[k];
+                            // Can't use "0" in the ng form for "no value", so 
+                            // have to set it here manually. This enables the
+                            // user to reset a field to "no value".
+                            if ( data[k] == null ) data[k] = "0";
+                            log( "Dirty value: " + k + " == '" + data[k] + "'");
+                        } else {
+                            log( "Not dirty: " + k );
+                        }
                     } );
                     if( $scope.settingsDetailsForm.$dirty ){
                         $scope.isSubmitting = true;
