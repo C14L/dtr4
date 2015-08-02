@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import (unicode_literals, absolute_import, division,
+                        print_function)
 
 from django.conf.urls import patterns, include, url
 from django.conf import settings

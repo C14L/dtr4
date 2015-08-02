@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import (unicode_literals, absolute_import, division,
+                        print_function)
 
 """
 Models for all user related data: profile, pic, messages, etc.

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import (unicode_literals, absolute_import, division,
+                        print_function)
 
 """
 Django settings for dtr4 project using Django 1.8.3.
