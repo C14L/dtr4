@@ -1,15 +1,17 @@
 
 === URGENT ===================================================================
 
-I18N: Translate calls to $scope.tr() inside Controllers! So far, only tr() calls inside templates are tramslated, oops.
+SEO: Finish homepage with some SEO text and login form. 
+
+EMAIL: (!!!) Send email to user when they get a new message, like, or friend request. But don't send more than one email per hour. If he user gets a new message but a mail was already sent within the last hour, then just skip the mail for the new message. --> Use a database table, e.g. "dtrprofile_usermail" or something, to remember when the last email was sent to each user, so to look up if a particular user is allowed to get a new mail. Do NOT store any email preferences (like do they want to receive notifications? etc) because there is no obligation to set an email address. If they provide an email address, just assume that they do want to get notifications.
+
+I18N: On login and signup pages, translate one line of text below form.
 
 PROFILE: In profile settings controller, check if the "dob" field is well-formated "YYYY-MM-DD" as expected from a HTML5 date field, because some browsers may ignore the date field requirements.
 
 GUI: Show how many people online currently, how many friends online currently, how many matches online.
 
 GUI: Make a "status" page to see how many people are online, how many friends exist, how many matches, how many private messages were written, how many etc.
-
-EMAIL: Send email to user when they get a new message, like, or friend request. But don't send more than one email per hour. If he user gets a new message but a mail was already sent within the last hour, then just skip the mail for the new message. --> Use a database table, e.g. "dtrprofile_usermail" or something, to remember when the last email was sent to each user, so to look up if a particular user is allowed to get a new mail. Do NOT store any email preferences (like do they want to receive notifications? etc) because there is no obligation to set an email address. If they provide an email address, just assume that they do want to get notifications.
 
 EMAIL: Send email to all users, once per week, about new signups from their city, and other site specific news.
 
@@ -73,6 +75,7 @@ TEMPLATES: use github.com/Pasvaz/bindonce to remove unnecessary watchers.
 
 === DONE / WONT ================================================================
 
+DONE I18N: Translate calls to $scope.tr() inside Controllers! So far, only tr() calls inside templates are tramslated, oops.
 DONE PROFILE: Don't attempt to save a badly formated "dob" value, only "yyyy-mm-dd". Also, add a placeholder to the form field to indicate the formate for browsers that do not respect HTML5 "date" fields.
 DONE GIT: Remove IPs and domains, if possible.
 DONE PRODUCTION: For some reason its still producing HTTP 500 responses. Now installed on Python3.2/Django1.8 but on local its not possible to use 3.2 but on production when using 3.4 it can't install Pillow for some reasion, probably some Ubuntu 12.04 library incompatible or so, on local with Ubuntu 14.04 it works. Can't find any error messages, nothing in error_log or access_log or anywhere. --> Maybe deploy locally with Apache2 to see errors... --> WSGI can't use different Python versions from different Virtual Envs. Little secret. Changed Python code for 2.7 and run on that version.
