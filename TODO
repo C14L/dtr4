@@ -5,6 +5,9 @@ HTTP500: This should not return a server error: http://www.elligue.com/api/v1/ci
 
 HTTP404: All *.php and city SEO pages refer to favicon at relative path "img/icon.png" which gives tons of 404 errors. Example "Referrer: http://www.elligue.com/citymxtam/tampico.html Requested URL: /citymxtam/img/icon.png"
 
+INBOX: Add a link to "my public messages" (or something) to the header of the inbox: "nuevos | inbox | enviado |
+public messages" or so.
+
 EMAIL: (!!!) Send email to user when they get a new message, like, or friend request. But don't send more than one email per hour. If he user gets a new message but a mail was already sent within the last hour, then just skip the mail for the new message. --> Use a database table, e.g. "dtrprofile_usermail" or something, to remember when the last email was sent to each user, so to look up if a particular user is allowed to get a new mail. Do NOT store any email preferences (like do they want to receive notifications? etc) because there is no obligation to set an email address. If they provide an email address, just assume that they do want to get notifications.
 
 I18N: On login and signup pages, translate one line of text below form.
