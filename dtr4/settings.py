@@ -188,7 +188,7 @@ SESSION_CACHE_ALIAS = 'default'
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
 LOGIN_REDIRECT_URL = '/app/'
-LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGOUT_REDIRECT_URL = '/'
 SOCIALACCOUNT_QUERY_EMAIL = True # allauth
 SOCIALACCOUNT_PROVIDERS = {
     'facebook': {

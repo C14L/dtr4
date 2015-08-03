@@ -23,7 +23,7 @@
   <button class="btn" type="submit">{% trans "Sign Up" %} &raquo;</button>
 </form>
 <div class="footnote">
-    {% trans 'Already have an account?' %} <a href="{{ login_url }}">{% trans 'sign in' %}</a>
+    {% blocktrans %}Already have an account? <a href="/accounts/login/">sign in</a>{% endblocktrans %}
 </div>
 
 {% endblock %}

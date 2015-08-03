@@ -74,25 +74,9 @@ def homepage(request, template_name="dtrprofile/index.html"):
     for SEO and for the user.
     """
     if request.user.is_authenticated():
-        url = settings.LOGIN_REDIRECT_URL
-        return HttpResponsePermanentRedirect(url)
-    # Anon user, for now simply redirect to login page.
-    url = settings.LOGIN_URL
-    return HttpResponsePermanentRedirect(url)
-    # TODO: make a nice homepage here with forms for login and signup,
-    # and some text/pics about the site.
-    return render_to_response(template_name, {},
-                              context_instance=RequestContext(request))
-
-class HomepageView(TemplateView):
-
-    template_name = "dtrprofile/index.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(HomepageView, self).get_context_data(**kwargs)
-        context['gender_name_choices'] = single_choices.GENDER_CHOICE[1:]
-        context['settings'] = settings
-        return context
+        return HttpResponsePermanentRedirect(settings.LOGIN_REDIRECT_URL)
+    fname = os.path.join(settings.BASE_DIR,'dtrprofile/static/site_index.html')
+    with open(fname, 'r') as fh: return HttpResponse(fh.read())
 
 # Private Messages
 
@@ -573,11 +557,11 @@ def profile_pics_item(request, pic_id):
 
     return HttpResponse(json.dumps(data), {'content_type':'application/json'})
 
-# ==================================================================================================
-# ==================================================================================================
-# === profile ======================================================================================
-# ==================================================================================================
-# ==================================================================================================
+# ======================================================================
+# ======================================================================
+# === profile ==========================================================
+# ======================================================================
+# ======================================================================
 
 @login_required()
 @require_http_methods(["GET", "HEAD", "POST", "DELETE"])

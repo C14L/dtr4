@@ -20,6 +20,7 @@ ga('create', 'UA-273063-2', 'elligue.com'); ga('send', 'pageview');
   </head>
   <body class="{% block body_classes %}{% endblock %}">
 
+<!--
     <form onsubmit="set_cookie('lg','en')" class="set-language" action="/i18n/setlang/" method="post">
       {% csrf_token %}
       <input type="hidden" name="language" value="en"><input type="submit" value="English">
@@ -28,7 +29,7 @@ ga('create', 'UA-273063-2', 'elligue.com'); ga('send', 'pageview');
       {% csrf_token %}
       <input type="hidden" name="language" value="es"><input type="submit" value="Espanol">
     </form>
-    
+-->
     <div class="sitename">El Ligue</div>
 
     {% block body %}
