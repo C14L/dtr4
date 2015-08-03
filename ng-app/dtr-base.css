@@ -368,8 +368,12 @@ footer {
     clear: both;
     font-size: 0.9rem; color: #999;
     display: block;
-    text-align: right;
+    text-align: left;
     margin-top: 0; padding: 25px 25px 15px 25px;
+}
+footer a {
+  text-decoration: inherit;
+  color: inherit;
 }
 
 /* ========================================================================== */

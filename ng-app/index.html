@@ -128,11 +128,15 @@
       </div> --><!-- /.sidebar-left -->
 
     </nav><!-- /nav.main /IndicatorController scope -->
+    
     <main class="main wrapper" id="main" ng-view="main"></main>
-    <footer>
-      ©2015 <span ng-bind="tr('All rights reserved.')"> |
+
+    <footer ng-controller="FooterController">
+      © 2015 <span ng-bind="tr('All rights reserved.')"></span> |
       <a href="/static/rules.html" ng-bind="tr('site rules')"></a> |
-      <a href="/static/privacy.html" ng-bind="tr('privacy')"></a>
+      <a href="/static/privacy.html" ng-bind="tr('privacy')"></a> | 
+      <a href="#" ng-click="setLanguage('en')">English</a> | 
+      <a href="#" ng-click="setLanguage('es')">Español</a>
     </footer>
     <span class="loading-bar" ng-show="loading">Loading...</span>
 
