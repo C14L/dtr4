@@ -106,7 +106,7 @@ app.controller( 'SearchController',
    [ '$scope', 'Authuser', 'Cities', 'Search', 'appBarTitle',
         function( $scope, Authuser, Cities, Search, appBarTitle ){
 
-            appBarTitle.primary = 'search';
+            appBarTitle.primary = $scope.tr('search');
             appBarTitle.secondary = '';
 
             $scope.userlist = [];
@@ -197,7 +197,7 @@ app.controller( 'ProfileController',
         function( $scope, $location, $http, $routeParams, Profile, Search, 
                   appBarTitle, Lists, Inbox ){
 
-            appBarTitle.primary = 'profile';
+            appBarTitle.primary = $scope.tr('profile');
             appBarTitle.secondary = '';
 
             // check if authuser has missing pnasl data and
@@ -284,17 +284,17 @@ app.controller( 'ProfileController',
             // moderator: delete profileuser
             $scope.deleteUser = function( ){
                 if( $scope.authuser['is_staff'] || $scope.authuser['id']==$scope.profileuser['id'] ){
-                    if ( confirm( 'Delete user account?' ) ){
+                    if ( confirm( $scope.tr('Delete user account?') ) ){
                         var url = '/api/v1/profile/'+$scope.profileuser['username']+'.json';
                         $http.delete( url ).success( function( data ){
                             Profile.clearFromBuffer( $scope.profileuser['username'] );
-                            alert( 'Account deleted!' );
+                            alert( $scope.tr('Account deleted!') );
                         } ).error( function( err ){
-                            alert( 'ERROR: Account not deleted!' );
+                            alert( $scope.tr('ERROR: Account not deleted!') );
                         } );
                     }
                 } else {
-                    alert( 'You can only delete your own profile.' );
+                    alert( $scope.tr('You can only delete your own profile.') );
                 }
             };
         }
@@ -454,7 +454,7 @@ app.controller( 'SettingsProfileController',
                             $scope.isSubmitSuccess = true;
                             $timeout( function(){ $scope.isSubmitSuccess = false }, 1000 );
                         } ).error( function( err ){
-                            alert( 'There was an error, please try again. Are you online?' );
+                            alert( $scope.tr('There was an error, please try again. Are you online?') );
                             $scope.isSubmitting = false;
                         } );
                     }
@@ -493,16 +493,16 @@ app.controller( 'SettingsProfileController',
                                     $scope.crcByLatLng = data['crc'];
                                 } ).error( function( err ){
                                     $scope.crcByLatLngLoading = false;
-                                    $scope.crcByLatLng = 'error: could not find location :(';
+                                    $scope.crcByLatLng = $scope.tr('error: could not find location');
                                 } );
                             }, function( err ){
                                 $scope.crcByLatLngLoading = false;
-                                $scope.crcByLatLng = 'error: could not find location :( ...';
+                                $scope.crcByLatLng = $scope.tr('error: could not find location');
                             }
                         );
                     } catch( e ){
                         $scope.crcByLatLngLoading = false;
-                        $scope.crcByLatLng = 'error: could not find location :( ,,,';
+                        $scope.crcByLatLng = $scope.tr('error: could not find location');
                     }
                 }
                 $scope.update_cities = function( country, city ){
@@ -1113,7 +1113,7 @@ app.controller( 'InboxController',
             }
 
             $scope.blockUser = function( username ){
-                if( confirm("Are you sure?") == true ){
+                if( confirm( $scope.tr("Block this user from contacting you?") ) == true ){
                     Inbox.blockUser( username ).then( function( ){
                         // this will remove all msgs revceived from user. that is 
                         // done in the Factory on the buffer. so we should refresh 
@@ -1149,7 +1149,7 @@ app.controller( 'ListsController',
                 };
 
             $scope.listname = $routeParams.listname.toLowerCase();
-            appBarTitle.primary = 'lists';
+            appBarTitle.primary = $scope.tr('lists');
             appBarTitle.secondary = listnames[$scope.listname];
 
             $scope.showList = function( ){
@@ -1181,7 +1181,7 @@ app.controller( 'ListsController',
     ]
 );
 
-// --- inbox messages ----------------------------------------------------------
+// --- list or recent pics for mods -------------------------------------------
 
 app.controller( 'PicturesController', 
     [ '$scope', '$http', 'appBarTitle',
@@ -1228,6 +1228,25 @@ app.controller( 'PicturesController',
 
             // start loading pics
             $scope.loadMore();
+        }
+    ]
+);
+
+// --- footer functions -------------------------------------------------------
+
+app.controller( 'FooterController', 
+    [ '$scope', '$window', 'appBarTitle',
+        function( $scope, $window, appBarTitle ){
+            appBarTitle.primary = '';
+            appBarTitle.secondary = '';
+            $scope.statusMsg = '';
+
+            // Change the display language: set lg cookie, then reload.
+            $scope.setLanguage = function( lg ){
+                log('SET LANGUAGE: "' + lg + '"');
+                set_cookie('lg', lg);
+                $window.location.reload();
+            }
         }
     ]
 );
