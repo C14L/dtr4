@@ -1,6 +1,8 @@
 
 === URGENT ===================================================================
 
+HTTP500 PROFILE: About texts do not accept non-ascii chars aparently. Test: Type "algún" (with accent) into the "About me" box and submit, receive an error message. Expected: It should be saved and shown in the profile page.
+
 HTTP500: This should not return a server error: http://www.elligue.com/api/v1/cities-in-country.json?q=D
 
 HTTP404: All *.php and city SEO pages refer to favicon at relative path "img/icon.png" which gives tons of 404 errors. Example "Referrer: http://www.elligue.com/citymxtam/tampico.html Requested URL: /citymxtam/img/icon.png"
