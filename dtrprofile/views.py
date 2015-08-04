@@ -97,8 +97,6 @@ class UserMsgList(APIView):
         The messages received by receiver are set to "is_read=True"
         automatically.
         """
-        if settings.DEBUG:
-            print('after: {0} -- before: {1}'.format(after, before))
         usermsgs = UserMsg.objects.filter(
             Q(from_user=receiver, to_user=sender) |
             Q(from_user=sender, to_user=receiver))
@@ -143,11 +141,10 @@ class UserMsgList(APIView):
             else:
                 # return all messages after the last the user received.
                 usermsgs = self.fetch_usermsgs(request.user, user, after)
-            #print('returning usermsgs:')
-            #print(usermsgs)
             #
             # TODO: this should return all new messages since "after" but it
             #       doesn't for some reason. 2014-12-19
+            #
             serializer = UserMsgSerializer(usermsgs, many=True)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         # Something went wrong in the serializer.
@@ -343,6 +340,7 @@ def profile_flag(request, flag_name, username):
             if settings.DEBUG:
                 print('# profile_flag(request, flag_name, username): '
                       'Authuser has not yet sent this flag.')
+
         # If not and this is two-way, check if authuser confirmed a flag
         if flag is None and two_way_flag:
             if settings.DEBUG:
@@ -359,6 +357,7 @@ def profile_flag(request, flag_name, username):
                 if settings.DEBUG:
                     print('# profile_flag(request, flag_name, username): '
                           'Authuser has also never received this flag')
+
         # If no flag exists yet, add a new flag
         if flag is None:
             if settings.DEBUG:
@@ -373,6 +372,7 @@ def profile_flag(request, flag_name, username):
             if settings.DEBUG:
                 print('# profile_flag(request, flag_name, username): '
                       'Flag item created with authuser as sender')
+
         # or for two-way, if there was an unconfirmed flag, confirm it
         elif flag is not None and flag.sender == user and not flag.confirmed:
             if settings.DEBUG:
@@ -384,6 +384,7 @@ def profile_flag(request, flag_name, username):
             if settings.DEBUG:
                 print('# profile_flag(request, flag_name, username): '
                       'Flag confirmed by authuser')
+
         if flag_name == 'block':
             # EVIL SHORTCUT!!! if "block" flag is set, set "UserMsg.is_blocked"
             # on all msgs that have authuser as "to_user", user as "from_user".
@@ -652,7 +653,6 @@ def profile_api_view(request, q, use):
                    'would_relocate', ]
         for field in fields:
             if body.get(field,  None) is not None:
-                print('...saving field {0} == {1}'.format(field, body[field]))
                 setattr(request.user.profile, field, body[field])
         # Set "dob" manually, to catch cases were it is "" empty.
         dob = body.get('dob', None)
@@ -721,9 +721,6 @@ def profile_api_view(request, q, use):
         flags = {}
         if user != request.user:
             # translate the flags into profileuser API flields
-            if settings.DEBUG:
-                print('--- profile_api_view(): Build flags between "{0}" and "{1}"...'.format(user.username, request.user.username))
-
             for f in UserFlag.get_one_way_flags(request.user, user):
                 name = [x[1] for x in USERFLAG_TYPES if x[0]==f.flag_type][0]
                 if f.sender == request.user:
@@ -746,8 +743,6 @@ def profile_api_view(request, q, use):
             user.profile.views_counter += 1
             user.profile.save()
 
-        if settings.DEBUG:
-            print('--- profile_api_view(): Build data dict...')
         data = {
             "flags": flags,
             # META
@@ -818,16 +813,10 @@ def profile_api_view(request, q, use):
             "western_zodiac": user.profile.western_zodiac,
             "eastern_zodiac": user.profile.eastern_zodiac,
         }
-        if settings.DEBUG:
-            print('--- profile_api_view(): mostly done, add some more fields...')
-
         try:
             data['crc'] = user.profile.crc
         except AttributeError:
             data['crc'] = ''
-        if settings.DEBUG:
-            print('--- profile_api_view(): crc added...')
-
         # attach a list of basic user data of profileuser's friends
         data['friends'] = []
         for x in user.profile.get_friends():
@@ -839,45 +828,38 @@ def profile_api_view(request, q, use):
                     'gender': x.profile.gender,
                     'crc': x.profile.crc,
                 })
-
         # add some extras, depending if authuser is looking at his own
         # profile, of looking at somebody else's profile page
         if user == request.user:
             # authuser can see (and edit) their own profile birthdate
-            try: data['dob'] = user.profile.dob.isoformat()
-            except: data['dob'] = '';
-
+            try:
+                data['dob'] = user.profile.dob.isoformat()
+            except:
+                data['dob'] = '';
             # tell authuser how many unread mail she has
-            if settings.DEBUG:
-                print('--- profile_api_view(): add unread mail count...')
-            data['mail_unread_counter'] = UserMsg.objects.filter(is_read=False,
-                                 to_user=request.user, is_blocked=False).count()
-
+            data['mail_unread_counter'] = UserMsg.objects.filter(
+                is_read=False, to_user=request.user, is_blocked=False).count()
         else:
             # if this is not authuser looking at his own profile, then add the
             # date of the last time profileuser looked at authuser's  profile.
-            try: data["last_viewed"] = UserFlag.last_viewed(user, request.user)\
-                                                                    .isoformat()
-            except AttributeError: data['last_viewed'] = 0
-
+            try:
+                data["last_viewed"] = UserFlag.last_viewed(
+                    user, request.user).isoformat()
+            except AttributeError:
+                data['last_viewed'] = 0
             # also, remember this profile view in UserFlags
-            flag, created = UserFlag.objects.get_or_create(flag_type=5,
-                                             sender=request.user, receiver=user)
+            flag, created = UserFlag.objects.get_or_create(
+                flag_type=5, sender=request.user, receiver=user)
             flag.created = datetime.utcnow().replace(tzinfo=utc)
             flag.save()
-            if settings.DEBUG:
-                print('--- profile_api_view(): Flags updated.')
-
-        if settings.DEBUG:
-            print('--- profile_api_view(): All done, send response.')
         return HttpResponse(json.dumps(data),
                             {'content_type':'application/json'})
 
-# ==================================================================================================
-# ==================================================================================================
-# === search =======================================================================================
-# ==================================================================================================
-# ==================================================================================================
+# ======================================================================
+# ======================================================================
+# === search ===========================================================
+# ======================================================================
+# ======================================================================
 
 class SearchAPIView(View):
 
@@ -1003,13 +985,13 @@ def talk_fetch_posts(request, after=None, before=None, count=None, group='all'):
     # Limit posts list by before or after a certain date.
     if before:
         if settings.DEBUG:
-            print('talk_fetch_posts(): fetch "{}" posts BEFORE "{}".'\
-                                                        .format(group, before))
+            print('talk_fetch_posts(): fetch "{}" posts BEFORE "{}".'.format(
+                                                                group, before))
         posts = posts.filter(created__lt=before)
     elif after:
         if settings.DEBUG:
-            print('talk_fetch_posts(): fetch "{}" posts AFTER "{}".'\
-                                                        .format(group, after))
+            print('talk_fetch_posts(): fetch "{}" posts AFTER "{}".'.format(
+                                                                group, after))
         posts = posts.filter(created__gt=after)
 
     # Limit post to a certain group, one of 'all', 'matches', 'friends'.
@@ -1128,7 +1110,6 @@ def talk_list(request, group='all'):
                                         .format(group, after, before, count))
         data = talk_fetch_posts(request, after, before, count, group)
         data = talk_posts_to_dict(request, data)
-
         return HttpResponse(json.dumps(data), {'content_type':'application/json'})
 
     elif request.method == 'POST':
