@@ -1,16 +1,14 @@
 
 === URGENT ===================================================================
 
-HTTP500 PROFILE: About texts do not accept non-ascii chars aparently. Test: Type "algún" (with accent) into the "About me" box and submit, receive an error message. Expected: It should be saved and shown in the profile page.
+EMAIL: (!!!) Send email to user when they get a new message, like, or friend request. But don't send more than one email per hour. If he user gets a new message but a mail was already sent within the last hour, then just skip the mail for the new message. --> Use a database table, e.g. "dtrprofile_usermail" or something, to remember when the last email was sent to each user, so to look up if a particular user is allowed to get a new mail. Do NOT store any email preferences (like do they want to receive notifications? etc) because there is no obligation to set an email address. If they provide an email address, just assume that they do want to get notifications.
 
 HTTP500: This should not return a server error: http://www.elligue.com/api/v1/cities-in-country.json?q=D
 
-HTTP404: All *.php and city SEO pages refer to favicon at relative path "img/icon.png" which gives tons of 404 errors. Example "Referrer: http://www.elligue.com/citymxtam/tampico.html Requested URL: /citymxtam/img/icon.png"
+HTTP500 PROFILE: About texts do not accept non-ascii chars aparently. Test: Type "algún" (with accent) into the "About me" box and submit, receive an error message. Expected: It should be saved and shown in the profile page.
 
 INBOX: Add a link to "my public messages" (or something) to the header of the inbox: "nuevos | inbox | enviado |
 public messages" or so.
-
-EMAIL: (!!!) Send email to user when they get a new message, like, or friend request. But don't send more than one email per hour. If he user gets a new message but a mail was already sent within the last hour, then just skip the mail for the new message. --> Use a database table, e.g. "dtrprofile_usermail" or something, to remember when the last email was sent to each user, so to look up if a particular user is allowed to get a new mail. Do NOT store any email preferences (like do they want to receive notifications? etc) because there is no obligation to set an email address. If they provide an email address, just assume that they do want to get notifications.
 
 I18N: On login and signup pages, translate one line of text below form.
 
@@ -82,6 +80,7 @@ TEMPLATES: use github.com/Pasvaz/bindonce to remove unnecessary watchers.
 
 === DONE / WONT ================================================================
 
+DONE HTTP404: All *.php and city SEO pages refer to favicon at relative path "img/icon.png" which gives tons of 404 errors. Example "Referrer: http://www.elligue.com/citymxtam/tampico.html Requested URL: /citymxtam/img/icon.png"
 DONE SEO: Finish homepage with some SEO text and login form.
 DONE I18N: Translate calls to $scope.tr() inside Controllers! So far, only tr() calls inside templates are tramslated, oops.
 DONE PROFILE: Don't attempt to save a badly formated "dob" value, only "yyyy-mm-dd". Also, add a placeholder to the form field to indicate the formate for browsers that do not respect HTML5 "date" fields.

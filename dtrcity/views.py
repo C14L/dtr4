@@ -35,12 +35,15 @@ def cities_in_country(request):
     # Max item count to be returned.
     size = int(request.GET.get('size', 10000))
     # Find the Country object GET "q"
-    country = get_object_or_404(Country, pk=request.GET.get('q', None))
+    try:
+        country = get_object_or_404(Country, pk=request.GET.get('q', None))
+    except ValueError as e: # not an int
+        raise Http404('No Country matches the given query.')
     # Find all City objects in the country of the required size.
     cities = City.objects.filter(country=country, population__gt=population)
     # Finally, look up the localized names of the City objects.
     data = AltName.objects.filter(geoname_id__in=cities, is_main=1, type=3,
-                                  language=settings.LANGUAGE).order_by('crc')
+                                  language=get_language()[:2]).order_by('crc')
     li = [(x.geoname_id, x.crc) for x in data[:size]]
     return HttpResponse(json.dumps(li), content_type="application/json")
 
