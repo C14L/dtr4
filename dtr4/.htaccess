@@ -686,3 +686,26 @@ deny from 41.78.136.0/22
 deny from 41.207.160.0/19
 deny from 80.248.64.0/20
 deny from 197.148.96.0/19
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+RewriteEngine on
+RewriteCond %{HTTP_HOST} !^www.elligue\.com$ [NC]
+RewriteCond %{HTTP_HOST} !^$
+RewriteRule ^/?(.*)  http://www.elligue.com/$1 [L,R=301]
+
+# Redir old user profiles
+RewriteRule ^/?u/?$  /accounts/login/ [L,R=301]
+RewriteRule ^/?u/([a-zA-Z0-9_-]+)/?$  /accounts/login/?next=/app/profile/$1 [L,R=301]
+RewriteRule ^/?user/([a-zA-Z0-9_-]+)/?$  /accounts/login/?next=/app/profile/$1 [L,R=301]
+RewriteRule ^/?citymxaaa/otra-ciudad-mexicana.html$  /paises/mexico/ [L,R=301]
+RewriteRule ^/?register\.php$  /accounts/signup/ [L,R=301]
+RewriteRule ^/?login\.php$  /accounts/login/ [L,R=301]
+RewriteRule ^/?search\.php$  /app/search [L,R=301]
+RewriteRule ^/?home\.php$  /accounts/login/ [L,R=301]
+RewriteRule ^/?fotos\.php$  /accounts/signup/ [L,R=301]
+
+
+
