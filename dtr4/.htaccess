@@ -1,21 +1,96 @@
 order allow,deny
 allow from all
 #
-###
+### CONTENT OVERVIEW ##########################################################
 #
-# Block from CENTRAL AFRICAN REPUBLIC (CF)
-# Block from CHAD (TD)
-# Block from CONGO (CG)
-# Block from CONGO THE DEMOCRATIC REPUBLIC OF THE (CD)
-# Block from COTE D'IVOIRE (CI)
-# Block from EQUATORIAL GUINEA (GQ)
-# Block from GHANA (GH)
-# Block from NIGERIA (NG)
-# Block from PAKISTAN (PK)
-# Block from SENEGAL (SN)
-# Block from TOGO (TG)
+# 1. Block for individual IPs and IP ranges.
 #
-###
+# 2. Block by country:
+#    - CENTRAL AFRICAN REPUBLIC (CF)
+#    - CHAD (TD)
+#    - CONGO (CG)
+#    - CONGO THE DEMOCRATIC REPUBLIC OF THE (CD)
+#    - COTE D'IVOIRE (CI)
+#    - EQUATORIAL GUINEA (GQ)
+#    - GHANA (GH)
+#    - NIGERIA (NG)
+#    - PAKISTAN (PK)
+#    - SENEGAL (SN)
+#    - TOGO (TG)
+#
+### INDIVIDUAL BLOCK ##########################################################
+#
+deny from 176.9.58.128      # SEOkicks-Robot spider etc. This IP block 
+deny from 176.9.58.129      # from 128-159 is "Hetzner Datacenter 15",
+deny from 176.9.58.130      # so its likely only spiders coming from 
+deny from 176.9.58.131      # there.
+deny from 176.9.58.132      #
+deny from 176.9.58.133      # SEOkicks does spider, but does not give
+deny from 176.9.58.134      # free access to the data owner's own data,
+deny from 176.9.58.135      # unlike Ahrefs or Majestic do. That's why
+deny from 176.9.58.136      # they get blocked here. 2015-08-05
+deny from 176.9.58.137
+deny from 176.9.58.138
+deny from 176.9.58.139
+deny from 176.9.58.140
+deny from 176.9.58.141
+deny from 176.9.58.142
+deny from 176.9.58.143
+deny from 176.9.58.144
+deny from 176.9.58.145
+deny from 176.9.58.146
+deny from 176.9.58.147
+deny from 176.9.58.148
+deny from 176.9.58.149
+deny from 176.9.58.150
+deny from 176.9.58.151
+deny from 176.9.58.152
+deny from 176.9.58.153
+deny from 176.9.58.154
+deny from 176.9.58.155
+deny from 176.9.58.156
+deny from 176.9.58.157
+deny from 176.9.58.158
+deny from 176.9.58.159
+deny from 185.53.44.        # XOVI GmbH SEO spider; 2015-08-05
+deny from 194.113.40.50     # worm? IP "Muenchen, kommunale Behoerde" search forum softw. 2014-11-09
+deny from 27.150.198.103    # Probably a worm looking for php to exploid. 2014-11-09
+deny from 85.114.139.54     # Fake crawler "publiclibraryarchive.org" doesn't exist. 2014-11-09
+deny from 66.175.56.64      # Worm looking for wp login pages. 2014-11-09
+deny from 78.182.159.68     # Some turkish bot
+deny from 185.24.233.251    # Some bot from ireland unidentified. 2014-04-10
+deny from 98.143.144.211    # Some unindentified bot from Los Angeles.
+deny from 121.189.37.60     # Some Korean IP with tons of connects
+deny from 62.212.72.        # LeaseWeb Amsterdam, spoofed MajesticSEO UA on 62.212.73.211
+deny from 62.212.73.
+deny from 62.212.74.
+deny from 162.210.192.      # LeaseWeb Amsterdam, spoofed MajesticSEO UA on 162.210.196.129
+deny from 162.210.193.
+deny from 162.210.194.
+deny from 162.210.195.
+deny from 162.210.196.
+deny from 162.210.197.
+deny from 162.210.198.
+deny from 162.210.199.
+deny from 184.154.          # Singlehop.com hoster, USA, spoofed MajesticSEO UA on 184.154.48.82
+deny from 77.247.181.160    # Torserver aus DE
+deny from 77.247.181.161
+deny from 77.247.181.162
+deny from 77.247.181.163
+deny from 77.247.181.164
+deny from 77.247.181.165
+deny from 77.247.181.166
+deny from 77.247.181.167
+deny from 77.247.181.168
+deny from 77.247.181.169
+deny from 77.247.181.170
+deny from 77.247.181.171
+deny from 77.247.181.172
+deny from 77.247.181.173
+deny from 77.247.181.174
+deny from 77.247.181.175
+#
+### COUNTRY-WIDE BLOCK ########################################################
 #
 # Block from CENTRAL AFRICAN REPUBLIC (CF)
 #
@@ -686,26 +761,3 @@ deny from 41.78.136.0/22
 deny from 41.207.160.0/19
 deny from 80.248.64.0/20
 deny from 197.148.96.0/19
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-RewriteEngine on
-RewriteCond %{HTTP_HOST} !^www.elligue\.com$ [NC]
-RewriteCond %{HTTP_HOST} !^$
-RewriteRule ^/?(.*)  http://www.elligue.com/$1 [L,R=301]
-
-# Redir old user profiles
-RewriteRule ^/?u/?$  /accounts/login/ [L,R=301]
-RewriteRule ^/?u/([a-zA-Z0-9_-]+)/?$  /accounts/login/?next=/app/profile/$1 [L,R=301]
-RewriteRule ^/?user/([a-zA-Z0-9_-]+)/?$  /accounts/login/?next=/app/profile/$1 [L,R=301]
-RewriteRule ^/?citymxaaa/otra-ciudad-mexicana.html$  /paises/mexico/ [L,R=301]
-RewriteRule ^/?register\.php$  /accounts/signup/ [L,R=301]
-RewriteRule ^/?login\.php$  /accounts/login/ [L,R=301]
-RewriteRule ^/?search\.php$  /app/search [L,R=301]
-RewriteRule ^/?home\.php$  /accounts/login/ [L,R=301]
-RewriteRule ^/?fotos\.php$  /accounts/signup/ [L,R=301]
-
-
-
