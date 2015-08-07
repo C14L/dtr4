@@ -155,7 +155,7 @@ if not PRODUCTION:
 # Email config
 EMAIL_SUBJECT_PREFIX = 'El Ligue: ' # For system emails to ADMINS+MANAGERS.
 SERVER_EMAIL = 'server@elligue.com' # For system emails to ADMINS+MANAGERS.
-DEFAULT_FROM_EMAIL = 'bot@elligue.com' # For emails sent to users.
+DEFAULT_FROM_EMAIL = 'El Ligue <noreply@elligue.com>' # For emails to users.
 #EMAIL_HOST_USER = ''
 #EMAIL_HOST_PASSWORD = ''
 if PRODUCTION:
