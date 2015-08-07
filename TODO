@@ -3,28 +3,24 @@
 
 EMAIL: (!!!) Send email to user when they get a new message, like, or friend request. But don't send more than one email per hour. If he user gets a new message but a mail was already sent within the last hour, then just skip the mail for the new message. --> Use a database table, e.g. "dtrprofile_usermail" or something, to remember when the last email was sent to each user, so to look up if a particular user is allowed to get a new mail. Do NOT store any email preferences (like do they want to receive notifications? etc) because there is no obligation to set an email address. If they provide an email address, just assume that they do want to get notifications.
 
-HTTP500: This should not return a server error: http://www.elligue.com/api/v1/cities-in-country.json?q=D
-
 HTTP500 PROFILE: About texts do not accept non-ascii chars aparently. Test: Type "algún" (with accent) into the "About me" box and submit, receive an error message. Expected: It should be saved and shown in the profile page.
 
-INBOX: Add a link to "my public messages" (or something) to the header of the inbox: "nuevos | inbox | enviado |
-public messages" or so.
-
-I18N: On login and signup pages, translate one line of text below form.
-
 PROFILE: In profile settings controller, check if the "dob" field is well-formated "YYYY-MM-DD" as expected from a HTML5 date field, because some browsers may ignore the date field requirements.
-
-GUI: Show how many people online currently, how many friends online currently, how many matches online.
-
-GUI: Make a "status" page to see how many people are online, how many friends exist, how many matches, how many private messages were written, how many etc.
-
-EMAIL: Send email to all users, once per week, about new signups from their city, and other site specific news.
 
 SEARCH: For new user, search should be set to match their "gender" settings; e.g. if the authuser is a "woman who likes men" then the first-time search should be automatically set for "men who like women", and the search city should be set to the same city as authuser. The age range can be left from 18 to 99.
 
 SEARCH: MSIE10/MSIE11 bug doesn't show pics in user boxes (e.g. in search, or user lists), just the boxes with username etc.
 
 SEARCH: MSIE10 bug doesn't show search results user boxes next to each other. They are shown as one box per line instead.
+
+INBOX: Add a link to "my public messages" (or something) to the header of the inbox: "nuevos | inbox | enviado |
+public messages" or so.
+
+I18N: On login and signup pages, translate one line of text below form.
+
+GUI: Show how many people online currently, how many friends online currently, how many matches online.
+
+GUI: Make a "status" page to see how many people are online, how many friends exist, how many matches, how many private messages were written, how many etc.
 
 === FIXME ======================================================================
 
@@ -80,6 +76,7 @@ TEMPLATES: use github.com/Pasvaz/bindonce to remove unnecessary watchers.
 
 === DONE / WONT ================================================================
 
+DONE HTTP500: This should not return a server error: http://www.elligue.com/api/v1/cities-in-country.json?q=D
 DONE HTTP404: All *.php and city SEO pages refer to favicon at relative path "img/icon.png" which gives tons of 404 errors. Example "Referrer: http://www.elligue.com/citymxtam/tampico.html Requested URL: /citymxtam/img/icon.png"
 DONE SEO: Finish homepage with some SEO text and login form.
 DONE I18N: Translate calls to $scope.tr() inside Controllers! So far, only tr() calls inside templates are tramslated, oops.
