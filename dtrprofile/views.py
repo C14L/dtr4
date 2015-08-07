@@ -15,6 +15,7 @@ import io
 import json
 import os
 import re
+import sys
 import uuid
 
 from PIL import Image
@@ -133,6 +134,12 @@ class UserMsgList(APIView):
         serializer = UserMsgSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            #
+            # TODO: Send an email to the receipient, unless they already
+            #       received an email less than an hour ago.
+            #
+            pass
+
             # should return ALL posts since last check (after) NOT only
             # this one
             if after is None:
@@ -567,12 +574,13 @@ def profile_pics_item(request, pic_id):
 @login_required()
 @require_http_methods(["GET", "HEAD", "POST", "DELETE"])
 def profile_api_view(request, q, use):
-    '''
-    Return a JSON view with extensive data on one user, either by the user's
-    pk or the username.
-    '''
-    if settings.DEBUG:
-        print('--- profile_api_view(request, q, use): q=="{0}", use=="{1}"'.format(q, use))
+    """Return a JSON view with extensive data on one user.
+
+    Either by the user's pk or the username.
+    """
+    DEBUG = settings.DEBUG
+    if DEBUG:
+        print('--- profile_api_view(request, q, use): q=="{0}", use=="{1}"'.format(q, use), file=sys.stderr)
 
     if use == 'username':
         user = get_object_or_404(User, username=q)
@@ -585,9 +593,25 @@ def profile_api_view(request, q, use):
 
     if request.method == "POST":
         # get data payload
-        body = {}
+        if DEBUG:
+            print('--- profile_api_view(): POST method', file=sys.stderr)
         if request.body:
-            body = json.loads(request.body.decode("utf-8")) # decode json from body
+            if DEBUG:
+                print('--- profile_api_view(): request.body found.', file=sys.stderr)
+            jsonstr = request.body.decode("utf-8")
+            if DEBUG:
+                print('--- profile_api_view(): request.body is type "{}".'.format(type(jsonstr)), file=sys.stderr)
+            if type(jsonstr) != unicode:
+                jsonstr = jsonstr.decode('utf-8')   # bytes -> Unicode
+                if DEBUG:
+                    print('--- profile_api_view(): request.body converted to type "{}".'.format(type(jsonstr)), file=sys.stderr)
+            body = json.loads(jsonstr)
+            if DEBUG:
+                print('--- profile_api_view(): request.body unpacked into JSON dict.', file=sys.stderr)
+        else:
+            body = {}
+            if DEBUG:
+                print('--- profile_api_view(): NO request.body found!', file=sys.stderr)
 
         if body.get('pic', None) is not None:
             # Set "pic" as authuser's main profile picture.
@@ -652,8 +676,9 @@ def profile_api_view(request, q, use):
                    'sports', 'style', 'want_children', 'weight',
                    'would_relocate', ]
         for field in fields:
-            if body.get(field,  None) is not None:
-                setattr(request.user.profile, field, body[field])
+            field_value = body.get(field,  None)
+            if field_value is not None:
+                setattr(request.user.profile, field, field_value)
         # Set "dob" manually, to catch cases were it is "" empty.
         dob = body.get('dob', None)
         if dob is not None:
