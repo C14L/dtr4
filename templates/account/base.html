@@ -20,38 +20,12 @@ ga('create', 'UA-273063-2', 'elligue.com'); ga('send', 'pageview');
     </script>
   </head>
   <body class="{% block body_classes %}{% endblock %}">
-
-<!--
-    <form onsubmit="set_cookie('lg','en')" class="set-language" action="/i18n/setlang/" method="post">
-      {% csrf_token %}
-      <input type="hidden" name="language" value="en"><input type="submit" value="English">
-    </form>
-    <form onsubmit="set_cookie('lg','es')" class="set-language" action="/i18n/setlang/" method="post">
-      {% csrf_token %}
-      <input type="hidden" name="language" value="es"><input type="submit" value="Espanol">
-    </form>
--->
-    <div class="sitename">El Ligue</div>
-
+    <a class="sitename logo" href="/">El Ligue</a>
     {% block body %}
-
-<!--
-      {% if messages %}
-          <div>
-              <strong>Messages:</strong>
-              <ul>
-                  {% for message in messages %}
-                      <li>{{message}}</li>
-                  {% endfor %}
-              </ul>
-          </div>
-      {% endif %}
--->
     <div class="inset">
       {% block content %}{% endblock %}
     </div>
     {% endblock %}
-  
     {% block extra_body %}{% endblock %}
     <footer>
       <section>

@@ -13,7 +13,6 @@
 <div class="header">{% trans "Or sign in directly" %}</div>
 -->
 
-
 <form class="login" method="POST" action="{% url 'account_login' %}">
   {% csrf_token %}
   {{ form.non_field_errors }}
@@ -36,8 +35,7 @@
 
 <div class="footnote">
   <!-- {% blocktrans %}Don't have an account? Login with Facebook above or <a href="/accounts/signup/">Sign Up</a>{% endblocktrans %} -->
-  {% blocktrans %}Don't have an account? <a href="/accounts/signup/">Sign Up</a> and join us!{% endblocktrans %}
-
+  ¿No tienes cuenta todavía? <a href="/accounts/signup/">Regístrate</a>
 </div>
 
 {% endblock %}
