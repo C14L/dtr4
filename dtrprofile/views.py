@@ -1055,7 +1055,8 @@ def talk_fetch_posts(request, after=None, before=None, count=None, group='all'):
         count = settings.DTR_TALK_PAGE_SIZE
 
     # Create the inicial posts object with all posts.
-    posts = Talk.objects.filter(is_blocked=False).order_by('-created')
+    posts = Talk.objects.filter(is_blocked=False,
+                                user__isnull=False).order_by('-created')
 
     #
     # TODO: Add prefetch for "user" field.
@@ -1132,21 +1133,40 @@ def talk_posts_to_dict(request, posts):
     return posts
 
 def talk_post_to_dict(post):
-    return {
-        'id': post.id,
-        'user': {
-            'id': post.user.id,
-            'username': post.user.username,
-            'pic': post.user.profile.pic_id,
-            'age': post.user.profile.age,
-            'gender': post.user.profile.gender,
-            'crc': post.user.profile.crc,
-        },
-        'created': post.created.isoformat(),
-        'child_counter': post.child_counter,
-        'views_counter': post.views_counter,
-        'text': post.text,
-    }
+    try:
+        ret = {
+            'id': post.id,
+            'user': {
+                'id': post.user.id,
+                'username': post.user.username,
+                'pic': post.user.profile.pic_id,
+                'age': post.user.profile.age,
+                'gender': post.user.profile.gender,
+                'crc': post.user.profile.crc,
+            },
+            'created': post.created.isoformat(),
+            'child_counter': post.child_counter,
+            'views_counter': post.views_counter,
+            'text': post.text,
+        }
+    except AttributeError:
+        ret = {
+            'id': post.id,
+            'user': {
+                'id': 0,
+                'username': '---',
+                'pic': '/static/placeholder.jpg',
+                'age': '',
+                'gender': '',
+                'crc': '',
+            },
+            'created': post.created.isoformat(),
+            'child_counter': post.child_counter,
+            'views_counter': post.views_counter,
+            'text': post.text,
+        }
+
+    return ret
 
 @login_required
 @require_http_methods(['PUT', 'GET', 'HEAD' ,'DELETE'])
