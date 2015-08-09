@@ -68,7 +68,7 @@ from dtrprofile.utils import get_client_ip
 
 # Homepage view
 
-def homepage(request, template_name="dtrprofile/index.html"):
+def homepage(request, template_name="dtrprofile/site_index.es.html"):
     """The homepage view at "/".
 
     If the user is logged in, simply redirect to the app's startpage.
@@ -77,10 +77,11 @@ def homepage(request, template_name="dtrprofile/index.html"):
     well as some text content describing the purpose of the site, both
     for SEO and for the user.
     """
+    # Authenticated user load app
     if request.user.is_authenticated():
         return HttpResponsePermanentRedirect(settings.LOGIN_REDIRECT_URL)
-    fname = os.path.join(settings.BASE_DIR,'dtrprofile/static/site_index.html')
-    with open(fname, 'r') as fh: return HttpResponse(fh.read())
+    # Anon users get a nice home page.
+    return render_to_response(template_name, context=RequestContext(request))
 
 # Private Messages
 

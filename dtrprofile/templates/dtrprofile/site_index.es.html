@@ -1,3 +1,5 @@
+{% load i18n %}
+{% load account %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -211,26 +213,31 @@ ul.citylinks > li > ul > li {
         <a class="sitename" href="/" title="Encontrar Amigas y Amigos, Chatear y Conocer Gente">El Ligue</a>
         <div class="signup-section above">
             <div class="inset">
-                <!-- <a class="fb" href="/accounts/facebook/login/"></a>
-                <div class="header">Or sign in directly</div> -->
-                <form class="login" method="POST" action="/accounts/login/">
-                    <input type='hidden' name='csrfmiddlewaretoken' value=''>
-                    <input id="id_login" class="login-input" maxlength="30" name="login" placeholder="Username" type="text" />
-                    <br>
-                    <input id="id_password"  class="login-input" name="password" placeholder="Password" type="password" />
-                    <br>
-                    <div class="remember-forgot-section">
-                        <input id="id_remember" name="remember" type="checkbox" />
-                        <label for="id_remember">Recordarme</label>
-                    </div>
-                    <button class="btn" type="submit">Iniciar sesión</button>
-                    <a class="forgot" href="/accounts/password/reset/">¿Olvidó su contraseña?</a>
-                </form>
-                <div class="footnote">
-                    <!-- Don't have an account? Login with Facebook above or 
-                    <a href="/accounts/signup/">Sign Up</a> -->
-                    Don't have an account? <a href="/accounts/signup/">Sign Up</a> and join us!
-                </div>
+
+<form class="login" method="POST" action="{% url 'account_login' %}">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+
+  <input id="id_login" class="login-input" maxlength="30" name="login" placeholder="Username" type="text" />{{ form.login.errors }}<br>
+  <input id="id_password"  class="login-input" name="password" placeholder="Password" type="password" />{{ form.password.errors }}<br>
+
+  <div class="remember-forgot-section">
+      <input id="id_remember" name="remember" type="checkbox" />
+      <label for="id_remember">{% trans "Remember Me" %}</label>
+  </div>
+
+  {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+
+  <button class="btn" type="submit">{% trans "Sign In" %}</button>
+  <a class="forgot" href="{% url 'account_reset_password' %}">Recuperar contraseña</a>
+</form>
+
+<div class="footnote">
+  ¿No tienes cuenta todavía? <a href="/accounts/signup/">Regístrate</a>
+</div>
+
             </div>
         </div>
         <main id="main">
@@ -323,36 +330,41 @@ ul.citylinks > li > ul > li {
 
         <div class="signup-section below">
             <div class="inset">
-                <!-- <a class="fb" href="/accounts/facebook/login/"></a>
-                <div class="header">Or sign in directly</div> -->
-                <form class="login" method="POST" action="/accounts/login/">
-                    <input type='hidden' name='csrfmiddlewaretoken' value=''>
-                    <input id="id_login" class="login-input" maxlength="30" name="login" placeholder="Username" type="text" />
-                    <br>
-                    <input id="id_password"  class="login-input" name="password" placeholder="Password" type="password" />
-                    <br>
-                    <div class="remember-forgot-section">
-                        <input id="id_remember" name="remember" type="checkbox" />
-                        <label for="id_remember">Recordarme</label>
-                    </div>
-                    <button class="btn" type="submit">Iniciar sesión</button>
-                    <a class="forgot" href="/accounts/password/reset/">¿Olvidó su contraseña?</a>
-                </form>
-                <div class="footnote">
-                    <!-- Don't have an account? Login with Facebook above or 
-                    <a href="/accounts/signup/">Sign Up</a> -->
-                    Don't have an account? <a href="/accounts/signup/">Sign Up</a> and join us!
-                </div>
+
+<form class="login" method="POST" action="{% url 'account_login' %}">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+
+  <input id="id_login" class="login-input" maxlength="30" name="login" placeholder="Username" type="text" />{{ form.login.errors }}<br>
+  <input id="id_password"  class="login-input" name="password" placeholder="Password" type="password" />{{ form.password.errors }}<br>
+
+  <div class="remember-forgot-section">
+      <input id="id_remember" name="remember" type="checkbox" />
+      <label for="id_remember">{% trans "Remember Me" %}</label>
+  </div>
+
+  {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+
+  <button class="btn" type="submit">{% trans "Sign In" %}</button>
+  <a class="forgot" href="{% url 'account_reset_password' %}">Recuperar contraseña</a>
+</form>
+
+<div class="footnote">
+  ¿No tienes cuenta todavía? <a href="/accounts/signup/">Regístrate</a>
+</div>
+
             </div>
         </div>
 
         <footer id="footer">
             <section class="cols col-1">
                 <a href="/browse.php">Browse</a> |
-                <a href="/mujeres-buscando-hombres.php">Find women looking for men</a> |
-                <a href="/hombres-buscando-mujeres.php">Find men looking for women</a> |
-                <a href="/fotos-mujeres.php">Photos of women</a> |
-                <a href="/fotos-hombres.php">Photos of men</a> |
+                <a href="/mujeres-buscando-hombres.php">Encontrar mujeres buscando hombres</a> |
+                <a href="/hombres-buscando-mujeres.php">Encontrar hombres buscando mujeres</a> |
+                <a href="/fotos-mujeres.php">Fotos de mujeres</a> |
+                <a href="/fotos-hombres.php">Fotos de hombres</a> |
                 <a href="/gente-por-pais.php">Encontrar amigos</a> |
                 <a href="/citymxmdf/mexico-d-f.html">Amigos en Mexico DF</a>
             </section>
@@ -362,8 +374,8 @@ ul.citylinks > li > ul > li {
             <section class="cols col-3">
                 &copy;2015 | 
                 <a rel="nofollow" href="http://C14L.com/impressum.html">Imprint</a> |
-                <a rel="nofollow" href="/static/tos.es.html">Terms of Service</a> |
-                <a rel="nofollow" href="/static/privacy.es.html">Data Privacy</a>
+                <a rel="nofollow" href="/static/tos.es.html">Términos de Servico</a> |
+                <a rel="nofollow" href="/static/privacy.es.html">Privacidad</a>
             </section>
         </footer>
     </body>
