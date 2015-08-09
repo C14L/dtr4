@@ -1,0 +1,24 @@
+@{{ from_user.username }} sent you a message in {{ site.name }}!
+
+Hello @{{ user.username }}, you just received a new private message in {{ site.name }}:
+
+------
+
+From: @{{ from_user.username }}
+
+{{ msg }}
+
+------
+
+Read all new messages here:
+ -> http://{{ site.domain }}/app/inbox/unread
+
+To chat with @{{ from_user.username }}, go here: 
+ -> http://{{ site.domain }}/app/profile/{{ from_user.username }}
+
+
+
+======
+If you do not want to receive these notifications, simply remove your 
+email address from your account in {{ site.name }}:
+http://{{ site.domain }}/accounts/email/

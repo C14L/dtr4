@@ -256,9 +256,10 @@ class UserProfile(models.Model):
                                 max_length=10, default='en')
     # Receive emails about activity?
     notification_emails = models.SmallIntegerField(
-        verbose_name='notification emails',
-        help_text='How often do you want to receive notification emails?',
         default=0, choices=single_choices.NOTIFICATION_EMAILS)
+    # When was the last email sent?
+    last_email = models.DateTimeField(null=True, default=None)
+
     # Use costum CSS when showing the profile page?
     style_active = models.BooleanField(default=False)
     style = models.TextField(verbose_name='Profile page CSS styles',

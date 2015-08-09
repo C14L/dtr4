@@ -14,7 +14,7 @@ class UserMsgSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserMsg
-        fields = ('id', 'from_user', 'to_user', 
+        fields = ('id', 'from_user', 'to_user',
                   'created', 'text', 'is_read', 'is_replied')
 
 # ------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'pic', 'age', 'gender', 
+        fields = ('id', 'username', 'pic', 'age', 'gender',
                   'crc', 'city', 'country', 'lat', 'lng')
 '''
 
@@ -47,7 +47,7 @@ class UserPnaslSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'pic', 'age', 'gender', 
+        fields = ('id', 'username', 'pic', 'age', 'gender',
                   'crc', 'city', 'country', 'lat', 'lng')
 
 class InboxSerializer(serializers.ModelSerializer):

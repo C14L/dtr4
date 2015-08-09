@@ -1,0 +1,24 @@
+@{{ from_user.username }} te envió un mensaje a través de {{ site.name }}
+
+Hola @{{ user.username }}, recibiste un nuevo mensaje a través de {{ site.name }}:
+
+------
+
+Enviado por: @{{ from_user.username }}
+
+{{ msg }}
+
+------
+
+Para leer todos tus mensajes nuevos:
+ -> http://{{ site.domain }}/app/inbox/unread
+
+Para chatear con @{{ from_user.username }} en directo:
+ -> http://{{ site.domain }}/app/profile/{{ from_user.username }}
+
+
+
+======
+Si no quieres recibir notificaciones de mensajes nuevos, simplemente borra
+tu dirección de email de tu perfil en {{ site.name }}:
+http://{{ site.domain }}/accounts/email/
