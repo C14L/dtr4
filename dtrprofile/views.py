@@ -670,8 +670,11 @@ def profile_api_view(request, q, use):
 
         if body.get('pic', None) is not None:
             # Set "pic" as authuser's main profile picture.
-            pic = UserPic.objects.get(pk=body.get('pic', None))
-            request.user.profile.pic = pic
+            try:
+                pic = UserPic.objects.get(pk=body.get('pic', None))
+                request.user.profile.pic = pic
+            except UserPic.DoesNotExist:
+                pass
 
         #print("UPDATE PROFILE VALUES ..................................")
         if body.get('city', None) is not None:
