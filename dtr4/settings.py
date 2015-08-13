@@ -62,7 +62,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.messages',
+    #'django.contrib.messages',
     'django.contrib.staticfiles',
     # Django sites framework is required for allauth.
     'django.contrib.sites',
@@ -104,7 +104,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    #'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     # My own: check if authuser was deleted and remove their session.
@@ -133,7 +133,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                #'django.contrib.messages.context_processors.messages',
                 # allauth specific context processors
                 #'sites.allauth.account.context_processors.account',
                 #'sites.allauth.socialaccount.context_processors.socialaccount',
