@@ -40,6 +40,8 @@ TALK 2015-07-20: Weird DB error with on_delete=models.SET_NULL in Talk >>> When 
 
 === NICE-TO-HAVE ===============================================================
 
+PROFILE: Make it possible to set the display status (offline, away) manually, to appear away to others.
+
 PROFILE: A user can limit private messages so that only they can first-contact others, but others can not first-contact them. Especially for sexy women so that they don't get flooded by billions of dumb-guy messages.
 
 TALK: On new user signup, auto-post a message "#Welcome @username from #City #Country. Use hashtag #Intro to indroduce yourself!" or something like that. >>> See dtrprofile/signals.py to implement it.
