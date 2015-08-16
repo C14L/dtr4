@@ -1,4 +1,92 @@
-### elligue.com ########################################################
+
+########################################################################
+
+MYSQL SETIING: /etc/mysql/my.cnf
+--------------------------------
+
+# Your innodb_buffer_pool_size should be set to the amount of InnoDB data and indexes you have. Run this query and it will tell you the Minimum recommended setting for mysql's current Innodb Data:
+# http://stackoverflow.com/questions/5174396/innodb-performance-tweaks/5348378#5348378
+
+SELECT CONCAT(ROUND(KBS/POWER(1024,IF(pw<0,0,IF(pw>3,0,pw)))+0.49999),
+SUBSTR(' KMG',IF(pw<0,0,IF(pw>3,0,pw))+1,1)) recommended_innodb_buffer_pool_size
+FROM (SELECT SUM(index_length) KBS FROM information_schema.tables WHERE
+engine='InnoDB') A,(SELECT 3 pw) B;
+
+[mysqld]   # <-- find this section to add the below setting!
+innodb_buffer_pool_size=1G
+
+# http://stackoverflow.com/questions/5696857/how-to-change-value-for-innodb-buffer-pool-size-in-mysql-on-mac-os
+# http://dev.mysql.com/doc/refman/5.5/en/innodb-parameters.html#sysvar_innodb_buffer_pool_instances
+
+To check setting on MYSQL command line:
+---------------------------------------
+mysql> SHOW variables;
+
+
+
+### elligue.com ########################################### 20150816 ###
+###### Now also in ./dtr4/dtr4/.htaccess use <Files wsgi.py></Files> to 
+###### block IPs only for the wsgi.py file. Let's see if that works.
+
+ServerAlias elligue.com
+DocumentRoot /var/www/vhosts/elligue.com/httpdocs
+ServerAdmin dealguien+elligue.admin@gmail.com
+
+WSGIDaemonProcess elligue4 python-path=/opt/elligue/dtr4:/opt/elligue/venv/dtr4/lib/python2.7/site-packages
+WSGIProcessGroup elligue4
+
+Alias /robots.txt /opt/elligue/www/robots.txt
+Alias /favicon.ico /opt/elligue/www/favicon.ico
+Alias /favicon.png /opt/elligue/www/favicon.png
+Alias /google01852a34070a364b.html /opt/elligue/www/google01852a34070a364b.html
+Alias /MJ12_F66E2694E95DB57A462E367D5F69090B.txt /opt/elligue/www/MJ12_F66E2694E95DB57A462E367D5F69090B.txt
+
+Alias /static/ /opt/elligue/dtr4/static_files/
+Alias /pics/ /var/elligue/userpics/
+AliasMatch ^/app/ /opt/elligue/dtr4/static_files/index.html
+WSGIScriptAlias / /opt/elligue/dtr4/dtr4/wsgi.py process-group=elligue4
+
+<Directory /opt/elligue/dtr4/static_files>
+  Order allow,deny
+  Allow from all
+  Options -Indexes
+  AllowOverride All
+</Directory>
+
+<Directory /opt/elligue/dtr4/dtr4>
+  Options -Indexes
+  Order allow,deny
+  Deny from all
+  <Files wsgi.py>
+    Order allow,deny
+    Allow from all
+  </Files>
+  AllowOverride All
+</Directory>
+
+RewriteEngine on
+RewriteCond %{HTTP_HOST} !^www.elligue\.com$ [NC]
+RewriteCond %{HTTP_HOST} !^$
+RewriteRule ^/?(.*)  http://www.elligue.com/$1 [L,R=301]
+
+# Redir old forum
+RewriteRule ^/?f/  /  [L,R=301]
+RewriteRule ^/?forum/  /  [L,R=301]
+RewriteRule ^/?thread/  /  [L,R=301]
+
+# Redir old user profiles
+RewriteRule ^/?u/?$  /accounts/login/ [L,R=301]
+RewriteRule ^/?u/([a-zA-Z0-9_-]+)/?$  /accounts/login/?next=/app/profile/$1 [L,R=301]
+RewriteRule ^/?user/([a-zA-Z0-9_-]+)/?$  /accounts/login/?next=/app/profile/$1 [L,R=301]
+RewriteRule ^/?citymxaaa/otra-ciudad-mexicana.html$  /paises/mexico/ [L,R=301]
+RewriteRule ^/?register\.php$  /accounts/signup/ [L,R=301]
+RewriteRule ^/?login\.php$  /accounts/login/ [L,R=301]
+RewriteRule ^/?search\.php$  /app/search [L,R=301]
+RewriteRule ^/?home\.php$  /accounts/login/ [L,R=301]
+RewriteRule ^/?fotos\.php$  /accounts/signup/ [L,R=301]
+
+
+### elligue.com ########################################### 2015070? ###
 
 ServerAlias elligue.com
 DocumentRoot /opt/elligue/www

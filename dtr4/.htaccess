@@ -1,3 +1,5 @@
+<Files wsgi.py>
+
 order allow,deny
 allow from all
 #
@@ -761,3 +763,5 @@ deny from 41.78.136.0/22
 deny from 41.207.160.0/19
 deny from 80.248.64.0/20
 deny from 197.148.96.0/19
+
+</Files>
