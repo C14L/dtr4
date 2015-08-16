@@ -1,6 +1,10 @@
 
 === URGENT ===================================================================
 
+TALK: Within talk, a click on a @username should open a Talk stream, NOT the user's profile page. Maybe two links, something like """@username [profile]""" with [profile] being a "person's head icon" that links to the profle page.
+
+TALK/PRIVATE MSGS: In private messages, make #hashtags and @username strings auto-linked to talk/hashtag pages.
+
 HTTP500 PROFILE: About texts don't accept non-ascii chars aparently. Test: Type "algún" (with accent) into the "About me" box and submit, receive an error message. Expected: It should be saved and shown in the profile page.
 
 PROFILE: In profile settings controller, check if the "dob" field is well-formated "YYYY-MM-DD" as expected from a HTML5 date field, because some browsers may ignore the date field requirements.
@@ -12,17 +16,17 @@ public messages" or so.
 
 GUI: Show how many people online currently, how many friends online currently, how many matches online.
 
-GUI: Make a "status" page to see how many people are online, how many friends exist, how many matches, how many private messages were written, how many etc.
+GUI: Make a detailed (internal?) "status" page to see how many people are online, how many friends exist, how many matches, how many private messages were written, how many etc.
 
 === FIXME ======================================================================
+
+PICS/TALK: Add pics to Talk by Hashtag #12345 (pic's pk) would display the pic in the Talk comment. On profile, have a link next to each pic to the pic's Talk comment, filtered by its hashtag as ususal for hashtags.
 
 TALK: Make users easily blockable next to their messages. Messages by blocked users are not shown already, but blocking them is still too complicated.
 
 ANGULAR: Check if the current page is in the visible tab of the browser. If it is not, then do not poll for messages / talk / etc. to safe some server time.
 
 TALK: Make "talk" readable for anon user too. All talk pages should be readable for anon user, so that search engines can index the content too. Currently, anon users are redirected to the login page. Example while logged out: http://localhost:8001/app/talk/topic/wondering
-
-HOMEPAGE: For anon users, do not redirect to login page, but show a nice homepage with forms for login and signup, and some text and picture content about the site, both for user and SEO.
 
 FLAGS: (client-side) When authuser confirms a friend request, the profileuser is correctly added to the "friends" list, but is not removed from the "friend invites received" list. The profileuser should be removed from that list, because the request is not open anymore.
 
@@ -70,6 +74,7 @@ TEMPLATES: use github.com/Pasvaz/bindonce to remove unnecessary watchers.
 
 === DONE / WONT ================================================================
 
+DONE HOMEPAGE: For anon users, do not redirect to login page, but show a nice homepage with forms for login and signup, and some text and picture content about the site, both for user and SEO.
 DONE I18N: On login and signup pages, translate one line of text below form.
 DONE CSRF ERROR ON AUTH: When a new user opens / and tries to login, they get a CSRF error because Django was never called and they did not get any cookie. --> Make the / page a Django view, not a static page and serve cookies with it.
 WONT SEARCH: MSIE10/MSIE11 bug doesn't show pics in user boxes (e.g. in search, or user lists), just the boxes with username etc.
