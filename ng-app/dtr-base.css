@@ -57,6 +57,30 @@ a.hashtag {
     color: #3333CC;
     text-decoration: none;
 }
+.username-talk-link { /* Link @username --> "@username + Talkstrem" inline links. */
+  white-space: nowrap;
+}
+.username-talk-link > a.username {
+}
+.username-talk-link > .icon-box {
+}
+.username-talk-link > .icon-box > a.usertalk {
+  transition: 0.2s ease-out;
+  display: inline-block;
+  margin: 0 4px; padding: 6px 7px 6px 5px;
+  border-radius: 50%;
+  font-size: 0.9em;
+  text-decoration: none;
+  color: #F44336;
+}
+.username-talk-link > .icon-box > a.usertalk:hover {
+  transition: 0.2s ease-out;
+  background-color: #F44336;
+  color: #FFFFFF;
+}
+.username-talk-link > .icon-box > a.userprofile {
+  display: none;
+}
 
 /* --- main nav (appbar) ---------------------------------------------------- */
 
@@ -631,5 +655,3 @@ footer a {
  }
 
 /* -------------------------------------------------------------------------- */
-
-

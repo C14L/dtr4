@@ -19,7 +19,7 @@ RE_HASHTAG = [
 
 RE_USERNAME = [
         new RegExp( '(\\\s|^)\\\@(\\\w{2,30})(?=\\\W|$)', 'gi' ),
-        '$1<a class="username" href="/app/people/$2">@$2</a>',
+        '$1<span class="username-talk-link"><a class="username" href="/app/people/$2">@$2</a><span class="icon-box"><a href="/app/talk/people/$2" class="usertalk ti-announcement"></a><a href="/app/people/$2" class="userprofile ti-user"></a></span></span>',
     ];
 RE_HREF_WWW = [ // www.example.com/any/where?da=duh
         new RegExp( '(\\\s|^)(www\.[a-zA-Z0-9-\.]+(?:/\\\w+)?)(\\\s|$)', 'gi' ),

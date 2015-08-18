@@ -38,6 +38,7 @@
     <div class="post-list list box">
       <div style="text-align:center;padding:50px 0;" ng-if="posts.length < 1 && !isLoadingMore" ng-bind="tr('no messages')"></div>
       <div class="loading-spinner" ng-if="statusMsg=='submitting'"><span></span><span></span><span></span></div>
+      
       <div class="item" ng-class="{ hide: post.hidden }" ng-repeat="post in posts track by post.id">
         <a ng-if="!post.block" href="{{URLS.BASE}}profile/{{ post.user.username }}" class="userpic"><img ng-src="{{ post.user.pic_url.small }}"></a>
         <div ng-if="!post.block" class="wrapper">
@@ -63,6 +64,7 @@
           <a href="#" ng-href="{{URLS.BASE}}lists/blocked" ng-bind="tr('blocked')"></a>
         </div>
       </div>
+      
     </div>
     <div class="load-more">
       <button class="load-more ti-download" ng-click="getOlderPosts()" ng-show="!isLoadingMore && posts.length > 8"></button>
