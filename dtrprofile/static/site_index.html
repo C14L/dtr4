@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Encontrar Novio ✫ Conocer Gente ✫ Buscar Pareja ~o EL LIGUE</title>
+        <meta name="description" content="El Ligue es gratis y en Español: conoce gente nueva de tu ciudad y encuentra pareja y amistad en nuestra comunidad de amigos en linea.">
+        <link rel="icon" href="/static/img/icon.png" type="image/png">
+        <script src="/static/utils.js"></script>
+        <script>
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-273063-2', 'elligue.com'); /* DO IN NG__ga('send','pageview') */
+
+        </script>
+        <style>
+
+html, body { margin: 0; padding: 0; }
+body {
+    font-family: Arial, sans-serif;
+    font-size:  1rem;
+    background: #ddd url("/static/img/account-login-bg.jpg") no-repeat center top fixed;
+    background-size: cover;
+}
+input[type='password'], input[type='text'], input[type='email'] {
+    width: 86%;
+    border: 0;
+    border-radius: 3px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    margin: 6px; padding: 5px;
+    font-size: 1rem;
+}
+body > h1 {
+    display: block; 
+    width: 300px; 
+    position: absolute; top: 100px; left: -20px;
+    margin: 0; padding: 0;
+    font-family: sans-serif;
+    font-size: 1.25rem;
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1.5em;
+    color: rgba(255,255,255,0.7); /* #CC3333; */
+    text-shadow: 0 0 5px rgba(255,255,255,0);
+    text-decoration: inherit;
+    text-align: center;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+.sitename{
+    display: block; 
+    position: absolute; top: 0;
+    margin: 16px; padding: 0;
+    font-family: serif;
+    font-size: 2rem;
+    font-weight: bold;
+    font-style: italic;
+    line-height: 1em;
+    color: #CC3333;
+    text-shadow: 0 0 20px rgba(255,255,255,0.8);
+    text-decoration: inherit;
+}
+.signup-section {
+    min-height: 90vh;
+    overflow: hidden;
+}
+.signup-section.above {}
+.signup-section.below {
+    min-height: auto;
+    padding: 64px 0;
+}
+.fb {
+    display: block; height: 37px;
+    background: url('/static/img/fb_200.png') top center no-repeat;
+    margin: 0 -1.5rem; padding: 0.5rem 0;
+    overflow: hidden;
+    border-bottom: 1px solid #999;
+}
+.inset {
+    width: 350px;
+    margin: 40px auto 0 auto; padding: 1.5rem;
+    background: rgba(255,255,255,0.65);
+    box-shadow: 0 0 10px rgba(0,0,0,.7);
+    border-radius: 5px;
+    text-align: center;
+}
+.inset h1 {
+    margin: 0;
+    color: rgba(0,0,0,0.6);
+}
+.inset .header {
+    margin: 1.5rem 0 0.5rem 0;
+}
+.remember-forgot-section {
+    text-align: left;
+    margin: 0.5rem auto;
+}
+.forgot {
+    display: block;
+    margin: 1rem 0 1.5rem 0;
+}
+.signup {
+    padding-bottom: 1rem;
+}
+.footnote {
+    margin: 0 -1.5rem; padding: 1.5rem 0 0 0;
+    overflow: hidden;
+    border-top: 1px solid #999;
+    font-style: italic;
+    line-height: 1.5rem;
+}
+.footnote a {
+    font-weight: bold;
+}
+.btn {
+    color: #fff; font-size: 1rem;
+    background-color: #c00;
+    border: 0; border-radius: 3px;
+    margin-top: .5rem;
+    padding: 0.5rem 2rem;
+    transition: 0.3s;
+}
+.btn:hover, .btn.active {
+    transition: 0.1s;
+    box-shadow: 0 2px 3px rgba(0,0,0,.7);
+    cursor: pointer;
+}
+ul.errorlist {
+    margin: 0; padding: 0;
+}
+ul.errorlist li {
+    display: inline;
+    color: red;
+}
+footer {
+    display: block; 
+    margin: 20px 0 0 0; padding: 10px 20px;
+    background-color: rgba(255,255,255,0.2);
+    color: rgba(0,0,0,0.6);
+    font-size: 0.9rem;
+}
+footer section {
+    margin: 10px 0;
+}
+footer section a {
+    text-decoration: inherit; color: inherit;
+}
+
+main {
+    background-color: #C62828;
+    color: #FFFFFF;
+    padding: 16px 8px;
+}
+main > section {
+    width: 600px;
+    margin: 16px auto; padding: 0;
+    font-size: 1.25rem;
+    line-height: 1.5em;
+}
+main > section > h1 {
+    text-align: center;
+}
+main > section a {
+    text-decoration: inherit;
+    color: inherit;
+}
+main > section a:hover {
+    text-decoration: underline;
+}
+.sec1 {}
+.sec2 {}
+.sec3 {
+    width: 700px;
+    margin: 16px auto; padding: 0;
+}
+ul.citylinks {
+    list-style: none; margin: 0; padding: 0;
+    -webkit-column-count: 3;
+    -moz-column-count: 3;
+    -ms-column-count: 3;
+    -o-column-count: 3;
+    column-count: 3;
+}
+ul.citylinks > li {
+    list-style: none; margin: 0; padding: 0;
+}
+ul.citylinks > li > a {
+    display: block;
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin: 0.75em 0; padding: 0;
+}
+ul.citylinks > li > ul {
+    list-style: none; margin: 0; padding: 0;
+}
+ul.citylinks > li > ul > li {
+    list-style: none; margin: 0; padding: 0;
+}
+
+        </style>
+    </head>
+    <body>
+        <h1>Encontrar amigos y amor, chatear y conocer gente nueva</h1>
+        <a class="sitename" href="/" title="Encontrar Amigas y Amigos, Chatear y Conocer Gente">El Ligue</a>
+        <div class="signup-section above">
+            <div class="inset">
+                <!-- <a class="fb" href="/accounts/facebook/login/"></a>
+                <div class="header">Or sign in directly</div> -->
+                <form class="login" method="POST" action="/accounts/login/">
+                    <input type='hidden' name='csrfmiddlewaretoken' value=''>
+                    <input id="id_login" class="login-input" maxlength="30" name="login" placeholder="Username" type="text" />
+                    <br>
+                    <input id="id_password"  class="login-input" name="password" placeholder="Password" type="password" />
+                    <br>
+                    <div class="remember-forgot-section">
+                        <input id="id_remember" name="remember" type="checkbox" />
+                        <label for="id_remember">Recordarme</label>
+                    </div>
+                    <button class="btn" type="submit">Iniciar sesión</button>
+                    <a class="forgot" href="/accounts/password/reset/">¿Olvidó su contraseña?</a>
+                </form>
+                <div class="footnote">
+                    <!-- Don't have an account? Login with Facebook above or 
+                    <a href="/accounts/signup/">Sign Up</a> -->
+                    Don't have an account? <a href="/accounts/signup/">Sign Up</a> and join us!
+                </div>
+            </div>
+        </div>
+        <main id="main">
+            <section class="sec1">
+                <p><strong>El Ligue es siempre gratis y todo en Español:</strong> conoce gente nueva de tu ciudad, y encuentra pareja y amistad en nuestra comunidad de amigos en linea. Es sencillo y rápido tener tu propio perfil con fotos en El Ligue. Conoce gente de <a href="/paises/estados-unidos/">Estados Unidos</a>, <a href="/paises/espana/">España</a>, <a href="/paises/mexico/">México</a>, y de toda América Latina.</p>
+                <p><strong>Encontrar novio de forma segura y entretenida:</strong> no necesitas dar tu direccion de correo electrónico ni otros datos personales. Puedes tener tu perfil para buscar pareja y platicar con gente de manera totalmente anónima y segura.</p>
+            </section>
+            <section class="sec2">
+                <h1>Conocer gente y hacer amigos nuevos</h1>
+
+                <p>El Ligue empezó hace mas de 10 años como un portal gratuito de <strong>anuncios personales</strong>, para <strong>encontrar amigos</strong> y <strong>buscar pareja</strong>.</p>
+
+                <p>También hoy, El Ligue sigue siendo completamente gratis. Pero ya es mucho mas que un portal de anuncios personales en <a href="/paises/mexico/puebla/puebla-de-zaragoza/">Puebla</a>, <a href="/paises/mexico/veracruz-llave/veracruz/">Veracruz</a>, <a href="/paises/mexico/veracruz-llave/xalapa/">Xalapa</a>, y <a href="/paises/mexico/queretaro-de-arteaga/santiago-de-queretaro/">Querétaro</a> en México.</p>
+                
+                <p>En el Ligue puedes <strong>encontrar amigos nuevos</strong> -- no sólo en México. Encuentra amigos en <a href="/paises/estados-unidos/">Estados Unidos</a>, en <a href="/paises/canada/">Canada</a> y toda América Latina.</p>
+                
+                <p>Somos una red social para encontrar tu "media naranja", de manera segura y anónima: no necesitar dar tus datos personales como nombre ni dirección de correo electrónico. Es seguro, ya que puedes bloquear usuarios abusivos facilmente.</p>
+                
+                <p>Puedes <strong>encontrar pareja gratis</strong>, escribir mensajes públicos y privados, <strong>chatear con gente</strong> y conocer amigos nuevos en tu misma ciudad.</p>
+            </section>
+            <section class="sec3">
+                <h1>Encontrar gente en tu ciudad</h1>
+                <ul class="citylinks">
+                    <li><a href="/paises/canada/">Canadá</a>
+                        <ul>
+                            <li><a href="/paises/canada/ontario/ottawa/">Ottawa, Canadá</a></li>
+                            <li><a href="/paises/canada/ontario/toronto">Toronto, Canadá</a></li>
+                            <li><a href="/paises/canada/ontario/hamilton">Hamilton, Canadá</a></li>
+                            <li><a href="/paises/canada/quebec/montreal">Montreal, Canadá</a></li>
+                            <li><a href="/paises/canada/nueva-escocia/halifax">Halifax, Canadá</a></li>
+                            <li><a href="/paises/canada/manitoba/winnipeg">Winnipeg, Canadá</a></li>
+                            <li><a href="/paises/canada/columbia-britanica/vancouver">Vancouver, Canadá</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/paises/estados-unidos/">Estados Unidos</a>
+                        <ul>
+                            <li><a href="/paises/estados-unidos/texas/san-antonio/">San Antonio, Texas</a></li>
+                            <li><a href="/paises/estados-unidos/texas/houston/">Houston, Texas</a></li>
+                            <li><a href="/paises/estados-unidos/texas/laredo/">Laredo, Texas</a></li>
+                            <li><a href="/paises/estados-unidos/texas/san-antonio/">San Antonio, Texas</a></li>
+                            <li><a href="/paises/estados-unidos/nueva-york/">Ciudad de Nueva York</a></li>
+                            <li><a href="/paises/estados-unidos/florida/tampa/">Tampa, Florida</a></li>
+                            <li><a href="/paises/estados-unidos/florida/miami">Miami, Florida</a></li>
+                            <!-- <li><a href="/paises/estados-unidos/"></a></li> -->
+                            <li><a href="/paises/estados-unidos/california/san-diego/">San Diego, Calif.</a></li>
+                            <li><a href="/paises/estados-unidos/california/san-francisco/">San Francisco</a></li>
+                            <li><a href="/paises/estados-unidos/california/fresno/">Fresno, California</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/paises/mexico/">México</a>
+                        <ul>
+                            <li><a href="/paises/mexico/nuevo-leon/monterrey/">Monterrey, México</a></li>
+                            <li><a href="/paises/mexico/tamaulipas/reynosa/">Reynosa, Tamaulipas</a></li>
+                            <li><a href="/paises/mexico/baja-california/tijuana/">Tijuana, México</a></li>
+                            <li><a href="/paises/mexico/baja-california/mexicali/">Mexicali, México</a></li>
+                            <li><a href="/paises/mexico/baja-california/ensenada/">Ensenada, México</a></li>
+                            <li><a href="/paises/mexico/san-luis-potosi/san-luis-potosi/">San Luis Potosí</a></li>
+                            <li><a href="/paises/mexico/mexico/toluca-de-lerdo/">Toluca, EdoMéx</a></li>
+                            <li><a href="/paises/mexico/puebla/puebla-de-zaragoza/">Puebla, México</a></li>
+                            <li><a href="/paises/mexico/oaxaca/oaxaca-de-juarez/">Oaxaca, México</a></li>
+                            <li><a href="/paises/mexico/yucatan/merida/">Mérida, Yucatán</a></li>
+                            <li><a href="/paises/mexico/chiapas/tuxtla-gtz/">Tuxtla Gutiérrez, Chiapas</a></li>
+                            <li><a href="/paises/mexico/veracruz-llave/xalapa/">Xalapa, Veracruz</a></li>
+                            <li><a href="/paises/mexico/jalisco/guadalajara/">Guadalajara, Jalisco</a></li>
+                            <li><a href="/paises/mexico/distrito-federal/ciudad-de-mexico/">Ciudad de México</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">Latino América</a>
+                        <ul>
+                            <li><a href="/paises/argentina/buenos-aires/">Buenos Aires, Argentina</a></li>
+                            <li><a href="/paises/bolivia/la-paz/san-pedro/">La Paz, Bolivia</a></li>
+                            <li><a href="/paises/brasil/sao-paulo/sao-paulo/">São Paulo, Brasil</a></li>
+                            <li><a href="/paises/brasil/rio-de-janeiro/rio-de-janeiro/">Río de Janeiro, Brasil</a></li>
+                            <li><a href="/paises/brasil/amazonas/manaos/">Manaos, Brasil</a></li>
+                            <li><a href="/paises/brasil/ceara/fortaleza/">Fortaleza, Ceará, Brasil</a></li>
+                            <li><a href="/paises/chile/antofagasta/antofagasta/">Antofagasta, Chile</a></li>
+                            <li><a href="/paises/chile/metropolitana/santiago-de-chile/">Santiago, Chile</a></li>
+                            <li><a href="/paises/colombia/bogota-de/bogota/">Bogotá, Colombia</a></li>
+                            <li><a href="/paises/costa-rica/san-jose/san-jose/">San José, Costa Rica</a></li>
+                            <li><a href="/paises/ecuador/pichincha/quito/">Quito, Ecuador</a></li>
+                            <li><a href="/paises/paraguay/asuncion/asuncion/">Asunción, Paraguay</a></li>
+                            <li><a href="/paises/peru/lima/lima/">Lima, Perú</a></li>
+                            <li><a href="/paises/uruguay/montevideo/montevideo/">Montevideo, Uruguay</a></li>
+                            <li><a href="/paises/venezuela/distrito-federal/caracas/">Caracas, Venezuela</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+        </main>
+
+        <div class="signup-section below">
+            <div class="inset">
+                <!-- <a class="fb" href="/accounts/facebook/login/"></a>
+                <div class="header">Or sign in directly</div> -->
+                <form class="login" method="POST" action="/accounts/login/">
+                    <input type='hidden' name='csrfmiddlewaretoken' value=''>
+                    <input id="id_login" class="login-input" maxlength="30" name="login" placeholder="Username" type="text" />
+                    <br>
+                    <input id="id_password"  class="login-input" name="password" placeholder="Password" type="password" />
+                    <br>
+                    <div class="remember-forgot-section">
+                        <input id="id_remember" name="remember" type="checkbox" />
+                        <label for="id_remember">Recordarme</label>
+                    </div>
+                    <button class="btn" type="submit">Iniciar sesión</button>
+                    <a class="forgot" href="/accounts/password/reset/">¿Olvidó su contraseña?</a>
+                </form>
+                <div class="footnote">
+                    <!-- Don't have an account? Login with Facebook above or 
+                    <a href="/accounts/signup/">Sign Up</a> -->
+                    Don't have an account? <a href="/accounts/signup/">Sign Up</a> and join us!
+                </div>
+            </div>
+        </div>
+
+        <footer id="footer">
+            <section class="cols col-1">
+                <a href="/browse.php">Browse</a> |
+                <a href="/mujeres-buscando-hombres.php">Find women looking for men</a> |
+                <a href="/hombres-buscando-mujeres.php">Find men looking for women</a> |
+                <a href="/fotos-mujeres.php">Photos of women</a> |
+                <a href="/fotos-hombres.php">Photos of men</a> |
+                <a href="/gente-por-pais.php">Encontrar amigos</a> |
+                <a href="/citymxmdf/mexico-d-f.html">Amigos en Mexico DF</a>
+            </section>
+            <section class="cols col-2">
+                <span><a href="/browse.php?begin=a">A</a> &middot; <a href="/browse.php?begin=b">B</a> &middot; <a href="/browse.php?begin=c">C</a> &middot; <a href="/browse.php?begin=d">D</a> &middot; <a href="/browse.php?begin=e">E</a> &middot; <a href="/browse.php?begin=f">F</a> &middot; <a href="/browse.php?begin=g">G</a> &middot; <a href="/browse.php?begin=h">H</a> &middot; <a href="/browse.php?begin=i">I</a> &middot; <a href="/browse.php?begin=j">J</a> &middot; <a href="/browse.php?begin=k">K</a> &middot; <a href="/browse.php?begin=l">L</a> &middot; <a href="/browse.php?begin=m">M</a> &middot; <a href="/browse.php?begin=n">N</a> &middot; <a href="/browse.php?begin=o">O</a> &middot; <a href="/browse.php?begin=p">P</a> &middot; <a href="/browse.php?begin=q">Q</a> &middot; <a href="/browse.php?begin=r">R</a> &middot; <a href="/browse.php?begin=s">S</a> &middot; <a href="/browse.php?begin=t">T</a> &middot; <a href="/browse.php?begin=u">U</a> &middot; <a href="/browse.php?begin=v">V</a> &middot; <a href="/browse.php?begin=w">W</a> &middot; <a href="/browse.php?begin=x">X</a> &middot; <a href="/browse.php?begin=y">Y</a> &middot; <a href="/browse.php?begin=z">Z</a> &middot; <a href="/browse.php?begin=_">_</a> &middot; </span>
+            </section>
+            <section class="cols col-3">
+                &copy;2015 | 
+                <a rel="nofollow" href="http://C14L.com/impressum.html">Imprint</a> |
+                <a rel="nofollow" href="/static/tos.es.html">Terms of Service</a> |
+                <a rel="nofollow" href="/static/privacy.es.html">Data Privacy</a>
+            </section>
+        </footer>
+    </body>
+    <script>
+(function(){var c=get_cookie('csrftoken'),els=document.querySelectorAll("input[name=csrfmiddlewaretoken]");for(var i=0;i<els.length;i++){els[i].value=get_cookie('csrftoken')}})();
+
+/* hackadihack: make overflow menues close on click anywhere. */
+(function(){document.getElementsByTagName('body')[0].addEventListener('click',function(ev){
+var els=document.querySelectorAll('nav.overflow input[type="checkbox"]');
+for(var i=0;i<els.length;i++) if(els[i]!=ev.target && els[i].checked) els[i].checked=false;});})();
+
+    </script>
+    <!-- Buffer some stuff -->
+    <link href="/static/themify-icons/themify-icons.css" type="text/css" rel="stylesheet">
+    <link href="/static/libs/picviewer.css" type="text/css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-resource.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="/static/libs/angular-upload.min.js"></script>
+    <script src="/static/libs/angular-bindonce.min.js"></script>
+    <script src="/static/libs/markdownjs.min.js"></script>
+    <script src="/static/libs/picviewer.js"></script>
+    <script src="/static/textfilter.js"></script>
+    <script src="/static/dtr-services.js"></script>
+    <script src="/static/dtr-controllers.js"></script>
+    <script src="/static/dtr-filters.js"></script>
+    <script src="/static/dtr-directives.js"></script>
+</html>

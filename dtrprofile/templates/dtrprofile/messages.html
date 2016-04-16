@@ -1,0 +1,64 @@
+{% extends "dtrprofile/base.html" %}
+
+{% block title %}Your Lists{% endblock %}
+
+{% block head %}
+
+<link href="/static/messages.css" rel="stylesheet" type="text/css">
+<script>
+
+var TR_MARK_AS_READ = "mark as read";
+var TR_MARK_AS_UNREAD = "mark as unread";
+
+login_required();
+
+$(document).ready(function(){
+    $.get('/api/v1/msgs-unread.json', {}, function(data){
+        render_messages('#messages-list', data);
+        update_time_deltas();
+    });
+});
+
+function render_messages(sel, data){
+    var html = ''
+    ,   mark_read_btn = '<span class="mark-read">' + TR_MARK_AS_READ + '</span>'
+    ,   mark_unread_btn = '<span class="mark-unread">' + TR_MARK_AS_UNREAD + '</span>';
+
+    data.forEach(function(row, i){
+        var read_unread_class = row['is_read'] == "1" ? 'is-read' : 'is-unread';
+        var pic = get_pic_url(row['from']['pic'], 'small');
+        var url = get_profile_url(row['from']['username']);
+        var gender = window.gender_symbols[row['from']['gender']];
+
+        html += '' +
+          '<a class="item ' + read_unread_class + '" href="' + url + '">' +
+          '<div class="userpic"><img src="' + pic + '"></div>' + 
+          '<div class="timestamp" data-timestamp="' + row['created'] + '"></div>' +
+          '<div class="username">' + row['from']['username'] + '</div>' +
+          '<div class="asl">' +
+          '<span class="age">' + row['from']['age'] + '</span>' +
+          '<span class="sex">' + gender + '</span>' +
+          '<span class="city">' + row['from']['crc'] + '</span>' +
+          '</div>' +
+          '<div class="text">' + row['text'] + '</div>' + 
+          mark_read_btn + mark_unread_btn + '</a>';
+    });
+    $(sel).html(html);
+}
+    </script>
+
+{% endblock %}
+
+{% block main %}
+
+<div class="messages content-wrapper">
+  <div class="list-opts" id="list-opts">
+    <a href="#unread" class="nav-link unread">unread</a>
+    <a href="#inbox" class="nav-link inbox">inbox</a>
+    <a href="#outbox" class="nav-link outbox">outbox</a>
+  </div>
+  <div class="messages list" id="messages-list"></div>
+</div>
+
+{% endblock %}
+

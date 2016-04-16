@@ -1,5 +1,7 @@
 # More in: ~/dev/global-settings/.gitignore
 
+app/
+api/
 www/
 ng-app/libs/
 static_files/

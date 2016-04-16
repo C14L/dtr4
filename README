@@ -2,6 +2,8 @@
 Setup dev on local box
 ======================
 
+sudo apt-get install python-dev # needed to compile Pillow
+
 ## Create virtual environment:
 $ mkdir /opt/elligue/venv/dtr4
 $ virtualenv --python=python3.2 /opt/elligue/venv/dtr4
