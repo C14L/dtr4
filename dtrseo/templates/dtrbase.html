@@ -44,6 +44,13 @@ section.card { margin: 0 auto; padding: 20px; }
 .userlist .item .header .about .crc {  }
 .userlist .item .header .westernzodiac { color: #999999; float: right; font-size: 0.85rem; }
 
+.ad003 { display: none; }
+.ad-medley-amigos { padding: 10px; text-align: center; /* box-shadow: inset 0 100px 80px -40px rgba(244,67,54,1); */ }
+@media(min-width: 1100px){
+    .ad003 { display: block; position: fixed; right: 0; bottom: 0; }
+}
+
+
         </style>
         {% block head %}{% endblock %}
     </head>
@@ -56,7 +63,18 @@ section.card { margin: 0 auto; padding: 20px; }
             </nav>
         </header>
         <main id="main">
+            <div class="ad001 ad-medley-amigos ad-atf">
+<a href=http://www.amigos.com/go/g1024432-pct?lang=spanish target="_blank"><img src="http://graphics.pop6.com/banners/amigos/spanish/24783_728x90.jpg" width="728" height="90" border="0"></a>
+            </div>
+
             {% block main %}{% endblock %}
+
+            <div class="ad002 ad-medley-amigos ad-btf">
+<A HREF=http://amigos.com/go/g1024432-pct target=_top><img src="http://ads.amigos.com/banners/ffe/carlota/ffe_600x400_9534.jpg" WIDTH=600 HEIGHT=400 BORDER=0></A>
+            </div>
+            <div class="ad003 ad-medley-amigos ad-atf">
+<A href=http://amigos.com/go/g1024432-pct target="_blank"><img src=http://ads.amigos.com/banners/ffe/amir/amigos_120x600_02.jpg WIDTH=120 HEIGHT=600 BORDER=0></A>
+            </div>
         </main>
         <footer id="footer">
             <section class="cols col-1">
