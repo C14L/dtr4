@@ -1,5 +1,5 @@
 # More in: ~/dev/global-settings/.gitignore
-
+___*/
 app/
 api/
 www/
