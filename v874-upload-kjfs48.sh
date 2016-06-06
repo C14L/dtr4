@@ -6,6 +6,16 @@ DST="cst@89.110.147.123:/var/www/www.elligue.com/"
 echo "${SRC} >>> ${DST}"
 read -rsp "Press [ENTER] to start..."
 
-#chmod -R 755 ${SRC}
+echo "collecting static files..."
+${SRC}/manage.py collectstatic --noinput
 
-rsync -rtvP --delete --exclude=app/ --exclude=*.pyc --exclude=*/__pycache__ ${SRC} ${DST}
+echo "fixing any chmod problems..."
+find ${SRC} -type d -print0 | xargs -0 chmod 755
+find ${SRC} -type f -print0 | xargs -0 chmod 644
+chmod -R 755 ${SRC}/manage.py
+chmod -R 755 ${SRC}/v600-*.sh
+chmod -R 755 ${SRC}/v874-*.sh
+
+read -rsp "Press [ENTER] to start..."
+
+rsync -rLtvP --delete-after --exclude=db.sqlite3 --exclude=___* --exclude=app/ --exclude=*.pyc --exclude=*/__pycache__ ${SRC} ${DST}
