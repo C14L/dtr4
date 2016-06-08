@@ -176,14 +176,22 @@ if not PRODUCTION:
 
 # Email config
 EMAIL_SUBJECT_PREFIX = 'El Ligue: '  # For system emails to ADMINS+MANAGERS.
-SERVER_EMAIL = 'El Ligue <elligue@yaix.de>'  # For system emails to ADMINS+MANAGERS.
-DEFAULT_FROM_EMAIL = SERVER_EMAIL  # 'El Ligue <noreply@elligue.com>' # For emails to users.
+SERVER_EMAIL = settings_private.SERVER_EMAIL
+DEFAULT_FROM_EMAIL = SERVER_EMAIL  # For emails to users.
 
-# EMAIL_HOST_USER = ''
-# EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST = settings_private.EMAIL_HOST
+EMAIL_HOST_USER = settings_private.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = settings_private.EMAIL_HOST_PASSWORD
+
+EMAIL_PORT = 25  # 587
+EMAIL_USE_TLS = True
+# EMAIL_USE_TLS = None
+# EMAIL_USE_SSL = None
+# EMAIL_SSL_KEYFILE
+# EMAIL_SSL_CERTFILE
 
 if PRODUCTION:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # default
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # default
 else:
     # Log to console on dev
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
