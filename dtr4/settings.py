@@ -175,11 +175,13 @@ if not PRODUCTION:
     STATICFILES_DIRS = ( os.path.join(BASE_DIR, "ng-app"), )
 
 # Email config
-EMAIL_SUBJECT_PREFIX = 'El Ligue: ' # For system emails to ADMINS+MANAGERS.
-SERVER_EMAIL = 'server@elligue.com' # For system emails to ADMINS+MANAGERS.
-DEFAULT_FROM_EMAIL = 'El Ligue <noreply@elligue.com>' # For emails to users.
+EMAIL_SUBJECT_PREFIX = 'El Ligue: '  # For system emails to ADMINS+MANAGERS.
+SERVER_EMAIL = 'El Ligue <elligue@yaix.de>'  # For system emails to ADMINS+MANAGERS.
+DEFAULT_FROM_EMAIL = SERVER_EMAIL  # 'El Ligue <noreply@elligue.com>' # For emails to users.
+
 # EMAIL_HOST_USER = ''
 # EMAIL_HOST_PASSWORD = ''
+
 if PRODUCTION:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # default
 else:
@@ -194,7 +196,7 @@ else:
 # }
 
 # Session config
-#SESSION_COOKIE_DOMAIN = 'elligue.com'  TODO: re-activate!
+SESSION_COOKIE_DOMAIN = 'elligue.com'
 SESSION_COOKIE_AGE = 60*60*24*30*12 # 1 year
 # SESSION_COOKIE_NAME = 'sessionid' # default
 # SESSION_COOKIE_PATH = '/' # default
@@ -239,7 +241,7 @@ DTR_TALK_PAGE_SIZE = 10
 
 # User uploaded picture files
 if PRODUCTION:
-    MEDIA_ROOT = '/var/elligue/userpics'
+    MEDIA_ROOT = '/var/www/www.elligue.com/userpics'
     MEDIA_URL = '/pics/'
     # 'http://userpics.elligue.com/' # TODO: make it a subdomain!
 else:
@@ -273,6 +275,3 @@ REST_FRAMEWORK = {
     'PAGINATE_BY_PARAM': 'page_size',
     'MAX_PAGINATE_BY': 100,
 }
-
-# Import secret settings.
-from .settings_private import *
