@@ -19,3 +19,15 @@ chmod -R 755 ${SRC}/v874-*.sh
 read -rsp "Press [ENTER] to start..."
 
 rsync -rLtvP --delete-after --exclude=db.sqlite3 --exclude=___* --exclude=app/ --exclude=*.pyc --exclude=*/__pycache__ ${SRC} ${DST}
+
+echo 
+echo "***************************************************"
+echo "**                                               **"
+echo "**     !! Now restart "dtr4" on the server!!     **"
+echo "**                                               **"
+echo "**                                               **"
+echo "** root@server:~# supervisorctl restart redddate **"
+echo "**                                               **"
+echo "***************************************************"
+echo
+
