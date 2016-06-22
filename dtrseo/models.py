@@ -2,8 +2,8 @@
 from __future__ import (unicode_literals, absolute_import, division,
                         print_function)
 
-from django.conf import settings
 from django.db import models
+
 
 IMPORT_BOARDS_NEWBS = (
         ('l', 'El Ligue'),
@@ -26,6 +26,7 @@ IMPORT_BOARDS_NEWBS = (
         ('t', 'Erotico'),
         ('u', 'dEbRaYeS lOcOs'),
         ('z', 'Moderadores'), )
+
 
 class OldThread(models.Model):
     # ID is the same as the pk in "dtrforum.models.Post".

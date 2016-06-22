@@ -5,17 +5,16 @@ from __future__ import (unicode_literals, absolute_import, division,
 import json
 
 from django.conf import settings
+from django.http import HttpResponse, Http404
 from django.http import HttpResponseBadRequest          # 400
-from django.http import HttpResponseNotFound            # 404
-from django.http import HttpResponseNotAllowed          # 405 eg ['GET','POST']
-from django.http import QueryDict, HttpResponse, Http404
-from django.shortcuts import render_to_response, get_object_or_404
-from django.shortcuts import render
-from django.views.decorators.http import require_http_methods
+from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
+from django.views.decorators.http import require_http_methods
 
-from dtrcity.models import Country, Region, City, AltName
+from dtrcity.models import Country, City, AltName
 
+
+# noinspection PyUnusedLocal
 @require_http_methods(["GET"])
 def all_countries(request):
     lang = get_language()[:2]
@@ -25,19 +24,18 @@ def all_countries(request):
     li = [(x.geoname_id, x.name) for x in an]
     return HttpResponse(json.dumps(li), content_type="application/json")
 
+
 @require_http_methods(["GET"])
 def cities_in_country(request):
     """Returns a list of (geoname_id, crc) pairs."""
     # The client may request only cities larger than GET "population".
     population = int(request.GET.get('population', 5000))
-    # Use only the first two chars of user' language selection.
-    language = get_language()[:2]
     # Max item count to be returned.
     size = int(request.GET.get('size', 10000))
     # Find the Country object GET "q"
     try:
         country = get_object_or_404(Country, pk=request.GET.get('q', None))
-    except ValueError as e: # not an int
+    except ValueError:  # not an int
         raise Http404('No Country matches the given query.')
     # Find all City objects in the country of the required size.
     cities = City.objects.filter(country=country, population__gt=population)
@@ -46,6 +44,7 @@ def cities_in_country(request):
                                   language=get_language()[:2]).order_by('crc')
     li = [(x.geoname_id, x.crc) for x in data[:size]]
     return HttpResponse(json.dumps(li), content_type="application/json")
+
 
 def city_by_latlng(request):
     """The client sends values from the HTML5 geolocation API: accuracy,
@@ -58,10 +57,11 @@ def city_by_latlng(request):
     except TypeError:
         return HttpResponseBadRequest()
     city = City.by_latlng(lat, lng)
-    data = { "id": city.pk, "lat": city.lat, "lng": city.lng,
-             "population": city.population, "country": city.country.pk,
-             "crc": city.get_crc(), }
+    data = {"id": city.pk, "lat": city.lat, "lng": city.lng,
+            "population": city.population, "country": city.country.pk,
+            "crc": city.get_crc(), }
     return HttpResponse(json.dumps(data), content_type="application/json")
+
 
 @require_http_methods(["GET", "HEAD"])
 def city_autocomplete_crc(request):
@@ -75,8 +75,9 @@ def city_autocomplete_crc(request):
     Only crc values of type=3 (city) and in the user's selected language
     are returned.
     """
-    CITY_AUTOCOMPELTE_MIN_LEN = getattr(settings,
-                                        'CITY_AUTOCOMPELTE_MIN_LEN', 4)
+    # noinspection PyPep8Naming
+    CITY_AUTOCOMPELTE_MIN_LEN = getattr(
+        settings, 'CITY_AUTOCOMPELTE_MIN_LEN', 4)
     lg = get_language()[:2]
     q = request.GET.get('q', '')
     size = int(request.GET.get('size', 20))
@@ -89,7 +90,7 @@ def city_autocomplete_crc(request):
     # contain q.
     if len(li) < size:
         rsize = size - len(li)
-        an = AltName.objects.filter(crc__icontains=q, language=lg,
-                                    type=3).exclude(crc__istartswith=q)
+        an = AltName.objects.filter(
+            crc__icontains=q, language=lg, type=3).exclude(crc__istartswith=q)
         li += [x['crc'] for x in an.order_by('crc')[:rsize].values('crc')]
     return HttpResponse(json.dumps(li), content_type="application/json")
