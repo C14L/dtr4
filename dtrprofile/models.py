@@ -396,6 +396,10 @@ class UserProfile(models.Model):
     eastern_zodiac = models.SmallIntegerField(
         editable=False, default=0, choices=single_choices.EASTERN_ZODIAC_CHOICE)
 
+    class Meta:
+        index_together = [['user', 'city', 'dob', 'gender', 'pic'],
+                          ['city', 'dob', 'gender'], ]
+
     def __str__(self):
         s = "UserProfile for {0} (#{1})"
         return s.format(self.user.id, self.user.username)
