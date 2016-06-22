@@ -1,18 +1,14 @@
-
 from django import forms
-from django.utils.translation import ugettext_lazy as _
 
 from dtrprofile.models import UserProfile
-import dtr4.settings_single_choices as single_choices
 
 
 class UserEditProfileForm(forms.ModelForm):
     # Some user profile basics like PASL, height, weight
     class Meta:
         model = UserProfile
-        fields = ( 'dob', 'gender', 'country', 'city', )
-        widgets = { 'dob': forms.DateInput(), 
-                    'gender': forms.RadioSelect(), }
+        fields = ('dob', 'gender', 'country', 'city', )
+        widgets = {'dob': forms.DateInput(), 'gender': forms.RadioSelect(), }
 
 
 class UserEditPicsForm(forms.Form):
@@ -33,7 +29,8 @@ class UserEditDetailsForm(forms.ModelForm):
                   'religion', 'religiosity', 'spirituality',
                   'education', 'jobfield', 'income', )
         widgets = {}
-        for f in fields: widgets[f] = forms.RadioSelect()
+        for f in fields:
+            widgets[f] = forms.RadioSelect()
 
 
 class UserEditAbouMeForm(forms.ModelForm):
@@ -41,18 +38,21 @@ class UserEditAbouMeForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('aboutme', )
-        widgets = { }
+        widgets = {}
+
 
 class UserEditSettingsForm(forms.ModelForm):
-    # Items with settings data like current language, receive email notifications, etc.
+    # Items with settings data like current language, receive email
+    # notifications, etc.
     class Meta:
         model = UserProfile
         fields = ('weight', ) 
         widgets = {}
+
 
 class UserEditDesignForm(forms.ModelForm):
     # CSS style for user profile.
     class Meta:
         model = UserProfile
         fields = ('style_active', 'style', )
-        widgets = { }
+        widgets = {}

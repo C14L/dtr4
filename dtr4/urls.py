@@ -23,16 +23,19 @@ from django.conf.urls import include, url, i18n
 from django.contrib import admin
 from django.contrib.auth.views import logout as logout_view
 from django.http import HttpResponse
-from rest_framework.urlpatterns import format_suffix_patterns
 
 from dtrcity import views as city_views
 from dtrprofile import views as profile_views
 from dtrseo import views as seo_views
 
+
 # Serve the ng-app files during dev
+# noinspection PyUnusedLocal
 def app_base_view(request):
     fname = os.path.join(settings.BASE_DIR, 'ng-app/index.html')
-    with open(fname, 'r') as fh: return HttpResponse(fh.read())
+    with open(fname, 'r') as fh:
+        return HttpResponse(fh.read())
+
 
 # Define routes
 urlpatterns = [
@@ -42,17 +45,19 @@ urlpatterns = [
     # Django's for admin and to change user language
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include(i18n)),
+
     # First remove extra do-you-really-want-to-log-out step upon logging
     # out, then include all-auth URLs.
-    url(r'^accounts/logout/$', logout_view, { 'next_page':
-                                              settings.LOGOUT_REDIRECT_URL }),
+    url(r'^accounts/logout/$', logout_view,
+        {'next_page': settings.LOGOUT_REDIRECT_URL}),
     url(r'^accounts/', include('allauth.urls')),
+
     # Homepage, that redirects either to login age or to ng app.
     url(r'^$', profile_views.homepage, name='home'),
     # Serve the app. In production, this is done by nginx.
     url(r'^app/', app_base_view),
 
-    ### JSON API endpoints
+    # JSON API endpoints
 
     # Pictures
 
@@ -65,7 +70,8 @@ urlpatterns = [
     url(r'^api/v1/lists/(?P<listname>[a-zA-Z0-9_-]{2,50}).json$',
         profile_views.profile_flag_list),
     # POST or DELETE a flag on a user.
-    url(r'^api/v1/flag/(?P<flag_name>\w{1,20})/(?P<username>[a-zA-Z0-9_-]{3,30}).json$',
+    url(r'^api/v1/flag/(?P<flag_name>\w{1,20})/'
+        r'(?P<username>[a-zA-Z0-9_-]{3,30}).json$',
         profile_views.profile_flag),
 
     # Talk
@@ -90,11 +96,11 @@ urlpatterns = [
     url(r'^api/v1/authuser/pics.json$',
         profile_views.profile_pics_list),
     url(r'^api/v1/authuser.json$',
-        profile_views.profile_api_view, kwargs={ 'use':'authuser', 'q':None}),
+        profile_views.profile_api_view, kwargs={'use': 'authuser', 'q': None}),
     url(r'^api/v1/profile/(?P<q>[a-zA-Z0-9_-]{3,30}).json$',
-        profile_views.profile_api_view, kwargs={ 'use':'username' }),
+        profile_views.profile_api_view, kwargs={'use': 'username'}),
     url(r'^api/v1/user/(?P<q>\d{1,11}).json$',
-        profile_views.profile_api_view, kwargs={ 'use':'user_id' }),
+        profile_views.profile_api_view, kwargs={'use': 'user_id'}),
 
     # Search
 
@@ -134,37 +140,37 @@ urlpatterns = [
     url(r'^fotos-hombres\.php$',
         seo_views.users_m_pics, name='dtrseo_users_m_pics'),
     url(r'^citymx(?P<city_short>[a-z]{3})/(?P<city_name>[a-zA-Z0-9_-]+)\.html$',
-         seo_views.citymx, name='dtrseo_citymx'),
+        seo_views.citymx, name='dtrseo_citymx'),
     url(r'^gente-por-pais\.php$',
-         seo_views.country_list, name='dtrseo_country_list'),
+        seo_views.country_list, name='dtrseo_country_list'),
     url(r'^paises/(?P<country>[a-z\-]{4,60})/$',
-         seo_views.users_by_country, name='dtrseo_users_by_country'),
+        seo_views.users_by_country, name='dtrseo_users_by_country'),
     url(r'^paises/(?P<country>[a-z\-]{4,60})/(?P<region>[0-9a-z\-]{2,60})/$',
-         seo_views.users_by_country_region,
-         name='dtrseo_users_by_country_region'),
+        seo_views.users_by_country_region,
+        name='dtrseo_users_by_country_region'),
     url(r'^paises/(?P<crc_url>[a-z-]{2,60}/[0-9a-z-]{2,80}/[0-9a-z-]{2,80})/$',
-         seo_views.users_by_altname_url, name='dtrseo_users_by_altname_url'),
-    #url(r'^thread/[a-zA-Z0-9-]+-(?P<threadid>\d+)-\d+\.html$',
+        seo_views.users_by_altname_url, name='dtrseo_users_by_altname_url'),
+    # url(r'^thread/[a-zA-Z0-9-]+-(?P<threadid>\d+)-\d+\.html$',
     #    seo_views.redir_old_forum_threads,
     #    name='dtrseo_redir_old_forum_threads'),
-    #url(r'^forum-archive\.php$',
+    # url(r'^forum-archive\.php$',
     #    seo_views.forum_archive, name='dtrseo_forum_archive'),
     # Previous user profiles, do not implement!
-    #url(r'^user/(?P<username>[a-zA-Z0-9-_]+)/?$',
+    # url(r'^user/(?P<username>[a-zA-Z0-9-_]+)/?$',
     #    seo_views.redir_old_user_pages, name='dtrseo_redir_old_user_pages'),
-    #url(r'^user/(?P<username>[a-zA-Z0-9-_]+)/fotos/\d{1,10}$',
+    # url(r'^user/(?P<username>[a-zA-Z0-9-_]+)/fotos/\d{1,10}$',
     #    seo_views.redir_old_user_pages),
-    #url(r'^user/(?P<username>[a-zA-Z0-9-_]+)/forum\d{1,3}\.html$',
+    # url(r'^user/(?P<username>[a-zA-Z0-9-_]+)/forum\d{1,3}\.html$',
     #    seo_views.redir_old_user_pages),
-    #url(r'^user/(?P<username>[a-zA-Z0-9-_]+)/liguelog/.+$',
+    # url(r'^user/(?P<username>[a-zA-Z0-9-_]+)/liguelog/.+$',
     #    seo_views.redir_old_user_pages),
 ]
 
 # Django RESTframework automatic API URLs not used.
-#rest_urlpatterns = format_suffix_patterns(rest_urlpatterns)
+# rest_urlpatterns = format_suffix_patterns(rest_urlpatterns)
 
 if settings.PRODUCTION:
-    pass # In PRODUCTION the dirs are served by Apache2.
+    pass  # In PRODUCTION the dirs are served by Apache2.
 else:
     from django.conf.urls.static import static
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns

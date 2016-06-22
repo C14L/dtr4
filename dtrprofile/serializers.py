@@ -1,10 +1,8 @@
-
 from django.contrib.auth.models import User
-from django.forms import widgets
 from rest_framework import serializers
-from dtrprofile.models import UserPic, UserMsg, UserProfile, UserFlag
 
-# ------------------------------------------------------------------------------
+from dtrprofile.models import UserMsg
+
 
 class UserMsgSerializer(serializers.ModelSerializer):
     """Messages with authuser, shown when lookig at a user's profile page."""
@@ -17,7 +15,6 @@ class UserMsgSerializer(serializers.ModelSerializer):
         fields = ('id', 'from_user', 'to_user',
                   'created', 'text', 'is_read', 'is_replied')
 
-# ------------------------------------------------------------------------------
 
 '''
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -25,7 +22,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     pic = serializers.ReadOnlyField(source='profile.pic.pk')
     age = serializers.ReadOnlyField(source='profile.age')
     gender = serializers.ReadOnlyField(source='profile.gender')
-    crc = serializers.ReadOnlyField(source='profile.crc') # <-- Need to get language version of crc! Hoe to do that?
+    # Need to get language version of crc! Hoe to do that?
+    crc = serializers.ReadOnlyField(source='profile.crc')
     city = serializers.ReadOnlyField(source='profile.city.pk')
 
     class Meta:
@@ -34,12 +32,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
                   'crc', 'city', 'country', 'lat', 'lng')
 '''
 
+
 class UserPnaslSerializer(serializers.ModelSerializer):
     """Returns only PNASL (picture, name, age, sex, location) of user."""
     pic = serializers.ReadOnlyField(source='profile.pic.pk')
     age = serializers.ReadOnlyField(source='profile.age')
     gender = serializers.ReadOnlyField(source='profile.gender')
-    crc = serializers.ReadOnlyField(source='profile.crc') # <-- Need to get language version of crc! How to do that?
+    # Need to get language version of crc! How to do that?
+    crc = serializers.ReadOnlyField(source='profile.crc')
     city = serializers.ReadOnlyField(source='profile.city.pk')
     country = serializers.ReadOnlyField(source='profile.country.pk')
     lat = serializers.ReadOnlyField(source='profile.lat')
@@ -49,6 +49,7 @@ class UserPnaslSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'pic', 'age', 'gender',
                   'crc', 'city', 'country', 'lat', 'lng')
+
 
 class InboxSerializer(serializers.ModelSerializer):
     """Messages authuser received or sent, shown on the "inbox" views."""
@@ -62,7 +63,3 @@ class InboxSerializer(serializers.ModelSerializer):
         model = UserMsg
         fields = ('id', 'created', 'text', 'from_user', 'to_user',
                   'is_read', 'is_replied', 'is_blocked')
-
-# ------------------------------------------------------------------------------
-
-

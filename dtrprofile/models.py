@@ -9,16 +9,12 @@ Models for all user related data: profile, pic, messages, etc.
 """
 
 import os
-import re
-import unicodedata
 from datetime import date, datetime
 from math import floor
-from random import randint
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import F
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_delete
@@ -32,28 +28,35 @@ from image_with_thumbnail_field import ImageWithThumbsField
 from dtrcity.models import City, Country, AltName
 import dtr4.settings_single_choices as single_choices
 
-# Reminder: SmallIntegerField -- safe +/-32767 in all databases.
 
 def nowtime():
     return timezone_now
-    #return datetime.utcnow().replace(tzinfo=utc)
+
 
 USERFLAG_IS_ONE_WAY = False
 USERFLAG_IS_TWO_WAY = True
 USERFLAG_TYPES = (
-    (1, 'friend',   USERFLAG_IS_TWO_WAY), # mutual, invite/confirm "friend" relationship
-    (2, 'like',     USERFLAG_IS_TWO_WAY), # mutual, like and like back to get a romantic "match".
-    (3, 'block',    USERFLAG_IS_ONE_WAY), # block another user so they can't see my profile or send messages anymore.
-    (4, 'favorite', USERFLAG_IS_ONE_WAY), # you can only have 5 favorites at a time!
-    (5, 'viewed',   USERFLAG_IS_ONE_WAY), # last time sender viewed the profile of receiver.
+    # mutual, invite/confirm "friend" relationship
+    (1, 'friend',   USERFLAG_IS_TWO_WAY),
+    # mutual, like and like back to get a romantic "match".
+    (2, 'like',     USERFLAG_IS_TWO_WAY),
+    # block another user so they can't see my profile or send messages anymore.
+    (3, 'block',    USERFLAG_IS_ONE_WAY),
+    # you can only have 5 favorites at a time!
+    (4, 'favorite', USERFLAG_IS_ONE_WAY),
+    # last time sender viewed the profile of receiver.
+    (5, 'viewed',   USERFLAG_IS_ONE_WAY),
 )
 USERFLAG_TYPES_CHOICES = [(x[0], x[1]) for x in USERFLAG_TYPES]
+
 
 class UserFlag(models.Model):
     """Set flags between user profiles: fav, like/match, block."""
 
-    sender = models.ForeignKey(User, db_index=True, related_name='has_flagged')
-    receiver = models.ForeignKey(User,db_index=True,related_name='was_flagged')
+    sender = models.ForeignKey(
+        User, db_index=True, related_name='has_flagged')
+    receiver = models.ForeignKey(
+        User, db_index=True, related_name='was_flagged')
     flag_type = models.PositiveIntegerField(choices=USERFLAG_TYPES_CHOICES)
     # Time the flag was set.
     created = models.DateTimeField(default=nowtime())
@@ -72,7 +75,7 @@ class UserFlag(models.Model):
         return s.format(self.pk, self.sender.username,
                         self.receiver.username, self.flag_type)
 
-    @classmethod # TODO: DELETE THIS??
+    @classmethod  # TODO: DELETE THIS??
     def get_flags(cls, user1, user2):
         return UserFlag.objects.filter(sender=user1, receiver=user2)
 
@@ -88,20 +91,20 @@ class UserFlag(models.Model):
     @classmethod
     def all_between_users(cls, user1, user2):
         """Return all flags between two users."""
-        return UserFlag.objects.filter(Q(sender=user1, receiver=user2)|
+        return UserFlag.objects.filter(Q(sender=user1, receiver=user2) |
                                        Q(sender=user2, receiver=user1))
 
     @classmethod
     def get_one_way_flags(cls, user1, user2):
         """Return all one-way flags between two users."""
-        one_way_choices = [x[0] for x in USERFLAG_TYPES if not x[2]]
+        one_way_choices = [y[0] for y in USERFLAG_TYPES if not y[2]]
         return UserFlag.all_between_users(user1, user2)\
                        .filter(flag_type__in=one_way_choices)
 
     @classmethod
     def get_two_way_flags(cls, user1, user2):
         """Return all two-way flags between two users."""
-        two_way_choices = [x[0] for x in USERFLAG_TYPES if x[2]]
+        two_way_choices = [y[0] for y in USERFLAG_TYPES if y[2]]
         return UserFlag.all_between_users(user1, user2)\
                        .filter(flag_type__in=two_way_choices)
 
@@ -116,14 +119,15 @@ class UserFlag(models.Model):
         """
         try:
             # Find the flag name in the USERFLAG_TYPES list.
-            flag_type, two_way_flag = [(x[0], x[2]) for x in
-                                       USERFLAG_TYPES if x[1] == flag_name][0]
+            flag_type, two_way_flag = [(y[0], y[2]) for y in
+                                       USERFLAG_TYPES if y[1] == flag_name][0]
         except IndexError:
             raise AttributeError('No flag by this name.')
         # Fetch exactly one object, anything else would be an exception.
         return UserFlag.objects.get(Q(sender=user1, receiver=user2) |
                                     Q(sender=user2, receiver=user1),
                                     flag_type=flag_type)
+
 
 class UserPic(models.Model):
     """Store data about uploaded user pictures."""
@@ -150,6 +154,7 @@ class UserPic(models.Model):
     def __str__(self):
         return str(self.id)
 
+    # noinspection PyMethodMayBeStatic
     def get_absolute_url(self):
         """Always return empty string, never show URL of raw pic."""
         # Do not return self.pic.url here.
@@ -162,7 +167,7 @@ class UserPic(models.Model):
     def get_aspect_height(self, width):
         """Return the height if image was resized to 'width'."""
         cw, ch = self.pic.width, self.pic.height
-        return (ch * width / cw)
+        return ch * width / cw
 
     def delete(self, *args, **kwargs):
         """Delete self and all files with different image sizes."""
@@ -171,6 +176,7 @@ class UserPic(models.Model):
 
     def save(self, *args, **kwargs):
         super(UserPic, self).save(*args, **kwargs)
+
 
 class UserMsg(models.Model):
     """Store private messages between users."""
@@ -217,7 +223,7 @@ class UserMsg(models.Model):
     @classmethod
     def set_is_read(cls, from_user, to_user):
         """Set all msgs by 'from_user' to 'to_user' to is_read=True."""
-        for row in UserMsg.objects.filter(from_user=from_user,to_user=to_user):
+        for row in UserMsg.objects.filter(from_user=from_user, to_user=to_user):
             # TODO: there's a more efficient way to do this!
             # "bulk update" something.
             row.is_read = True
@@ -232,6 +238,8 @@ class UserMsg(models.Model):
             msg.is_read = False
             msg.save()
 
+
+# noinspection PyBroadException
 class UserProfile(models.Model):
     """All user profile info is here.
 
@@ -289,8 +297,8 @@ class UserProfile(models.Model):
     pic = models.ForeignKey(UserPic, null=True, default=None, blank=True,
                             editable=False, on_delete=models.SET_NULL)
     dob = models.DateField(null=True, default=None, blank=True)
-    gender = models.SmallIntegerField(verbose_name='gender', default=11,
-                                      choices=single_choices.GENDER_CHOICE) # 11=other
+    gender = models.SmallIntegerField(  # 11=other
+        verbose_name='gender', default=11, choices=single_choices.GENDER_CHOICE)
     # Lat/lng in decimal degrees (wgs84)
     lat = models.FloatField(db_index=True, null=True, default=None)
     lng = models.FloatField(db_index=True, null=True, default=None)
@@ -384,9 +392,9 @@ class UserProfile(models.Model):
     # Automatically set from birth date
 
     western_zodiac = models.SmallIntegerField(
-        editable=False, default=0,choices=single_choices.WESTERN_ZODIAC_CHOICE)
+        editable=False, default=0, choices=single_choices.WESTERN_ZODIAC_CHOICE)
     eastern_zodiac = models.SmallIntegerField(
-        editable=False, default=0,choices=single_choices.EASTERN_ZODIAC_CHOICE)
+        editable=False, default=0, choices=single_choices.EASTERN_ZODIAC_CHOICE)
 
     def __str__(self):
         s = "UserProfile for {0} (#{1})"
@@ -408,23 +416,12 @@ class UserProfile(models.Model):
         # remember user's language setting, 2 char code only!
         # --> No, don't! Updates like view_counter would set this to the
         # other user's language setting! Needs to be updated explicitly.
-        #self.language = get_language()[:2]
+        # self.language = get_language()[:2]
         # Make star signs searchable.
         if self.dob:
             self.western_zodiac = self.get_western_zodiac()
             self.eastern_zodiac = self.get_eastern_zodiac()
         super(UserProfile, self).save(*args, **kwargs)
-
-    @receiver(post_save, sender=User)
-    def create_profile_for_user(sender, instance=None,created=False, **kwargs):
-        if created:
-            UserProfile.objects.get_or_create(user=instance)
-
-    @receiver(pre_delete, sender=User)
-    def delete_profile_for_user(sender, instance=None, **kwargs):
-        if instance:
-            user_profile = UserProfile.objects.get(user=instance)
-            user_profile.delete()
 
     @classmethod
     def get_pic_url(cls, pic, size='s'):
@@ -432,12 +429,13 @@ class UserProfile(models.Model):
         # model simply to display the profile avatar pic.
         # /[MEDIA_URL]/[size]/[int(pic_id/10000)]/[pic_id].jpg
 
-        if isinstance(pic, UserPic): # Accept both UserPic objects and Integers.
+        if isinstance(pic, UserPic):  # Accept both UserPic objs and ints.
             pic_id = pic.id
         elif isinstance(pic, int):
             pic_id = pic
-        else: # If its None or something, then return a "has no picture" image.
-            return os.path.join(settings.STATIC_URL, 'img/404-userpic-{}.jpg'.format(size))
+        else:  # If its None or something, then return a "has no picture" image.
+            return os.path.join(settings.STATIC_URL,
+                                'img/404-userpic-{}.jpg'.format(size))
         sub = str(int(floor(pic_id / 10000)))
         base = settings.MEDIA_URL.rstrip('/')
         return '{}/{}/{}/{}.jpg'.format(base, size, sub, pic_id)
@@ -464,24 +462,25 @@ class UserProfile(models.Model):
     def get_gender_symbol(self):
         try:
             a = single_choices.GENDER_CHOICE_SYMBOL
-            return [x[1] for x in a if x[0] == self.gender][0]
+            return [y[1] for y in a if y[0] == self.gender][0]
         except IndexError:
             return ''
 
     def get_gender_heshe(self):
         try:
             a = single_choices.GENDER_CHOICE_HESHE
-            return [x[1] for x in a if x[0] == self.gender][0]
-        except:
+            return [y[1] for y in a if y[0] == self.gender][0]
+        except IndexError:
             return ''
 
     def get_gender_hisher(self):
         try:
             a = single_choices.GENDER_CHOICE_HISHER
-            return [x[1] for x in a if x[0] == self.gender][0]
-        except:
+            return [y[1] for y in a if y[0] == self.gender][0]
+        except IndexError:
             return ''
 
+    # noinspection PyTypeChecker
     def get_age(self):
         try:
             delta = date.today() - self.dob
@@ -508,17 +507,18 @@ class UserProfile(models.Model):
     def get_western_zodiac_symbol(self):
         try:
             a = single_choices.WESTERN_ZODIAC_SYMBOLS
-            return [x[1] for x in a if x[0]==self.western_zodiac][0]
-        except:
+            return [y[1] for y in a if y[0] == self.western_zodiac][0]
+        except IndexError:
             return ''
 
     def get_eastern_zodiac_symbol(self):
         try:
             a = single_choices.EASTERN_ZODIAC_SYMBOLS
-            return [x[1] for x in a if x[0]==self.eastern_zodiac][0]
-        except:
+            return [y[1] for y in a if y[0] == self.eastern_zodiac][0]
+        except IndexError:
             return ''
 
+    # noinspection PyTypeChecker
     def get_last_active_seconds(self):
         if self.last_active is None:
             # When instantiated a new UserProfile, needs to return something.
@@ -528,21 +528,19 @@ class UserProfile(models.Model):
         return (dtime - self.last_active).total_seconds()
 
     def get_is_online(self):
-        x = settings.ONLINE_SECONDS_SINCE_LAST_ACTIVE
-        return self.get_last_active_seconds() < x
+        return (self.get_last_active_seconds() <
+                settings.ONLINE_SECONDS_SINCE_LAST_ACTIVE)
 
     def get_is_idle(self):
-        x = settings.IDLE_SECONDS_SINCE_LAST_ACTIVE
-        return self.get_last_active_seconds() < x and not self.get_is_online()
+        y = settings.IDLE_SECONDS_SINCE_LAST_ACTIVE
+        return self.get_last_active_seconds() < y and not self.get_is_online()
 
     def get_is_offline(self):
         return not self.get_is_online() and not self.get_is_idle()
 
     def get_friends(self):
-        '''
-        Return list of user objects that are friends (reciprocal friends flag)
-        by profile user.
-        '''
+        """Return list of user objects that are friends (reciprocal friends
+        flag) by profile user."""
         f1 = User.objects.filter(has_flagged__receiver=self.user,
                                  has_flagged__confirmed__isnull=False,
                                  has_flagged__flag_type=1)
@@ -552,7 +550,23 @@ class UserProfile(models.Model):
         return list(f1) + list(f2)
 
 
+# noinspection PyUnusedLocal
+@receiver(post_save, sender=User)
+def create_profile_for_user(sender, instance=None, created=False, **kwargs):
+    if created:
+        UserProfile.objects.get_or_create(user=instance)
+
+
+# noinspection PyUnusedLocal
+@receiver(pre_delete, sender=User)
+def delete_profile_for_user(sender, instance=None, **kwargs):
+    if instance:
+        user_profile = UserProfile.objects.get(user=instance)
+        user_profile.delete()
+
+
 ################################################################################
+
 
 class Talk(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL,
@@ -560,7 +574,7 @@ class Talk(models.Model):
     created = models.DateTimeField()
     created_ip = models.CharField(default='', max_length=15)
     parent = models.ForeignKey('self', db_index=True, null=True,
-                                       default=None, related_name='children')
+                               default=None, related_name='children')
     child_counter = models.SmallIntegerField(default=0)
     views_counter = models.SmallIntegerField(default=0)
     hashtag_counter = models.SmallIntegerField(default=0)
@@ -577,9 +591,13 @@ class Talk(models.Model):
     def __str__(self):
         return self.text
 
+
 class TalkHashtag(models.Model):
-    tag = models.CharField(max_length=50, db_index=True) # the hashtag withOUT the "#" hash.
-    talk = models.ForeignKey(Talk, db_index=True, related_name="hashtag") # ref to talk post id
+    # the hashtag withOUT the "#" hash.
+    tag = models.CharField(max_length=50, db_index=True)
+    # ref to talk post id
+    talk = models.ForeignKey(Talk, db_index=True, related_name="hashtag")
+
 
 class TalkUsername(models.Model):
     user = models.ForeignKey(User, db_index=True, related_name="mentioned_in")

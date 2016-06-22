@@ -30,21 +30,21 @@ if not PRODUCTION:
     DATABASES['default']['PASSWORD'] = 'pla'
 
 SITE_ID = 1
-CSRF_COOKIE_NAME = 'csrftoken' # default
-CSRF_COOKIE_HTTPONLY = False # needs access from Angular
-CSRF_COOKIE_SECURE = False # TODO: Set True when SSL/HTTPS
-X_FRAME_OPTIONS = 'DENY' # never serve any part in a frame; default: SAMEORIGIN
+CSRF_COOKIE_NAME = 'csrftoken'  # default
+CSRF_COOKIE_HTTPONLY = False  # needs access from Angular
+CSRF_COOKIE_SECURE = False  # TODO: Set True when SSL/HTTPS
+X_FRAME_OPTIONS = 'DENY'  # never serve any part in a frame; default: SAMEORIGIN
 ROOT_URLCONF = 'dtr4.urls'
 WSGI_APPLICATION = 'dtr4.wsgi.application'
-SIMULATE_NETWORK_DELAY = False # my own Middleware for API delay.
+SIMULATE_NETWORK_DELAY = False  # my own Middleware for API delay.
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
 LANGUAGE_CODE = 'es'
-LANGUAGE = LANGUAGE_CODE[:2] # I added this. Remove?
-LANGUAGE_COOKIE_NAME = 'lg' # language cookie, default: "django_language"
+LANGUAGE = LANGUAGE_CODE[:2]  # I added this. Remove?
+LANGUAGE_COOKIE_NAME = 'lg'  # language cookie, default: "django_language"
 # LANGUAGE_SESSION_KEY = None
 # Suggested in: https://docs.djangoproject.com/en/1.7/topics/i18n/translation/
 # Do not change! E.g. used to import geonames, all languages a user can select.
@@ -76,7 +76,7 @@ DISALLOWED_USER_AGENTS = [
 IGNORABLE_404_URLS = (re.compile(r'\.(php|cgi)$'), re.compile(r'/wp-admin/'),
                       re.compile(r'/phpmyadmin/'),
                       re.compile(r'^/apple-touch-icon.*\.png$'), )
-PREPEND_WWW = False # done by Apache2 in production, unused on dev.
+PREPEND_WWW = False  # done by Apache2 in production, unused on dev.
 APPEND_SLASH = True
 if PRODUCTION:
     SECURE_BROWSER_XSS_FILTER = True
@@ -172,7 +172,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')
 if not PRODUCTION:
     # The Angular app is here. On the live system, the app is served by
     # nginx directly, same as the other static files.
-    STATICFILES_DIRS = ( os.path.join(BASE_DIR, "ng-app"), )
+    STATICFILES_DIRS = (os.path.join(BASE_DIR, "ng-app"), )
 
 # Email config
 EMAIL_SUBJECT_PREFIX = 'El Ligue: '  # For system emails to ADMINS+MANAGERS.
@@ -205,12 +205,12 @@ else:
 
 # Session config
 SESSION_COOKIE_DOMAIN = 'elligue.com'
-SESSION_COOKIE_AGE = 60*60*24*30*12 # 1 year
-# SESSION_COOKIE_NAME = 'sessionid' # default
-# SESSION_COOKIE_PATH = '/' # default
-# SESSION_COOKIE_SECURE = False # TODO: set to True when moving to https
+SESSION_COOKIE_AGE = 60*60*24*30*12  # 1 year
+# SESSION_COOKIE_NAME = 'sessionid'  # default
+# SESSION_COOKIE_PATH = '/'  # default
+# SESSION_COOKIE_SECURE = False  # TODO: set to True when moving to https
 if DEBUG:
-    SESSION_COOKIE_DOMAIN = None # no restriction on dev
+    SESSION_COOKIE_DOMAIN = None  # no restriction on dev
 # For memcached use 'django.contrib.sessions.backends.cache'
 # Django default: 'django.contrib.sessions.backends.db'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
@@ -221,15 +221,15 @@ LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
 LOGIN_REDIRECT_URL = '/app/'
 LOGOUT_REDIRECT_URL = '/'
-SOCIALACCOUNT_QUERY_EMAIL = True # allauth
+SOCIALACCOUNT_QUERY_EMAIL = True  # allauth
 SOCIALACCOUNT_PROVIDERS = {
     'facebook': {
         'SCOPE': ['email', 'publish_stream'],
         'METHOD': 'js_sdk'  # instead of 'oauth2'
     }
 }
-ACCOUNT_UNIQUE_EMAIL = False # allow multiple accounts with same email.
-ACCOUNT_AUTHENTICATION_METHOD = "username" # login username only
+ACCOUNT_UNIQUE_EMAIL = False  # allow multiple accounts with same email.
+ACCOUNT_AUTHENTICATION_METHOD = "username"  # login username only
 ACCOUNT_LOGOUT_ON_GET = True
 # ACCOUNT_SIGNUP_FORM_CLASS (=None) Ask the user for more info on signup
 ACCOUNT_USERNAME_MIN_LENGTH = 3
@@ -257,9 +257,9 @@ else:
     MEDIA_URL = '/pics/'
 # TODO: This is probably not used currently. Implement watermarking and
 # remove unused settings.
-THUMBS_MINSIZE = (350, 350) # ????
-THUMBS_ORIGINAL_DIR = os.path.join(MEDIA_ROOT, 'orig') # Original uploaded files before resizing.
-THUMBS_WATERMARK_IMAGES = { # ????
+THUMBS_MINSIZE = (350, 350)  # ????                     # Orig uploaded files
+THUMBS_ORIGINAL_DIR = os.path.join(MEDIA_ROOT, 'orig')  # <-- before resizing.
+THUMBS_WATERMARK_IMAGES = {
     '350x350': os.path.join(BASE_DIR, 'misc/watermark_elligue1.png')
 }
 # The maximum size, in Bytes, for files that will be uploaded into memory. Files

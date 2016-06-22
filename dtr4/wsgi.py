@@ -5,8 +5,9 @@ WSGI config for dtr4 project.
 https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
 """
 
-import os
 import sys
+
+import os
 from django.core.wsgi import get_wsgi_application
 
 # Add the app's directory to the PYTHONPATH

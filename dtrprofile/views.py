@@ -2,6 +2,8 @@
 from __future__ import (unicode_literals, absolute_import, division,
                         print_function)
 
+from dtrprofile.forms import UserEditProfileForm
+
 """
 Manage user profiles, pics, messages between users, and more.
 
@@ -10,61 +12,47 @@ between users, pics and profiles. Return only JSON encoded data, try
 not to return any HTML pages.
 """
 
-import base64
-import io
 import json
-import os
 import re
 import sys
-import uuid
 
-from PIL import Image
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
-from django.core.urlresolvers import reverse
 from django.db.models import Count
-from django.db.models import F
 from django.db.models import Q
-from django.db.models.query import QuerySet
-from django.http import HttpResponsePermanentRedirect   # 301
-from django.http import HttpResponseRedirect            # 302
+from django.http import HttpResponsePermanentRedirect, Http404  # 301
 from django.http import HttpResponseBadRequest          # 400
 from django.http import HttpResponseForbidden           # 403
 from django.http import HttpResponseNotFound            # 404
-from django.http import HttpResponseNotAllowed          # 405 eg ['GET','POST']
-from django.http import QueryDict, HttpResponse, Http404
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext, Context, Template
-from django.template.loader import get_template, render_to_string
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.template import RequestContext, Context
+from django.template.loader import get_template
 from django.utils.decorators import method_decorator
 from django.utils.timezone import utc
 from django.utils.timezone import now as timezone_now
 from django.utils.translation import get_language
-from django.utils.translation import ugettext as __
-from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from django.views.generic.base import View, TemplateView
+from django.views.generic.base import View
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from dtr4 import settings_single_choices as single_choices
-from dtrcity.models import City, Country, AltName
-from dtrprofile.models import (UserPic, UserMsg, UserProfile, UserFlag,
+from dtrcity.models import City
+from dtrprofile.models import (UserPic, UserMsg, UserFlag,
                                Talk, TalkHashtag, TalkUsername)
 from dtrprofile.models import USERFLAG_TYPES
 from dtrprofile.serializers import UserMsgSerializer, InboxSerializer
 from dtrprofile.utils import get_client_ip
+
 
 # Homepage view
 
@@ -83,8 +71,10 @@ def homepage(request, template_name="dtrprofile/site_index.es.html"):
     # Anon users get a nice home page.
     return render_to_response(template_name, context=RequestContext(request))
 
+
 # Private Messages
 
+# noinspection PyMethodMayBeStatic
 class UserMsgList(APIView):
     """Private messages between the authuser and one other user.
 
@@ -115,31 +105,35 @@ class UserMsgList(APIView):
         """
         # Default minimum time between two notification emails.
         gap_sec = 60 * getattr(settings, 'SEND_EMAIL_TIMEGAP_MINUTES', 60)
-        gap_ok = (not user.profile.last_email) or (timezone_now() -
-                  user.profile.last_email).total_seconds() > gap_sec
+        gap_ok = ((not user.profile.last_email) or (timezone_now() -
+                  user.profile.last_email).total_seconds() > gap_sec)
 
         if user.email and gap_ok:
             from_user = request.user
             lg = get_language()[:2].lower()
             fn = 'dtrprofile/email_notify_new_private_message.{}'.format(lg)
             plaintext = get_template('{}.txt'.format(fn))
+            # noinspection PyBroadException
             try:
                 # optional html version
                 htmltext = get_template('{}.html'.format(fn))
             except:
                 htmltext = None
-            d = Context({ 'user': user, 'from_user': from_user,
-                          'msg': msg, 'site': get_current_site(request) })
+
+            d = Context({'user': user, 'from_user': from_user,
+                         'msg': msg, 'site': get_current_site(request)})
             from_email = settings.DEFAULT_FROM_EMAIL
             to_email = user.email
             subject, text_content = plaintext.render(d).split('\n\n', 1)
-            if htmltext: # optional
+            html_content = None
+            if htmltext:  # optional
                 html_content = htmltext.render(d)
             email = EmailMultiAlternatives(subject, text_content,
                                            from_email, [to_email])
-            if htmltext: # optional
+            if htmltext:  # optional
                 email.attach_alternative(html_content, "text/html")
             email.send()
+
             # Remember the time when this email was sent.
             user.profile.last_email = timezone_now()
             user.profile.save()
@@ -212,6 +206,7 @@ class UserMsgList(APIView):
         # Something went wrong in the serializer.
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class InboxList(APIView):
     """Return lists for unread, inbox, and sent messages.
 
@@ -237,8 +232,7 @@ class InboxList(APIView):
         elif t == 'sent':
             usermsgs = usermsgs.filter(from_user=request.user)
         else:
-            return Response(serializer.errors,
-                            status=status.HTTP_404_NOT_FOUND)
+            return Response([], status=status.HTTP_404_NOT_FOUND)
         # add time limits, if requested
         if before:
             usermsgs = usermsgs.filter(created__lt=before)
@@ -259,6 +253,7 @@ class InboxList(APIView):
         else:
             return HttpResponseNotFound()
 
+
 class InboxItem(APIView):
     """To set individual messages manually to is_read or is_replied."""
 
@@ -270,16 +265,19 @@ class InboxItem(APIView):
         is_read = int(body.get('is_read', -1))
         is_replied = int(body.get('is_replied', -1))
         item = get_object_or_404(UserMsg, pk=pk, to_user=request.user)
-        if is_read == 0: item.is_read = False
-        if is_read == 1: item.is_read = True
-        if is_replied == 0: item.is_replied = False
-        if is_replied == 1: item.is_replied = True
+        if is_read == 0:
+            item.is_read = False
+        if is_read == 1:
+            item.is_read = True
+        if is_replied == 0:
+            item.is_replied = False
+        if is_replied == 1:
+            item.is_replied = True
         item.save()
         return HttpResponse()
 
-#
+
 # Below are function based views. ######################################
-#
 
 # flags and lists
 
@@ -295,39 +293,39 @@ def profile_flag_list(request, listname):
     Find all users that have the requested relation to authuser and
     return a list of basic user data dicts. Not complete User objects!
     """
-
+    flags = None
     data = []
     lists = ['matches', 'like_me', 'likes', 'viewed_me', 'favorites',
              'friends', 'friend_recv', 'friend_sent', 'blocked']
-    if not listname in lists:
+    if listname not in lists:
         return HttpResponseNotFound()
     # two-way lists: difference between "invite" and "mutual".
-    if listname == "matches": # 2=like
+    if listname == "matches":  # 2=like
         flags = UserFlag.objects.filter(flag_type=2, confirmed__isnull=False)\
                                 .filter(Q(receiver=request.user) |
                                         Q(sender=request.user))
-    elif listname == "like_me": # 2=like
+    elif listname == "like_me":  # 2=like
         flags = UserFlag.objects.filter(flag_type=2, receiver=request.user,
                                         confirmed__isnull=True)
-    elif listname == "likes": # 2=like
+    elif listname == "likes":  # 2=like
         flags = UserFlag.objects.filter(flag_type=2, sender=request.user,
                                         confirmed__isnull=True)
-    if listname == "friends": # 1=friend
+    if listname == "friends":  # 1=friend
         flags = UserFlag.objects.filter(flag_type=1, confirmed__isnull=False)\
                                 .filter(Q(receiver=request.user) |
                                         Q(sender=request.user))
-    elif listname == "friend_recv": # 1=friend
+    elif listname == "friend_recv":  # 1=friend
         flags = UserFlag.objects.filter(flag_type=1, receiver=request.user,
                                         confirmed__isnull=True)
-    elif listname == "friend_sent": # 1=friend
+    elif listname == "friend_sent":  # 1=friend
         flags = UserFlag.objects.filter(flag_type=1, sender=request.user,
                                         confirmed__isnull=True)
     # one-way lists: not important if "mutual".
-    elif listname == "viewed_me": # 5=viewed
+    elif listname == "viewed_me":  # 5=viewed
         flags = UserFlag.objects.filter(flag_type=5, receiver=request.user)
-    elif listname == "favorites": # 4=favorite
+    elif listname == "favorites":  # 4=favorite
         flags = UserFlag.objects.filter(flag_type=4, sender=request.user)
-    elif listname == "blocked": # 3=block
+    elif listname == "blocked":  # 3=block
         flags = UserFlag.objects.filter(flag_type=3, sender=request.user)
     # blocked users should only ever show up on the "blocked" list, and
     # be not displayed on any others. So, do remove them from any list
@@ -336,11 +334,11 @@ def profile_flag_list(request, listname):
         # fetch a list of User pk values that were blocked by authuser.
         blocklist = UserFlag.objects.filter(flag_type=3, sender=request.user)
         blocklist = blocklist.values_list('receiver', flat=True)
-    #
+
     # TODO: here, filter out the blocked users IN THE DATABASE QUERY,
     # so that the positive matched can properly be limited to 200 or so,
     # right IN THE DB QUERY (flags)!
-    #
+
     for flag in flags:
         # serialize the found flags into a list of basic user dicts, but
         # remove any blocked users.
@@ -360,20 +358,21 @@ def profile_flag_list(request, listname):
             'username': other.username,
             'is_staff': other.is_staff,
             'last_active': other.profile.last_active.isoformat(),
-            #'created': other.date_joined.isoformat(),
+            # 'created': other.date_joined.isoformat(),
             'pic': other.profile.pic_id,
             'age': other.profile.age,
             'gender': other.profile.gender,
             'crc': other.profile.crc,
-            #'city': other.profile.city.pk,
-            #'country': other.profile.country.pk,
+            # 'city': other.profile.city.pk,
+            # 'country': other.profile.country.pk,
         }
         if flag.created:
             item['created'] = flag.created.isoformat()
         if flag.confirmed:
             item['confirmed'] = flag.confirmed.isoformat()
         data.append(item)
-    return HttpResponse(json.dumps(data), {'content_type':'application/json'})
+    return HttpResponse(json.dumps(data), {'content_type': 'application/json'})
+
 
 @login_required()
 @require_http_methods(["POST", "DELETE"])
@@ -382,7 +381,7 @@ def profile_flag(request, flag_name, username):
     user = get_object_or_404(User, username=username)
     try:
         flag_type, flag_name, two_way_flag = [x for x in USERFLAG_TYPES
-                                              if x[1]==flag_name][0]
+                                              if x[1] == flag_name][0]
     except IndexError:
         # The requested flag_name does not exist.
         return HttpResponseNotFound()
@@ -397,7 +396,7 @@ def profile_flag(request, flag_name, username):
             if settings.DEBUG:
                 print('# profile_flag(request, flag_name, username): '
                       'Authuser already set this flag. Ignore request!')
-        except:
+        except UserFlag.DoesNotExist:
             pass
             if settings.DEBUG:
                 print('# profile_flag(request, flag_name, username): '
@@ -414,7 +413,7 @@ def profile_flag(request, flag_name, username):
                 if settings.DEBUG:
                     print('# profile_flag(request, flag_name, username): '
                           'Authuser had previously received this flag')
-            except:
+            except UserFlag.DoesNotExist:
                 pass
                 if settings.DEBUG:
                     print('# profile_flag(request, flag_name, username): '
@@ -462,14 +461,15 @@ def profile_flag(request, flag_name, username):
             print('# profile_flag(): Delete a flag: '
                   '{0} for user {1}.'.format(flag_name, username))
         flag = UserFlag.get_flag(flag_name, request.user, user)
-        done = False
+        # done = False
         if two_way_flag:
             if settings.DEBUG:
                 print('# profile_flag(): Two way flag...')
             if flag.receiver == request.user and flag.confirmed:
-                print('# profile_flag(): Authuser had confirmed a flag, just '
-                      'set "confirmed" from "{}" to None.'.format(
-                      flag.confirmed))
+                if settings.DEBUG:
+                    print('# profile_flag(): Authuser had confirmed a flag, '
+                          'just set "confirmed" from "{}" to None.'
+                          ''.format(flag.confirmed))
                 flag.confirmed = None
                 flag.save()
                 if settings.DEBUG:
@@ -493,25 +493,28 @@ def profile_flag(request, flag_name, username):
                         flag_type=flag_type, created=old_confirmed)
         else:
             # for a one-way, just delete it.
-            print('# profile_flag(): One way flag, easy, just delete.')
+            if settings.DEBUG:
+                print('# profile_flag(): One way flag, easy, just delete.')
             flag.delete()
 
         if flag_name == 'block':
-            # EVIL SHORTCUT!!! if "block" flag is removed, also remove all
+            # EVIL SHORTCUT --> if "block" flag is removed, also remove all
             # "UserMsg.is_blocked" on msgs that have authuser as "to_user" and
             # user as "from_user".
             UserMsg.objects.filter(to_user=request.user,
                                    from_user=user).update(is_blocked=False)
-    print('# profile_flag(request, flag_name, username): All done.')
-    return HttpResponse(json.dumps(data), {'content_type':'application/json'})
+    if settings.DEBUG:
+        print('# profile_flag(request, flag_name, username): All done.')
+    return HttpResponse(json.dumps(data), {'content_type': 'application/json'})
+
 
 # pictures
 
 @login_required()
-@csrf_exempt # TODO: FIXME!
+@csrf_exempt  # TODO: FIXME!
 @require_http_methods(["POST"])
 def profile_pics_list(request):
-    '''Create user uploaded photos.'''
+    """Create user uploaded photos."""
     if settings.DEBUG:
         deb = '# profile_pics_list(request): '
         print(deb + 'request method "{}"...'.format(request.method))
@@ -521,40 +524,41 @@ def profile_pics_list(request):
         if len(request.FILES) != 1:
             return HttpResponseBadRequest('upload one image file')
         if settings.DEBUG:
-            print(deb + 'files count OK')
+            print('...files count OK')
         # Create a DB row first, then use the ID as filename, save the
         # image file, and update the DB row with the image object.
         pic = UserPic.objects.create(user=request.user,
                                      created_ip=get_client_ip(request))
         if settings.DEBUG:
-            print(deb + 'UserPic object created OK')
+            print('...UserPic object created OK')
         pic_filename = '{}.jpg'.format(pic.id)
         if settings.DEBUG:
-            print(deb + 'pic_filename == "{}".'.format(pic_filename))
+            print('...pic_filename == "{}".'.format(pic_filename))
         pic.pic = request.FILES['file']
         if settings.DEBUG:
-            print(deb + 'pic.pic set to request.FILES[file] OK')
+            print('...pic.pic set to request.FILES[file] OK')
         pic.pic.save(pic_filename, request.FILES['file'])
         if settings.DEBUG:
-            print(deb + 'pic.pic.save() OK')
+            print('...pic.pic.save() OK')
         pic.save()
         if settings.DEBUG:
-            print(deb + 'pic.save() OK')
+            print('...pic.save() OK')
         # If this is the user's first pic, then set as profile avatar,
         # and attach the avatar to the existing userprofile object.
         if request.user.profile.pic is None:
             if settings.DEBUG:
-                print(deb + 'no profile pic, set this to profile pic...')
+                print('...no profile pic, set this to profile pic...')
             request.user.profile.pic = pic
             request.user.profile.save()
             if settings.DEBUG:
-                print(deb + 'new profile pic set and saved OK')
+                print('...new profile pic set and saved OK')
         # Return only the new pic's id.
-        data = { 'pic': pic.id }
+        data = {'pic': pic.id}
         if settings.DEBUG:
-            print(deb + 'response with new pic id=="{}".'.format(data['pic']))
+            print('...response with new pic id=="{}".'.format(data['pic']))
         return HttpResponse(json.dumps(data),
-                            {'content_type':'application/json'})
+                            {'content_type': 'application/json'})
+
 
 """
 def SOMETHING_ELSE_profile_pics_list(request):
@@ -562,15 +566,18 @@ def SOMETHING_ELSE_profile_pics_list(request):
 
     if body.get('image', None):
         image_b64 = body.get('image')
-        print('image_b64 type, length: {0}, {1}'.format(len(image_b64), type(image_b64)))
+        print('image_b64 type, length: {0}, {1}'
+              ''.format(len(image_b64), type(image_b64)))
 
         begin_raw_data = image_b64.find(",") + 1
         print('begin_raw_data at: {0}'.format(begin_raw_data))
 
         image_raw_base64 = image_b64[begin_raw_data:]
-        print('image_raw_base64 type, length: {0}, {1}'.format(len(image_raw_base64), type(image_raw_base64)))
+        print('image_raw_base64 type, length: {0}, {1}'\
+              ''.format(len(image_raw_base64), type(image_raw_base64)))
 
-        image_data = base64.urlsafe_b64decode(image_raw_base64 + ('=' * (4 - len(image_raw_base64) % 4)))
+        image_data = base64.urlsafe_b64decode(
+            image_raw_base64 + ('=' * (4 - len(image_raw_base64) % 4)))
         print('image_data type: {0}'.format(type(image_data)))
 
         tmp_filename = '/tmp/' + str(uuid.uuid1())
@@ -585,8 +592,8 @@ def SOMETHING_ELSE_profile_pics_list(request):
             im.save(tmp_filename + '.jpg', 'JPEG', quality=85, optimize=True)
             print('JPEG file written.')
 
-        pic = UserPic.objects.create(user=request.user) # create db entry to get new id
-        print('UserPic object created')
+        pic = UserPic.objects.create(user=request.user)  # create db entry
+        print('UserPic object created')                  # to get new id
         pic_filename = '{}.jpg'.format(pic.id)
         print('pic_filename: {}'.format(pic_filename))
 
@@ -605,10 +612,11 @@ def SOMETHING_ELSE_profile_pics_list(request):
                             {'content_type':'application/json'})
 """
 
+
 @login_required()
 @require_http_methods(["DELETE"])
 def profile_pics_item(request, pic_id):
-    '''Delete user uploaded photos.'''
+    """Delete user uploaded photos."""
     data = []
     pic = UserPic.objects.get(pk=pic_id)
 
@@ -618,7 +626,8 @@ def profile_pics_item(request, pic_id):
     pic.pic.delete()
     pic.delete()
 
-    return HttpResponse(json.dumps(data), {'content_type':'application/json'})
+    return HttpResponse(json.dumps(data), {'content_type': 'application/json'})
+
 
 # ======================================================================
 # ======================================================================
@@ -626,6 +635,8 @@ def profile_pics_item(request, pic_id):
 # ======================================================================
 # ======================================================================
 
+
+# noinspection PyUnusedLocal
 @login_required()
 @require_http_methods(["GET", "HEAD", "POST", "DELETE"])
 def profile_api_view(request, q, use):
@@ -633,9 +644,9 @@ def profile_api_view(request, q, use):
 
     Either by the user's pk or the username.
     """
-    DEBUG = settings.DEBUG
-    if DEBUG:
-        print('--- profile_api_view(request, q, use): q=="{0}", use=="{1}"'.format(q, use), file=sys.stderr)
+    if settings.DEBUG:
+        print('--- profile_api_view(request, q, use): q=="{0}", use=="{1}"'
+              ''.format(q, use), file=sys.stderr)
 
     if use == 'username':
         user = get_object_or_404(User, username=q)
@@ -644,29 +655,34 @@ def profile_api_view(request, q, use):
     elif use == 'authuser':
         user = request.user
     else:
-        raise Error('Must pass either use="username" or use="user_id" to View.')
+        raise Http404
 
     if request.method == "POST":
         # get data payload
-        if DEBUG:
+        if settings.DEBUG:
             print('--- profile_api_view(): POST method', file=sys.stderr)
         if request.body:
-            if DEBUG:
-                print('--- profile_api_view(): request.body found.', file=sys.stderr)
+            if settings.DEBUG:
+                print('--- profile_api_view(): request.body found.',
+                      file=sys.stderr)
             jsonstr = request.body.decode("utf-8")
-            if DEBUG:
-                print('--- profile_api_view(): request.body is type "{}".'.format(type(jsonstr)), file=sys.stderr)
+            if settings.DEBUG:
+                print('--- profile_api_view(): request.body is type "{}".'
+                      ''.format(type(jsonstr)), file=sys.stderr)
             if type(jsonstr) != unicode:
                 jsonstr = jsonstr.decode('utf-8')   # bytes -> Unicode
-                if DEBUG:
-                    print('--- profile_api_view(): request.body converted to type "{}".'.format(type(jsonstr)), file=sys.stderr)
+                if settings.DEBUG:
+                    print('--- profile_api_view(): request.body converted to '
+                          'type "{}".'.format(type(jsonstr)), file=sys.stderr)
             body = json.loads(jsonstr)
-            if DEBUG:
-                print('--- profile_api_view(): request.body unpacked into JSON dict.', file=sys.stderr)
+            if settings.DEBUG:
+                print('--- profile_api_view(): request.body unpacked into '
+                      'JSON dict.', file=sys.stderr)
         else:
             body = {}
-            if DEBUG:
-                print('--- profile_api_view(): NO request.body found!', file=sys.stderr)
+            if settings.DEBUG:
+                print('--- profile_api_view(): NO request.body found!',
+                      file=sys.stderr)
 
         if body.get('pic', None) is not None:
             # Set "pic" as authuser's main profile picture.
@@ -676,43 +692,43 @@ def profile_api_view(request, q, use):
             except UserPic.DoesNotExist:
                 pass
 
-        #print("UPDATE PROFILE VALUES ..................................")
+        # print("UPDATE PROFILE VALUES ..................................")
         if body.get('city', None) is not None:
-            #print("UPDATE PROFILE VALUE: city")
+            # print("UPDATE PROFILE VALUE: city")
             try:
                 city = City.objects.get(pk=body.get('city', None))
-                #print("UPDATE PROFILE VALUE city == {}".format(city.name))
+                # print("UPDATE PROFILE VALUE city == {}".format(city.name))
                 request.user.profile.city = city
                 request.user.profile.country = city.country
                 request.user.profile.lat = city.lat
                 request.user.profile.lng = city.lng
-            except city.DoesNotExist:
+            except City.DoesNotExist:
                 # the user selected no city
-                #print("UPDATE PROFILE VALUE city was EMPTY")
+                # print("UPDATE PROFILE VALUE city was EMPTY")
                 request.user.profile.city = None
                 request.user.profile.country = None
                 # Do not accept country-only data!
-                #try:
+                # try:
                 #    # but maybe we have a country?
                 #    country = Country.objects.get(pk=body.get('country', None))
                 #    request.user.profile.country = country
-                #except country.DoesNotExist:
+                # except country.DoesNotExist:
                 #    # nope, then set to "unknown" too
                 #    request.user.profile.country = None
 
         if body.get('lat', None) is not None \
-        and body.get('lng', None) is not None:
+                and body.get('lng', None) is not None:
             # maybe overwrite with more precise lat/lng given?
             request.user.profile.lat = body.get('lat', None)
             request.user.profile.lng = body.get('lng', None)
 
         if body.get('new_password_1', None) is not None\
-        or body.get('new_password_2', None) is not None:
-            pw_1 = body.get('new_password_1', None)
+                or body.get('new_password_2', None) is not None:
+            pw_1 = body.get('new_password_1', '')
             pw_2 = body.get('new_password_2', None)
             if not request.user.check_password(body.get('old_password', None)):
                 return HttpResponseBadRequest('old_password')
-            if len(pw_1) < 6 or pw_1 != pw2:
+            if len(pw_1) < 6 or pw_1 != pw_2:
                 return HttpResponseBadRequest('new_password_1')
             request.user.set_password(pw_1)
             request.user.save()
@@ -724,22 +740,22 @@ def profile_api_view(request, q, use):
             request.user.save()
 
         # all the other standard data fields on "User.profile"
-        fields = [ 'aboutme', 'aboutbooks', 'aboutmovies', 'aboutmusic',
-                   'aboutarts', 'abouttravel', 'aboutfood', 'aboutquotes',
-                   'aboutsports', 'drink', 'diet', 'figure','fitness', 'pot',
-                   'education', 'eyecolor', 'gender', 'lookingfor',
-                   'has_children', 'height', 'haircolor', 'income', 'jobfield',
-                   'longest_relationship', 'looks', 'relationship_status',
-                   'religion', 'religiosity', 'smoke', 'spirituality',
-                   'sports', 'style', 'want_children', 'weight',
-                   'would_relocate', ]
+        fields = ['aboutme', 'aboutbooks', 'aboutmovies', 'aboutmusic',
+                  'aboutarts', 'abouttravel', 'aboutfood', 'aboutquotes',
+                  'aboutsports', 'drink', 'diet', 'figure', 'fitness', 'pot',
+                  'education', 'eyecolor', 'gender', 'lookingfor',
+                  'has_children', 'height', 'haircolor', 'income', 'jobfield',
+                  'longest_relationship', 'looks', 'relationship_status',
+                  'religion', 'religiosity', 'smoke', 'spirituality',
+                  'sports', 'style', 'want_children', 'weight',
+                  'would_relocate', ]
         for field in fields:
             field_value = body.get(field,  None)
             if field_value is not None:
                 setattr(request.user.profile, field, field_value)
         # Set "dob" manually, to catch cases were it is "" empty.
-        dob = body.get('dob', None)
-        if dob is not None:
+        dob = body.get('dob', '')
+        if dob:
             # Verify that dob is well formated
             re_dob = re.compile(r'^(19|20)[0-9][0-9]-[01][0-9]-[0123][0-9]$')
             if re_dob.match(dob):
@@ -752,7 +768,7 @@ def profile_api_view(request, q, use):
 
         # all done, save user
         request.user.profile.save()
-        return HttpResponse() # 200
+        return HttpResponse()  # 200
 
     if request.method == "DELETE":
         # delete user's profile. Either user's own profile or authuser is_staff
@@ -773,11 +789,12 @@ def profile_api_view(request, q, use):
         # Text content from all private messages should be preserved, if the
         # user deleted their own account. If the account was removed by staff,
         # then the content should be removed as well (to remove spam)
-        #if ownprofile:
-            #UserMsg.objects.filter(from_user=user).update(from_user=None)
-            # Should happen automatically because models.SET_NULL in model def.
-        #else:
-            #UserMsg.objects.filter(from_user=user).update(text='', from_user=None)
+        # if ownprofile:
+        #    UserMsg.objects.filter(from_user=user).update(from_user=None)
+        #    Should happen automatically because models.SET_NULL in model def.
+        # else:
+        #    UserMsg.objects.filter(
+        #        from_user=user).update(text='', from_user=None)
 
         # For some reason I get IntegrityError when trying to set them to NULL
         # so instead just delete all messages send or received by the user.
@@ -789,7 +806,7 @@ def profile_api_view(request, q, use):
 
         # Preserve all messges sent to the user, but remove association.
         # Should happen automatically because models.SET_NULL in model def.
-        #UserMsg.objects.filter(to_user=user).update(to_user=None)
+        # UserMsg.objects.filter(to_user=user).update(to_user=None)
 
         # All flags on the account should be removed, as well as the related
         # Profile object. The cascading should happen automatically when
@@ -797,22 +814,21 @@ def profile_api_view(request, q, use):
         user.delete()
 
         # Confirm
-        return HttpResponse() # 200
+        return HttpResponse()  # 200
 
     if request.method == "GET":
-
         flags = {}
         if user != request.user:
             # translate the flags into profileuser API flields
             for f in UserFlag.get_one_way_flags(request.user, user):
-                name = [x[1] for x in USERFLAG_TYPES if x[0]==f.flag_type][0]
+                name = [x[1] for x in USERFLAG_TYPES if x[0] == f.flag_type][0]
                 if f.sender == request.user:
                     flags[name] = f.created.isoformat()
                 elif f.sender == user:
                     flags[name + '_received'] = f.created.isoformat()
 
             for f in UserFlag.get_two_way_flags(request.user, user):
-                name = [x[1] for x in USERFLAG_TYPES if x[0]==f.flag_type][0]
+                name = [x[1] for x in USERFLAG_TYPES if x[0] == f.flag_type][0]
                 if f.sender == request.user:
                     flags[name] = f.created.isoformat()
                     if f.confirmed is not None:
@@ -821,7 +837,6 @@ def profile_api_view(request, q, use):
                     flags[name + '_received'] = f.created.isoformat()
                     if f.confirmed:
                         flags[name] = f.confirmed.isoformat()
-
             # count the view, this is not authuser looking at their own profile
             user.profile.views_counter += 1
             user.profile.save()
@@ -850,10 +865,14 @@ def profile_api_view(request, q, use):
             "style_active": user.profile.style_active,
             "style": user.profile.style,
             # COUTNER
-            "friend_open_invites_recv_counter": user.profile.friend_open_invites_recv_counter,
-            "friend_mutual_confirmed_counter": user.profile.friend_mutual_confirmed_counter,
-            "match_open_invites_recv_counter": user.profile.match_open_invites_recv_counter,
-            "match_mutual_confirmed_counter": user.profile.match_mutual_confirmed_counter,
+            "friend_open_invites_recv_counter":
+                user.profile.friend_open_invites_recv_counter,
+            "friend_mutual_confirmed_counter":
+                user.profile.friend_mutual_confirmed_counter,
+            "match_open_invites_recv_counter":
+                user.profile.match_open_invites_recv_counter,
+            "match_mutual_confirmed_counter":
+                user.profile.match_mutual_confirmed_counter,
             "mail_recv_counter": user.profile.mail_recv_counter,
             "mail_sent_counter": user.profile.mail_sent_counter,
             "mail_unread_counter": user.profile.mail_unread_counter,
@@ -915,10 +934,11 @@ def profile_api_view(request, q, use):
         # profile, of looking at somebody else's profile page
         if user == request.user:
             # authuser can see (and edit) their own profile birthdate
+            # noinspection PyBroadException
             try:
                 data['dob'] = user.profile.dob.isoformat()
             except:
-                data['dob'] = '';
+                data['dob'] = ''
             # tell authuser how many unread mail she has
             data['mail_unread_counter'] = UserMsg.objects.filter(
                 is_read=False, to_user=request.user, is_blocked=False).count()
@@ -936,7 +956,8 @@ def profile_api_view(request, q, use):
             flag.created = datetime.utcnow().replace(tzinfo=utc)
             flag.save()
         return HttpResponse(json.dumps(data),
-                            {'content_type':'application/json'})
+                            {'content_type': 'application/json'})
+
 
 # ======================================================================
 # ======================================================================
@@ -944,16 +965,18 @@ def profile_api_view(request, q, use):
 # ======================================================================
 # ======================================================================
 
+
 class SearchAPIView(View):
 
     @method_decorator(login_required)
     def get(self, request):
-        json_header = {'content_type':'application/json'}
+        json_header = {'content_type': 'application/json'}
 
         page_size = int(request.GET.get('page_size', 20))
         page = int(request.GET.get('page', 1))
         gender = int(request.GET.get('gender', 1))
-        exclude = request.GET.get('exclude', []) # list of usernames to exclude (e.g. profileuser's)
+        # list of usernames to exclude (e.g. profileuser's)
+        exclude = request.GET.get('exclude', [])
 
         # Get the limits for the dob.
         minage = int(request.GET.get('minage', 18))
@@ -970,6 +993,7 @@ class SearchAPIView(View):
         first = last - page_size
 
         # Get a list of cities that are within "dist" distance from "city".
+        # noinspection PyBroadException
         try:
             dist = int(request.GET.get('dist', 100))
             city_id = int(request.GET.get('city', request.user.profile.city_id))
@@ -978,7 +1002,7 @@ class SearchAPIView(View):
         except:
             # If anything goes wrong on the way, return an empty result [].
             # - User may not be logged in
-            # - User may not have set their own city and no search city is given.
+            # - User may not have set their own city and no search city is given
             # - City pk does not exist. ..etc
             return HttpResponse(json.dumps([]), json_header)
 
@@ -995,22 +1019,23 @@ class SearchAPIView(View):
                                .order_by('-profile__last_active')[first:last]
         data = []
         for user in userlist:
-            item = {}
-            item['id'] = user.pk
-            item['last_active'] = user.profile.last_active.isoformat()
-            item['created'] = user.date_joined.isoformat()
-            item['username'] = user.username
-            item['age'] = user.profile.age
-            item['gender'] = user.profile.gender
-            item['pic'] = user.profile.pic.pk
-            item['city'] = user.profile.city.pk
-            item['country'] = user.profile.country.pk
-            item['crc'] = user.profile.crc
+            item = {'id': user.pk,
+                    'last_active': user.profile.last_active.isoformat(),
+                    'created': user.date_joined.isoformat(),
+                    'username': user.username,
+                    'age': user.profile.age,
+                    'gender': user.profile.gender,
+                    'pic': user.profile.pic.pk,
+                    'city': user.profile.city.pk,
+                    'country': user.profile.country.pk,
+                    'crc': user.profile.crc}
             data.append(item)
 
         return HttpResponse(json.dumps(data), json_header)
 
+
 # --- Others -------------------------------------------------------------------
+
 
 @login_required
 def edit_profile(req):
@@ -1021,28 +1046,28 @@ def edit_profile(req):
         if form.is_valid():
             req.user.profile.dob = form.cleaned_data['dob']
             req.user.profile.gender = form.cleaned_data['gender']
-            #req.user.profile.country = form.cleaned_data['country']
-            #req.user.profile.city = form.cleaned_data['city']
-            req.user.profile.last_modified = datetime.utcnow().replace(tzinfo=utc)
+            # req.user.profile.country = form.cleaned_data['country']
+            # req.user.profile.city = form.cleaned_data['city']
+            req.user.profile.last_modified = datetime.utcnow()\
+                                                     .replace(tzinfo=utc)
             req.user.profile.save()
-
             return HttpResponse()
-
     else:
         form = UserEditProfileForm({
             'dob': req.user.profile.dob,
             'gender': req.user.profile.gender,
-            #'country': req.user.profile.country,
-            #'city': req.user.profile.city,
+            # 'country': req.user.profile.country,
+            # 'city': req.user.profile.city,
         })
 
     return HttpResponse(form.as_ul())
 
-# ==================================================================================================
-# ==================================================================================================
-# === talk =========================================================================================
-# ==================================================================================================
-# ==================================================================================================
+
+# =============================================================================
+# =============================================================================
+# === talk ====================================================================
+# =============================================================================
+# =============================================================================
 
 # GET /api/v1/talk/new.json?after=datetime (or ?before=datetime)
 # POST /api/v1/talk/new.json
@@ -1062,9 +1087,7 @@ def talk_fetch_posts(request, after=None, before=None, count=None, group='all'):
     posts = Talk.objects.filter(is_blocked=False,
                                 user__isnull=False).order_by('-created')
 
-    #
     # TODO: Add prefetch for "user" field.
-    #
 
     # Limit posts list by before or after a certain date.
     if before:
@@ -1095,8 +1118,7 @@ def talk_fetch_posts(request, after=None, before=None, count=None, group='all'):
                                     .filter(flag_type=2)\
                                     .filter(sender=request.user)\
                                     .values('receiver')
-        posts = posts.filter(Q(user__in=matches_1)|
-                             Q(user__in=matches_2)|
+        posts = posts.filter(Q(user__in=matches_1) | Q(user__in=matches_2) |
                              Q(user=request.user))
     elif group == 'friends' and request.user.is_authenticated():
         # Find friends of authuser and only fetch their posts and the authuser's
@@ -1109,11 +1131,10 @@ def talk_fetch_posts(request, after=None, before=None, count=None, group='all'):
                                     .filter(flag_type=1)\
                                     .filter(sender=request.user)\
                                     .values('receiver')
-        posts = posts.filter(Q(user__in=friends_1)|
-                             Q(user__in=friends_2)|
+        posts = posts.filter(Q(user__in=friends_1) | Q(user__in=friends_2) |
                              Q(user=request.user))
-
     return posts[:count]
+
 
 def talk_posts_to_dict(request, posts):
     """
@@ -1135,6 +1156,7 @@ def talk_posts_to_dict(request, posts):
         posts[i] = talk_post_to_dict(posts[i])
         posts[i]['block'] = posts[i]['user']['id'] in blocked
     return posts
+
 
 def talk_post_to_dict(post):
     try:
@@ -1172,34 +1194,33 @@ def talk_post_to_dict(post):
 
     return ret
 
+
 @login_required
-@require_http_methods(['PUT', 'GET', 'HEAD' ,'DELETE'])
+@require_http_methods(['PUT', 'GET', 'HEAD', 'DELETE'])
 def talk_post(request, post_id):
-    '''An individual post: delete, update, or retreive.'''
+    """An individual post: delete, update, or retreive."""
+    data = []
     post = get_object_or_404(Talk, pk=post_id)
 
     if request.method in ['GET', 'HEAD']:
         data = talk_post_to_dict(post)
-
     elif request.method == 'PUT':
         # Updateing a post not implemented.
         return HttpResponseBadRequest('Not implemented.')
-
     elif request.method == 'DELETE':
         # User can only delete their own posts, except staff who can delete any.
         if post.user != request.user and not request.user.is_staff:
             HttpResponseForbidden('You can only delete your own posts.')
         post.delete()
-        data = []
+    return HttpResponse(json.dumps(data), {'content_type': 'application/json'})
 
-    return HttpResponse(json.dumps(data), {'content_type':'application/json'})
 
 @require_http_methods(['POST', 'GET', 'HEAD'])
 def talk_list(request, group='all'):
-    '''
+    """
     GET returns a list of "count" posts, newest first.
     POST receives data of a new post and saves it and returns the new post.
-    '''
+    """
     if group not in ['all', 'matches', 'friends', 'own']:
         return HttpResponseBadRequest()
 
@@ -1209,12 +1230,12 @@ def talk_list(request, group='all'):
         before = request.GET.get('before', None)
         count = request.GET.get('count', settings.DTR_TALK_PAGE_SIZE)
         if settings.DEBUG:
-            print('talk_list() GET group:{}, after:{}, before:{}, count:{}.'\
-                                        .format(group, after, before, count))
+            print('talk_list() GET group:{}, after:{}, before:{}, count:{}.'
+                  ''.format(group, after, before, count))
         data = talk_fetch_posts(request, after, before, count, group)
         data = talk_posts_to_dict(request, data)
-        return HttpResponse(json.dumps(data), {'content_type':'application/json'})
-
+        return HttpResponse(json.dumps(data),
+                            {'content_type': 'application/json'})
     elif request.method == 'POST':
         # Only authenticated user may post content.
         if not request.user.is_authenticated():
@@ -1229,8 +1250,10 @@ def talk_list(request, group='all'):
         if not text:
             return HttpResponseBadRequest('no nothing')
         if parent:
-            try: parent = Talk.objects.get(pk=parent)
-            except: parent = None
+            try:
+                parent = Talk.objects.get(pk=parent)
+            except Talk.DoesNotExist:
+                parent = None
 
         # Find any hashtags or usernames mentioned in the post.
         hashtags = set(re.findall(r'#\w{2,50}', text))
@@ -1252,104 +1275,111 @@ def talk_list(request, group='all'):
 
         # Write usernames (user objects) to TalkUsername
         usernames = [x.lstrip('@') for x in usernames]
-        users = User.objects.filter(username__in=usernames) #, is_active=True)
+        users = User.objects.filter(username__in=usernames)  # , is_active=True)
         for user in users:
             TalkUsername.objects.create(user=user, talk=post)
 
         # Return the newly created post object.
+        # noinspection PyTypeChecker
         return HttpResponse(json.dumps(talk_post_to_dict(post)),
-                            {'content_type':'application/json'})
+                            {'content_type': 'application/json'})
+
 
 @require_http_methods(['GET', 'HEAD'])
 def talk_hashtag(request, hashtag):
-    '''returns a list of posts that are tagged with the hashtag hashtag.'''
+    """returns a list of posts that are tagged with the hashtag hashtag."""
     after = request.GET.get('after', None)
     before = request.GET.get('before', None)
     count = request.GET.get('count', settings.DTR_TALK_PAGE_SIZE)
     posts = Talk.objects.filter(hashtag__tag__iexact=hashtag).order_by('-pk')
-    if after: posts = posts.filter(created__gt=after)
-    if before: posts = posts.filter(created__lt=before)
+    if after:
+        posts = posts.filter(created__gt=after)
+    if before:
+        posts = posts.filter(created__lt=before)
     data = talk_posts_to_dict(request, posts[:count])
+    return HttpResponse(json.dumps(data), {'content_type': 'application/json'})
 
-    return HttpResponse(json.dumps(data), {'content_type':'application/json'})
 
 @require_http_methods(['GET', 'HEAD'])
 def talk_username(request, username):
-    '''returns a list of posts that mention user "username".'''
+    """returns a list of posts that mention user "username"."""
     after = request.GET.get('after', None)
     before = request.GET.get('before', None)
     count = request.GET.get('count', settings.DTR_TALK_PAGE_SIZE)
     user = get_object_or_404(User, username__iexact=username)
     posts = Talk.objects.filter(Q(mentions__user=user) |
                                 Q(user=user)).order_by('-pk')
-    if after: posts = posts.filter(created__gt=after)
-    if before: posts = posts.filter(created__lt=before)
+    if after:
+        posts = posts.filter(created__gt=after)
+    if before:
+        posts = posts.filter(created__lt=before)
     data = talk_posts_to_dict(request, posts[:count])
+    return HttpResponse(json.dumps(data), {'content_type': 'application/json'})
 
-    return HttpResponse(json.dumps(data), {'content_type':'application/json'})
 
 @require_http_methods(['GET', 'HEAD'])
 def talk_popular_tags(request):
-    '''
+    """
     returns a list with the "count" most popular tags within the past "sample"
     tags posted.
 
     TODO: The "sample" part doesn't work well with MySQL. Change it to grouped
     by date, so that we get "the most popular tag in the last week" or "in the
     past 24 hours" etc.
-    '''
+    """
     count = request.GET.get('count', 20)
-    #sample = request.GET.get('sample', 1000)
+    # sample = request.GET.get('sample', 1000)
     tags = TalkHashtag.objects.values('tag').annotate(count=Count('tag'))
     data = [x['tag'] for x in tags.order_by('-count')[:count]]
+    return HttpResponse(json.dumps(data), {'content_type': 'application/json'})
 
-    return HttpResponse(json.dumps(data), {'content_type':'application/json'})
 
 @require_http_methods(['GET', 'HEAD'])
 def talk_popular_users(request):
-    '''
+    """
     returns a list with the "count" most popular (most often @mentioned) users
     within the past "sample" users posted.
 
     TODO: The "sample" part doesn't work well with MySQL. Change it to grouped
     by date, so that we get "the most popular tag in the last week" or "in the
     past 24 hours" etc.
-    '''
+    """
     count = request.GET.get('count', 20)
-    #sample = request.GET.get('sample', 1000)
-    users = TalkUsername.objects.values('user__username')\
-            .annotate(count=Count('user')).order_by('-count')[:count]
+    # sample = request.GET.get('sample', 1000)
+    users = TalkUsername.objects.values('user__username').annotate(
+        count=Count('user')).order_by('-count')[:count]
     data = [x['user__username'] for x in users]
+    return HttpResponse(json.dumps(data), {'content_type': 'application/json'})
 
-    return HttpResponse(json.dumps(data), {'content_type':'application/json'})
 
-# ==================================================================================================
-# ==================================================================================================
-# ==================================================================================================
-# ==================================================================================================
-# ==================================================================================================
+# =============================================================================
+# =============================================================================
+# =============================================================================
+# =============================================================================
+# =============================================================================
+
 
 @login_required
 @require_http_methods(['GET'])
 def pictures_list(request):
-    '''
+    """
     Return a list of most recent user uploaded pictures items. Each item is a
     dict with the fields: id, username, created
 
     Optionally params: count - number of items to return, between 1 and 500.
                        below_id - only return pics with IDs smaller than this.
-    '''
+    """
     data = []
     count = int(request.GET.get('count', 50))
     below_id = int(request.GET.get('below_id', 0))
-    if not count or count < 1 or count > 500: count = 50
+    if not count or count < 1 or count > 500:
+        count = 50
     pics = UserPic.objects.all().order_by('-created')\
                                 .select_related('user__username')
     if below_id:
         pics = pics.filter(id__lt=below_id)
-
     for pic in pics[:count]:
-        data.append({ 'id': pic.id, 'username': pic.user.username,
-                      'created': pic.created.isoformat() })
-
-    return HttpResponse(json.dumps(data), {'content_type':'application/json'})
+        data.append({'id': pic.id,
+                     'username': pic.user.username,
+                     'created': pic.created.isoformat()})
+    return HttpResponse(json.dumps(data), {'content_type': 'application/json'})
