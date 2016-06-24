@@ -404,28 +404,47 @@ class UserProfile(models.Model):
         s = "UserProfile for {0} (#{1})"
         return s.format(self.user.id, self.user.username)
 
-    def __init__(self, *args, **kwargs):
-        super(UserProfile, self).__init__(*args, **kwargs)
-        self.language = settings.LANGUAGE_CODE[:2]
-        self.age = self.get_age()
-        self.crc = self.get_crc()
-        self.is_online = self.get_is_online()
-        self.is_idle = self.get_is_idle()
-        self.is_offline = self.get_is_offline()
-        self.pic_url_s = self.get_pic_url(self.pic, 's')
-        self.pic_url_m = self.get_pic_url(self.pic, 'm')
-        self.pic_url_x = self.get_pic_url(self.pic, 'x')
-
     def save(self, *args, **kwargs):
-        # remember user's language setting, 2 char code only!
-        # --> No, don't! Updates like view_counter would set this to the
-        # other user's language setting! Needs to be updated explicitly.
-        # self.language = get_language()[:2]
-        # Make star signs searchable.
         if self.dob:
             self.western_zodiac = self.get_western_zodiac()
             self.eastern_zodiac = self.get_eastern_zodiac()
         super(UserProfile, self).save(*args, **kwargs)
+
+    @property
+    def language(self):
+        return settings.LANGUAGE_CODE[:2]
+
+    @property
+    def pic_url_s(self):
+        return self.get_pic_url(self.pic_id, 's')
+
+    @property
+    def pic_url_m(self):
+        return self.get_pic_url(self.pic_id, 'm')
+
+    @property
+    def pic_url_x(self):
+        return self.get_pic_url(self.pic_id, 'x')
+
+    @property
+    def age(self):
+        return self.get_age()
+
+    @property
+    def crc(self):
+        return self.get_crc()
+
+    @property
+    def is_online(self):
+        return self.get_is_online()
+
+    @property
+    def is_idle(self):
+        return self.get_is_idle()
+
+    @property
+    def is_offline(self):
+        return self.get_is_offline()
 
     @classmethod
     def get_pic_url(cls, pic, size='s'):

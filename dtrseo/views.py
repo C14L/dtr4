@@ -2,6 +2,8 @@
 from __future__ import (unicode_literals, absolute_import, division,
                         print_function)
 
+from django.views.decorators.cache import cache_page
+
 """
 This app mainly provides landing pages for all dater3 areas, and makes sure
 that well-indexed pages from the EL Ligue PHP version remain indexed under the
@@ -54,6 +56,7 @@ def redir_old_forum_threads(req, threadid):
     return HttpResponsePermanentRedirect(url)
 
 
+@cache_page(60 * 60 * 24 * 365)
 def users_alphabetically(req):  # URL path: /browse.php?begin=ab
     d = {'letter': req.GET.get('begin', '').lower()}
 
@@ -64,10 +67,11 @@ def users_alphabetically(req):  # URL path: /browse.php?begin=ab
         d['userprofiles'] = UserProfile.objects.filter(
             user__username__istartswith=d['letter'], user__is_active=True,
             pic__isnull=False).order_by('user__username').prefetch_related(
-            'user')[:100]
+            'user', 'city')[:100]
     return render_to_response(tpl, d, context_instance=RequestContext(req))
 
 
+@cache_page(60 * 60 * 24 * 365)
 def users_f_m(req, tpl='dtrseo/list_of_users_f_m.html'):  # 20==woman
     return render_to_response(tpl, {'userprofiles': UserProfile.objects.filter(
         gender__in=(4, 5), user__is_active=True, pic__isnull=False).order_by(
@@ -75,6 +79,7 @@ def users_f_m(req, tpl='dtrseo/list_of_users_f_m.html'):  # 20==woman
         context_instance=RequestContext(req))
 
 
+@cache_page(60 * 60 * 24 * 365)
 def users_m_f(req, tpl='dtrseo/list_of_users_m_f.html'):
     return render_to_response(tpl, {'userprofiles': UserProfile.objects.filter(
         gender__in=(1, 2), user__is_active=True, pic__isnull=False).order_by(
@@ -82,6 +87,7 @@ def users_m_f(req, tpl='dtrseo/list_of_users_m_f.html'):
         context_instance=RequestContext(req))
 
 
+@cache_page(60 * 60 * 24 * 365)
 def users_f_pics(req, tpl='dtrseo/list_of_users_f_pics.html'):
     return render_to_response(tpl, {'userprofiles': UserProfile.objects.filter(
         gender__in=(4, 5), user__is_active=True, pic__isnull=False).order_by(
@@ -89,6 +95,7 @@ def users_f_pics(req, tpl='dtrseo/list_of_users_f_pics.html'):
         context_instance=RequestContext(req))
 
 
+@cache_page(60 * 60 * 24 * 365)
 def users_m_pics(req, tpl='dtrseo/list_of_users_m_pics.html'):
     return render_to_response(tpl, {'userprofiles': UserProfile.objects.filter(
         gender__in=(1, 2), user__is_active=True, pic__isnull=False).order_by(
@@ -97,6 +104,7 @@ def users_m_pics(req, tpl='dtrseo/list_of_users_m_pics.html'):
 
 
 # noinspection PyUnusedLocal
+@cache_page(60 * 60 * 24 * 365)
 def citymx(req, city_short, city_name, tpl='dtrseo/es_citymx.html'):
     # The old URLs to some Mexican cities, e.g. "/citymxmer/merida.html‎"
     abbr_cities = {
@@ -144,7 +152,7 @@ def citymx(req, city_short, city_name, tpl='dtrseo/es_citymx.html'):
         'userprofiles': UserProfile.objects.filter(
             gender__in=[1, 2, 4, 5], city__in=cities, user__is_active=True,
             pic__isnull=False).order_by('-user__last_login').prefetch_related(
-            'user')[:48],
+            'user', 'city')[:48],
         'city': get_object_or_404(
             AltName, geoname_id=abbr_cities[city_short], is_main=1, type=3,
             language=(get_language() or settings.LANGUAGE_CODE)[:2]),
@@ -152,6 +160,7 @@ def citymx(req, city_short, city_name, tpl='dtrseo/es_citymx.html'):
     return render_to_response(tpl, d, context_instance=RequestContext(req))
 
 
+@cache_page(60 * 60 * 24 * 365)
 def country_list(req, tpl='dtrseo/list_of_country.html'):
     """Show a list of some countries."""
     lim = [
@@ -175,6 +184,7 @@ def country_list(req, tpl='dtrseo/list_of_country.html'):
                               context_instance=RequestContext(req))
 
 
+@cache_page(60 * 60 * 24 * 365)
 def users_by_country(req, country, tpl='dtrseo/list_of_users_by_country.html'):
     """Show list of regions of one country with some user profiles."""
     country_altname = get_object_or_404(
@@ -235,6 +245,7 @@ def users_by_country_region(req, country, region,
                     }, context_instance=RequestContext(req))
 
 
+@cache_page(60 * 60 * 24 * 365)
 def users_by_altname_url(req, crc_url,
                          tpl='dtrseo/list_of_users_by_altname_url.html'):
     """Shows a list of userprofiles from a city by its AltName.url value."""
@@ -244,9 +255,9 @@ def users_by_altname_url(req, crc_url,
             language=(get_language() or settings.LANGUAGE_CODE)[:2])[0]
     except IndexError:
         raise Http404
-    userprofiles = UserProfile.objects.filter(city=altname.geoname_id)\
-                                      .order_by('-user__last_login')\
-                                      .prefetch_related('user')[:50]
+    userprofiles = UserProfile.objects.filter(
+        city=altname.geoname_id).order_by('-user__last_login').prefetch_related(
+        'user', 'city')[:50]
     return render_to_response(
         tpl, {'userprofiles': userprofiles, 'city': altname},
         context_instance=RequestContext(req))
