@@ -106,6 +106,7 @@ INSTALLED_APPS = (
     # 'allauth.socialaccount.providers.vimeo',
 
     'rest_framework',
+    'debug_toolbar',
 
     # Make settings accessible from within templates
     # 'dtrprofile.templatetags.settings_value',
@@ -199,12 +200,12 @@ else:
     # Log to console on dev
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# CACHES = {
-#    'default': {
-#        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-#        'LOCATION': '127.0.0.1:11211',
-#    },
-# }
+CACHES = {
+   'default': {
+       'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+       'LOCATION': '127.0.0.1:11211',
+   },
+}
 
 # Session config
 SESSION_COOKIE_DOMAIN = 'elligue.com'
