@@ -32,7 +32,10 @@ if not PRODUCTION:
 SITE_ID = 1
 CSRF_COOKIE_NAME = 'csrftoken'  # default
 CSRF_COOKIE_HTTPONLY = False  # needs access from Angular
-CSRF_COOKIE_SECURE = False  # TODO: Set True when SSL/HTTPS
+CSRF_COOKIE_SECURE = True  # set True for HTTPS
+if not PRODUCTION:
+    CSRF_COOKIE_SECURE = False  # not on localhost
+
 X_FRAME_OPTIONS = 'DENY'  # never serve any part in a frame; default: SAMEORIGIN
 ROOT_URLCONF = 'dtr4.urls'
 WSGI_APPLICATION = 'dtr4.wsgi.application'
@@ -205,11 +208,12 @@ else:
 
 # Session config
 SESSION_COOKIE_DOMAIN = 'elligue.com'
-SESSION_COOKIE_AGE = 60*60*24*30*12  # 1 year
-# SESSION_COOKIE_NAME = 'sessionid'  # default
-# SESSION_COOKIE_PATH = '/'  # default
-# SESSION_COOKIE_SECURE = False  # TODO: set to True when moving to https
-if DEBUG:
+SESSION_COOKIE_AGE = 60*60*24*30*12  # 1y
+# SESSION_COOKIE_NAME = 'sessionid'
+# SESSION_COOKIE_PATH = '/'
+SESSION_COOKIE_SECURE = True  # Set to True when using HTTPS
+if not PRODUCTION:
+    SESSION_COOKIE_SECURE = False  # not on localhost
     SESSION_COOKIE_DOMAIN = None  # no restriction on dev
 # For memcached use 'django.contrib.sessions.backends.cache'
 # Django default: 'django.contrib.sessions.backends.db'
@@ -265,7 +269,7 @@ THUMBS_WATERMARK_IMAGES = {
 # The maximum size, in Bytes, for files that will be uploaded into memory. Files
 # larger than FILE_UPLOAD_MAX_MEMORY_SIZE will be streamed to disk.
 # Default: 2621440 Bytes (2.5 MiB)
-FILE_UPLOAD_MAX_MEMORY_SIZE = 3200000
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10000000  # 10 MB
 # The directory where uploaded files larger than FILE_UPLOAD_MAX_MEMORY_SIZE
 # will be stored. Django default: /tmp
 # FILE_UPLOAD_TEMP_DIR = ''
