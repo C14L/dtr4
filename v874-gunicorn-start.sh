@@ -5,7 +5,8 @@ DJANGODIR=/var/www/www.elligue.com/dtr4
 SOCKFILE=/var/www/www.elligue.com/run/gunicorn.sock
 USER=cst
 GROUP=cst
-NUM_WORKERS=5
+NUM_WORKERS=3
+NUM_THREADS=4
 DJANGO_SETTINGS_MODULE=dtr4.settings
 DJANGO_WSGI_MODULE=dtr4.wsgi
 
@@ -20,6 +21,10 @@ RUNDIR=$(dirname ${SOCKFILE})
 test -d ${RUNDIR} || mkdir -p ${RUNDIR}
 
 exec ../venv/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
-  --name ${NAME} --workers ${NUM_WORKERS} \
-  --user=${USER} --group=${GROUP} \
-  --bind=unix:${SOCKFILE} --log-level=debug --log-file=-
+  --name ${NAME} \
+  --workers ${NUM_WORKERS} \
+  --threads ${NUM_THREADS} \
+  --user=${USER} \
+  --group=${GROUP} \
+  --bind=unix:${SOCKFILE} \
+  --log-level=debug --log-file=-
