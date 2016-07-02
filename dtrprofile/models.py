@@ -64,7 +64,12 @@ class UserFlag(models.Model):
     confirmed = models.DateTimeField(default=None, null=True)
 
     class Meta:
-        index_together = [['sender', 'receiver'], ['sender', 'receiver']]
+        index_together = [
+            ['sender', 'receiver'],
+            ['receiver', 'sender'],
+            ['flag_type', 'receiver', 'sender'],
+            ['flag_type', 'sender', 'receiver'],
+        ]
         unique_together = ['sender', 'receiver', 'flag_type']
 
     def __init__(self, *args, **kwargs):

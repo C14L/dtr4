@@ -293,6 +293,7 @@ def profile_flag_list(request, listname):
     Find all users that have the requested relation to authuser and
     return a list of basic user data dicts. Not complete User objects!
     """
+    after = request.GET.get('after', None)
     flags = None
     data = []
     lists = ['matches', 'like_me', 'likes', 'viewed_me', 'favorites',
@@ -335,9 +336,22 @@ def profile_flag_list(request, listname):
         blocklist = UserFlag.objects.filter(flag_type=3, sender=request.user)
         blocklist = blocklist.values_list('receiver', flat=True)
 
-    # TODO: here, filter out the blocked users IN THE DATABASE QUERY,
-    # so that the positive matched can properly be limited to 200 or so,
-    # right IN THE DB QUERY (flags)!
+    # Prefetches now and limits the query by "after" parameter. However, there
+    # is still a query to City model for each iteration on flags. Example:
+    #
+    # SELECT ••• FROM `dtrcity_altname` WHERE (`dtrcity_altname`.`geoname_id` =
+    # 3871336 AND `dtrcity_altname`.`type` = 3 AND `dtrcity_altname`.`language`
+    # = 'es' AND `dtrcity_altname`.`is_main` = 1)
+    #
+    # TODO: prefetch related `City` objects for all items in `flags`.
+
+    if after:
+        # Limit the matches to those created after the given datetime.
+        flags = flags.filter(created__gt=after)
+
+    flags = flags.prefetch_related(
+        'sender', 'sender__profile', 'sender__profile__city',
+        'receiver', 'receiver__profile', 'receiver__profile__city')
 
     for flag in flags:
         # serialize the found flags into a list of basic user dicts, but
@@ -371,6 +385,10 @@ def profile_flag_list(request, listname):
         if flag.confirmed:
             item['confirmed'] = flag.confirmed.isoformat()
         data.append(item)
+
+    if settings.ENABLE_DEBUG_TOOLBAR:
+        return HttpResponse('<html><body>DTB: {}</body></html>'.format(data))
+
     return HttpResponse(json.dumps(data), {'content_type': 'application/json'})
 
 
