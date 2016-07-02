@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
+from __future__ import (unicode_literals, absolute_import, division,
+                        print_function)
+
 from datetime import datetime
 from random import random
 from time import sleep
 from time import time
 
 import os
-from django.conf import settings
 from django.db.models import F
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
@@ -129,3 +132,32 @@ class SimpleSpamBotTrapMiddleware(object):
         # If the request past all checks and filters, then return None to 
         # proceed.
         return None
+
+
+import sys
+import cProfile
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+from django.conf import settings
+
+
+class ProfilerMiddleware(object):
+    profiler = None
+
+    def process_view(self, request, callback, callback_args, callback_kwargs):
+        if settings.ENABLE_PROFILER and 'prof' in request.GET:
+            self.profiler = cProfile.Profile()
+            args = (request,) + callback_args
+            return self.profiler.runcall(callback, *args, **callback_kwargs)
+
+    def process_response(self, request, response):
+        if settings.ENABLE_PROFILER and 'prof' in request.GET:
+            self.profiler.create_stats()
+            out = StringIO()
+            old_stdout, sys.stdout = sys.stdout, out
+            self.profiler.print_stats(1)
+            sys.stdout = old_stdout
+            response.content = '<pre>%s</pre>' % out.getvalue()
+        return response

@@ -21,6 +21,9 @@ DEBUG = os.path.exists('/islocal.txt')
 PRODUCTION = not DEBUG
 TEMPLATE_DEBUG = DEBUG
 
+ENABLE_PROFILER = False
+ENABLE_DEBUG_TOOLBAR = not ENABLE_PROFILER
+
 SECRET_KEY = settings_private.SECRET_KEY
 ADMINS = settings_private.ADMINS
 MANAGERS = settings_private.MANAGERS
@@ -61,7 +64,7 @@ LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'dtrseo/locale'),
 ]
 
-ALLOWED_HOSTS = ['www.elligue.com', 'lg.cn8.eu', 'localhost']
+ALLOWED_HOSTS = ['www.elligue.com', 'localhost']
 
 # Block bad User-Agents, list of regexps. default: ()
 # Do this in Apache2 .htaccess file, these should not even make it here.
@@ -84,7 +87,7 @@ APPEND_SLASH = True
 if PRODUCTION:
     SECURE_BROWSER_XSS_FILTER = True
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -106,7 +109,6 @@ INSTALLED_APPS = (
     # 'allauth.socialaccount.providers.vimeo',
 
     'rest_framework',
-    'debug_toolbar',
 
     # Make settings accessible from within templates
     # 'dtrprofile.templatetags.settings_value',
@@ -118,7 +120,11 @@ INSTALLED_APPS = (
     # Add later for production
     # django_compressor
     # 'compressor',
-)
+]
+
+if ENABLE_DEBUG_TOOLBAR:
+    INSTALLED_APPS += ['debug_toolbar']
+
 
 MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -141,6 +147,9 @@ MIDDLEWARE_CLASSES = [
     # setting "SIMULATE_NETWORK_DELAY" is True.
     'dtrprofile.middleware.SimulateNetworkDelayMiddleware',
 ]
+
+if ENABLE_PROFILER:
+    MIDDLEWARE_CLASSES.insert(0, 'dtrprofile.middleware.ProfilerMiddleware')
 
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of allauth
