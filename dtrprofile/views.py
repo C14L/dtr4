@@ -1024,17 +1024,19 @@ class SearchAPIView(View):
             # - City pk does not exist. ..etc
             return HttpResponse(json.dumps([]), json_header)
 
-        userlist = User.objects.filter(is_active=True)\
-                               .filter(profile__pic__isnull=False)\
-                               .filter(profile__country__isnull=False)\
-                               .filter(profile__city__in=cities)\
-                               .filter(profile__gender=gender)\
-                               .filter(profile__dob__gt=born_after)\
-                               .filter(profile__dob__lt=born_before)\
-                               .exclude(pk=request.user.pk)\
-                               .exclude(username__in=exclude)\
-                               .exclude(pk__in=blocked_qs)\
-                               .order_by('-profile__last_active')[first:last]
+        userlist = User.objects\
+            .prefetch_related('profile', 'profile__city')\
+            .filter(is_active=True)\
+            .filter(profile__pic__isnull=False)\
+            .filter(profile__country__isnull=False)\
+            .filter(profile__city__in=cities)\
+            .filter(profile__gender=gender)\
+            .filter(profile__dob__gt=born_after)\
+            .filter(profile__dob__lt=born_before)\
+            .exclude(pk=request.user.pk)\
+            .exclude(username__in=exclude)\
+            .exclude(pk__in=blocked_qs)\
+            .order_by('-profile__last_active')[first:last]
         data = []
         for user in userlist:
             item = {'id': user.pk,
@@ -1043,11 +1045,14 @@ class SearchAPIView(View):
                     'username': user.username,
                     'age': user.profile.age,
                     'gender': user.profile.gender,
-                    'pic': user.profile.pic.pk,
+                    'pic': user.profile.pic_id,
                     'city': user.profile.city.pk,
-                    'country': user.profile.country.pk,
+                    'country': user.profile.country_id,
                     'crc': user.profile.crc}
             data.append(item)
+
+        if settings.ENABLE_DEBUG_TOOLBAR:
+            return HttpResponse('<html><body>{}</body></html>'.format(data))
 
         return HttpResponse(json.dumps(data), json_header)
 
