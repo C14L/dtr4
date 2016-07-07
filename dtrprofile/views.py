@@ -349,9 +349,13 @@ def profile_flag_list(request, listname):
         # Limit the matches to those created after the given datetime.
         flags = flags.filter(created__gt=after)
 
-    flags = flags.prefetch_related(
-        'sender', 'sender__profile', 'sender__profile__city',
-        'receiver', 'receiver__profile', 'receiver__profile__city')
+    flags = flags.prefetch_related('sender', 'sender__profile',
+                                   'receiver', 'receiver__profile')
+
+    # Fetch all i18n'ed geonames at once and join onto flags instances
+    city_id_li = [x.sender.profile.city_id for x in flags] +\
+                 [x.receiver.profile.city_id for x in flags]
+    geoname_li = UserProfile.get_crc_list(city_id_li)  # {geoname_id: crc}
 
     for flag in flags:
         # serialize the found flags into a list of basic user dicts, but
@@ -366,6 +370,7 @@ def profile_flag_list(request, listname):
                 continue
             # Again, the "other" is the user that is not authuser.
             other = flag.sender
+
         # Build the user data dict.
         item = {
             'id': other.id,
@@ -376,7 +381,7 @@ def profile_flag_list(request, listname):
             'pic': other.profile.pic_id,
             'age': other.profile.age,
             'gender': other.profile.gender,
-            'crc': other.profile.crc,
+            'crc': geoname_li[other.profile.city_id],
             # 'city': other.profile.city.pk,
             # 'country': other.profile.country.pk,
         }
@@ -1034,7 +1039,7 @@ class SearchAPIView(View):
             return HttpResponse(json.dumps([]), json_header)
 
         userlist = User.objects\
-            .prefetch_related('profile', 'profile__city')\
+            .prefetch_related('profile')\
             .filter(is_active=True)\
             .filter(profile__pic__isnull=False)\
             .filter(profile__country__isnull=False)\
@@ -1047,6 +1052,11 @@ class SearchAPIView(View):
             .exclude(pk__in=blocked_qs)\
             .order_by('-profile__last_active')[first:last]
         data = []
+
+        # Fetch all i18n'ed geonames at once and join onto user.profile instance
+        geonames_li = [x.profile.city_id for x in userlist]
+        geonames_li = UserProfile.get_crc_list(geonames_li)
+
         for user in userlist:
             item = {'id': user.pk,
                     'last_active': user.profile.last_active.isoformat(),
@@ -1055,9 +1065,9 @@ class SearchAPIView(View):
                     'age': user.profile.age,
                     'gender': user.profile.gender,
                     'pic': user.profile.pic_id,
-                    'city': user.profile.city.pk,
+                    'city': user.profile.city_id,
                     'country': user.profile.country_id,
-                    'crc': user.profile.crc}
+                    'crc': geonames_li[user.profile.city_id], }
             data.append(item)
 
         if settings.ENABLE_DEBUG_TOOLBAR:

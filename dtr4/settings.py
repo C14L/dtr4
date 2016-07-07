@@ -21,7 +21,7 @@ DEBUG = os.path.exists('/islocal.txt')
 PRODUCTION = not DEBUG
 TEMPLATE_DEBUG = DEBUG
 
-ENABLE_PROFILER = True
+ENABLE_PROFILER = False
 ENABLE_DEBUG_TOOLBAR = False
 
 SECRET_KEY = settings_private.SECRET_KEY
