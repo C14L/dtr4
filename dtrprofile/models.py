@@ -472,6 +472,14 @@ class UserProfile(models.Model):
         # Return the URL path of the profile.
         return reverse('user_profile', args=[self.user.username])
 
+    @classmethod
+    def get_crc_list(cls, city_id_list):
+        li = AltName.objects.filter(
+            geoname_id__in=city_id_list, type=3, is_main=True,
+            language=(get_language() or settings.LANGUAGE_CODE)[:2]
+        ).values('geoname_id', 'crc')
+        return {a['geoname_id']: a['crc'] for a in li}
+
     def get_crc(self):
         try:
             return AltName.objects.get(geoname_id=self.city.pk, type=3,
@@ -575,7 +583,8 @@ class UserProfile(models.Model):
         f2 = User.objects.filter(was_flagged__sender=self.user,
                                  was_flagged__confirmed__isnull=False,
                                  was_flagged__flag_type=1)
-        return list(f1) + list(f2)
+        return (list(f1.prefetch_related('profile')) +
+                list(f2.prefetch_related('profile')))
 
 
 # noinspection PyUnusedLocal

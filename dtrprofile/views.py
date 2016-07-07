@@ -24,7 +24,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
-from django.db.models import Count
+from django.db.models import Count, F
 from django.db.models import Q
 from django.http import HttpResponsePermanentRedirect, Http404  # 301
 from django.http import HttpResponseBadRequest          # 400
@@ -48,7 +48,7 @@ from rest_framework.views import APIView
 
 from dtrcity.models import City
 from dtrprofile.models import (UserPic, UserMsg, UserFlag,
-                               Talk, TalkHashtag, TalkUsername)
+                               Talk, TalkHashtag, TalkUsername, UserProfile)
 from dtrprofile.models import USERFLAG_TYPES
 from dtrprofile.serializers import UserMsgSerializer, InboxSerializer
 from dtrprofile.utils import get_client_ip
@@ -855,9 +855,10 @@ def profile_api_view(request, q, use):
                     flags[name + '_received'] = f.created.isoformat()
                     if f.confirmed:
                         flags[name] = f.confirmed.isoformat()
+
             # count the view, this is not authuser looking at their own profile
-            user.profile.views_counter += 1
-            user.profile.save()
+            user.profile.views_counter += 1  # no F('views_counter') + 1
+            user.profile.save(update_fields=['views_counter'])
 
         data = {
             "flags": flags,
@@ -939,6 +940,10 @@ def profile_api_view(request, q, use):
             data['crc'] = ''
         # attach a list of basic user data of profileuser's friends
         data['friends'] = []
+        # Fetch all i18n'ed geonames at once and join onto user.profile instance
+        friends_li = user.profile.get_friends()  # ret User instances, ugh!
+        friends_city_id_li = [x.profile.city_id for x in friends_li]
+        friends_city_li = UserProfile.get_crc_list(friends_city_id_li)
         for x in user.profile.get_friends():
             data['friends'].append({
                     'id': x.id,
@@ -946,7 +951,7 @@ def profile_api_view(request, q, use):
                     'pic': x.profile.pic_id or 0,
                     'age': x.profile.age,
                     'gender': x.profile.gender,
-                    'crc': x.profile.crc,
+                    'crc': friends_city_li.get(x.profile.city_id, ''),
                 })
         # add some extras, depending if authuser is looking at his own
         # profile, of looking at somebody else's profile page
@@ -973,6 +978,10 @@ def profile_api_view(request, q, use):
                 flag_type=5, sender=request.user, receiver=user)
             flag.created = datetime.utcnow().replace(tzinfo=utc)
             flag.save()
+
+        if settings.ENABLE_DEBUG_TOOLBAR:
+            return HttpResponse('<html><body>{}</body></html>'.format(data))
+
         return HttpResponse(json.dumps(data),
                             {'content_type': 'application/json'})
 

@@ -36,10 +36,11 @@ class UserProfileLastActiveMiddleware(object):
     # noinspection PyMethodMayBeStatic,PyUnusedLocal
     def process_request(self, request):
         if request.user.is_authenticated():
-            userprofile = UserProfile.objects.get(pk=request.user)
-            userprofile.last_active = datetime.utcnow().replace(tzinfo=utc)
-            userprofile.active_counter = F('active_counter') + 1
-            userprofile.save(update_fields=['last_active', 'active_counter'])
+            nowdt = datetime.utcnow().replace(tzinfo=utc)
+            request.user.profile.last_active = nowdt
+            request.user.profile.active_counter += 1  # F('active_counter') + 1
+            request.user.profile.save(
+                update_fields=['last_active', 'active_counter'])
         return None
 
 

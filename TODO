@@ -1,9 +1,9 @@
 
+Reduce requests to `/api/v1/talk/list.json?after=<DATETIME>`, `/api/v1/talk/viewed_me.json?after=<DATETIME>`, `/api/v1/talk/unread.json?after=<DATETIME>`, etc. Reduce frequency. And reduce frequency even more when tab not focused.
+
+Seo landing pages by city should use caching to reduce load.
+
 === URGENT ===================================================================
-
-TALK: Within talk, a click on a @username should open a Talk stream, NOT the user's profile page. Maybe two links, something like """@username [profile]""" with [profile] being a "person's head icon" that links to the profle page.
-
-TALK/PRIVATE MSGS: In private messages, make #hashtags and @username strings auto-linked to talk/hashtag pages.
 
 HTTP500 PROFILE: About texts don't accept non-ascii chars aparently. Test: Type "algún" (with accent) into the "About me" box and submit, receive an error message. Expected: It should be saved and shown in the profile page.
 
@@ -18,7 +18,7 @@ GUI: Show how many people online currently, how many friends online currently, h
 
 GUI: Make a detailed (internal?) "status" page to see how many people are online, how many friends exist, how many matches, how many private messages were written, how many etc.
 
-=== FIXME ======================================================================
+=== FIXNEEDED ================================================================
 
 PICS/TALK: Add pics to Talk by Hashtag #12345 (pic's pk) would display the pic in the Talk comment. On profile, have a link next to each pic to the pic's Talk comment, filtered by its hashtag as ususal for hashtags.
 
@@ -43,6 +43,8 @@ LISTS: some lists, only empty lists!, eg /app/lists/matches do not load every se
 TALK 2015-07-20: Weird DB error with on_delete=models.SET_NULL in Talk >>> When a user is deleted, the related Talk objects should be set to NULL, but instead I get a database error when I try to set them to NULL manually or automatically. >>> IntegrityError at /api/v1/profile/CmdrBratwurst.json (1452, 'Cannot add or update a child row: a foreign key constraint fails (`elligue4`.`dtrprofile_talk`, CONSTRAINT `dtrprofile_talk_user_id_56da8d1e8b93abcf_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`))') >>> So now, instead, just delete all messages, public and private, when a user account is deleted.
 
 === NICE-TO-HAVE ===============================================================
+
+TALK/PRIVATE MSGS: In private messages, make #hashtags and @username strings auto-linked to talk/hashtag pages.
 
 PROFILE: Make it possible to set the display status (offline, away) manually, to appear away to others.
 
@@ -73,6 +75,8 @@ TEMPLATES: Where possible, use ng-bind instead of inline {{ }} to show content.
 TEMPLATES: use github.com/Pasvaz/bindonce to remove unnecessary watchers.
 
 === DONE / WONT ================================================================
+
+TALK: Within talk, a click on a @username should open a Talk stream, NOT the user's profile page. Maybe two links, something like """@username [profile]""" with [profile] being a "person's head icon" that links to the profle page.
 
 DONE HOMEPAGE: For anon users, do not redirect to login page, but show a nice homepage with forms for login and signup, and some text and picture content about the site, both for user and SEO.
 DONE I18N: On login and signup pages, translate one line of text below form.
