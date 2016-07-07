@@ -8,10 +8,11 @@ window.MEDIA_URL = '/pics/';
 window.STATIC_URL = '/static/';
 window.CSRF_COOKIE_NAME = 'csrftoken';
 
-window.CHECK_NEW_MSGS_INTERVAL  =  10 * 1000; // msgs on a user profile
-window.CHECK_NEW_LISTS_INTERVAL = 120 * 1000; // changes to "matches" list
-window.CHECK_NEW_INBOX_INTERVAL =  25 * 1000; // background new inbox msgs:
-window.CHECK_NEW_TALK_INTERVAL  =  19 * 1000; // background newtalk posts:
+// --increased vals 20160707
+window.CHECK_NEW_MSGS_INTERVAL  =  20 * 1000; // msgs on a user profile
+window.CHECK_NEW_LISTS_INTERVAL = 600 * 1000; // changes to "matches" list
+window.CHECK_NEW_INBOX_INTERVAL = 120 * 1000; // background new inbox msgs:
+window.CHECK_NEW_TALK_INTERVAL  = 300 * 1000; // background newtalk posts:
 
 window.CHECK_NEW_INBOX_LIMIT = 5000; // minimum msecs to pass before re-checking inbox. ???Used???
 
