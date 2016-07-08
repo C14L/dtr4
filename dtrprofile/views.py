@@ -381,7 +381,7 @@ def profile_flag_list(request, listname):
             'pic': other.profile.pic_id,
             'age': other.profile.age,
             'gender': other.profile.gender,
-            'crc': geoname_li[other.profile.city_id],
+            'crc': geoname_li.get(other.profile.city_id, ''),
             # 'city': other.profile.city.pk,
             # 'country': other.profile.country.pk,
         }
@@ -1067,7 +1067,8 @@ class SearchAPIView(View):
                     'pic': user.profile.pic_id,
                     'city': user.profile.city_id,
                     'country': user.profile.country_id,
-                    'crc': geonames_li[user.profile.city_id], }
+                    'crc': geonames_li.get(user.profile.city_id, ''),
+            }
             data.append(item)
 
         if settings.ENABLE_DEBUG_TOOLBAR:
