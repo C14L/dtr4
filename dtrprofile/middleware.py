@@ -2,18 +2,23 @@
 from __future__ import (unicode_literals, absolute_import, division,
                         print_function)
 
+import cProfile
+import sys
 from datetime import datetime
 from random import random
 from time import sleep
 from time import time
 
 import os
-from django.db.models import F
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.utils.timezone import utc
 
-from dtrprofile.models import UserProfile
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+from django.conf import settings
 
 
 class SimulateNetworkDelayMiddleware(object):
@@ -133,15 +138,6 @@ class SimpleSpamBotTrapMiddleware(object):
         # If the request past all checks and filters, then return None to 
         # proceed.
         return None
-
-
-import sys
-import cProfile
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-from django.conf import settings
 
 
 class ProfilerMiddleware(object):

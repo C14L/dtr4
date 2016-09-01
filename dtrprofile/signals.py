@@ -3,6 +3,7 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
 
+# noinspection PyUnusedLocal
 @receiver(user_signed_up)
 def user_signed_up_callback(sender, **kwargs):
     """
@@ -18,6 +19,7 @@ def user_signed_up_callback(sender, **kwargs):
     # >> TODO: UserStatus.autopost(user, msg, hidden=False)
 
 
+# noinspection PyUnusedLocal
 @receiver(user_logged_in)
 def user_logged_in_callback(sender, **kwargs):
     """
