@@ -177,15 +177,15 @@ TEMPLATES = [
     },
 ]
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.8/howto/static-files/
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')
-# 'http://static.elligue.com/' # TODO: make subdomain
+
 if not PRODUCTION:
     # The Angular app is here. On the live system, the app is served by
     # nginx directly, same as the other static files.
-    STATICFILES_DIRS = (os.path.join(BASE_DIR, "ng-app"), )
+    STATICFILES_DIRS = (
+        os.path.join(BASE_DIR, '../dtr4-ui'),
+    )
 
 # Email config
 EMAIL_SUBJECT_PREFIX = 'El Ligue: '  # For system emails to ADMINS+MANAGERS.

@@ -29,18 +29,10 @@ from dtrprofile import views as profile_views
 from dtrseo import views as seo_views
 
 
-# Serve the ng-app files during dev
-# noinspection PyUnusedLocal
-def app_base_view(request):
-    fname = os.path.join(settings.BASE_DIR, 'ng-app/index.html')
-    with open(fname, 'r') as fh:
-        return HttpResponse(fh.read())
-
-
 # Define routes
 urlpatterns = [
 
-    # HTML pages
+    # - - - HTML pages - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     # Django's for admin and to change user language
     url(r'^admin/', include(admin.site.urls)),
@@ -54,10 +46,8 @@ urlpatterns = [
 
     # Homepage, that redirects either to login age or to ng app.
     url(r'^$', profile_views.homepage, name='home'),
-    # Serve the app. In production, this is done by nginx.
-    url(r'^app/', app_base_view),
 
-    # JSON API endpoints
+    # - - - JSON API endpoints - - - - - - - - - - - - - - - - - - - - - - - -
 
     # Pictures
 
@@ -169,10 +159,16 @@ urlpatterns = [
 # Django RESTframework automatic API URLs not used.
 # rest_urlpatterns = format_suffix_patterns(rest_urlpatterns)
 
-if settings.PRODUCTION:
-    pass  # In PRODUCTION the dirs are served by Apache2.
-else:
+if not settings.PRODUCTION:
+    # Serve the ng-app files during dev
+    # noinspection PyUnusedLocal
+    def app_base_view(request):
+        fname = os.path.join(settings.BASE_DIR, '../dtr4-ui/index.html')
+        with open(fname, 'r') as fh:
+            return HttpResponse(fh.read())
+
     from django.conf.urls.static import static
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static('/pics/', document_root=settings.MEDIA_ROOT)
+    urlpatterns += [url(r'^app/', app_base_view)]
