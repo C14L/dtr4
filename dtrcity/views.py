@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-from __future__ import (unicode_literals, absolute_import, division,
-                        print_function)
-
 import json
 
 from django.conf import settings
 from django.http import HttpResponse, Http404
-from django.http import HttpResponseBadRequest          # 400
+from django.http import HttpResponseBadRequest  # 400
 from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
 from django.views.decorators.http import require_http_methods

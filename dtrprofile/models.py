@@ -1,32 +1,21 @@
-# -*- coding: utf-8 -*-
-from __future__ import (unicode_literals, absolute_import, division,
-                        print_function)
-
-"""
-Models for all user related data: profile, pic, messages, etc.
-
-
-"""
-
-import os
 from datetime import date, datetime
 from math import floor
 
+import os
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.timezone import now as timezone_now
 from django.utils.timezone import utc
 from django.utils.translation import get_language
 
-from image_with_thumbnail_field import ImageWithThumbsField
-
-from dtrcity.models import City, Country, AltName
 import dtr4.settings_single_choices as single_choices
+from dtrcity.models import City, Country, AltName
+from image_with_thumbnail_field import ImageWithThumbsField
 
 
 def nowtime():

@@ -20,7 +20,7 @@ class MyAccountAdapter(DefaultAccountAdapter):
     def __init__(self, *args, **kwargs):
         super(MyAccountAdapter, self).__init__(*args, **kwargs)
 
-    def clean_username(self, username):
+    def clean_username(self, username, shallow=False):
         if not USERNAME_REGEX.match(username):
             ret = _("Usernames can only contain letters, digits and @/./+/-/_.")
             ret = ret.replace("@/./+/-/", "")  # Remove the special chars from

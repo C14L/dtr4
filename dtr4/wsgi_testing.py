@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-
-"""
-WSGI config for dtr4 project.
-https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
-"""
-
 import sys
 
 import os

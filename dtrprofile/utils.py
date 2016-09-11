@@ -1,4 +1,3 @@
-
 import re
 from django.utils.text import slugify as dj_slugify
 

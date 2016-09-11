@@ -1,23 +1,8 @@
-# -*- coding: utf-8 -*-
-from __future__ import (unicode_literals, absolute_import, division,
-                        print_function)
-
-from dtrprofile.forms import UserEditProfileForm
-
-"""
-Manage user profiles, pics, messages between users, and more.
-
-Main app for the project, manages public and private messages and flags
-between users, pics and profiles. Return only JSON encoded data, try
-not to return any HTML pages.
-"""
-
 import json
-import re
-
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
+import re
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -25,30 +10,31 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Count
 from django.db.models import Q
-from django.http import HttpResponsePermanentRedirect, Http404  # 301
+from django.http import HttpResponse
 from django.http import HttpResponseBadRequest          # 400
 from django.http import HttpResponseForbidden           # 403
 from django.http import HttpResponseNotFound            # 404
-from django.http import HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404, redirect
-from django.template import RequestContext, Context
+from django.http import HttpResponsePermanentRedirect, Http404  # 301
+from django.shortcuts import get_object_or_404, redirect, \
+    render
+from django.template import Context
 from django.template.loader import get_template
 from django.utils.decorators import method_decorator
-from django.utils.timezone import utc
 from django.utils.timezone import now as timezone_now
+from django.utils.timezone import utc
 from django.utils.translation import get_language
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.generic.base import View
-
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from dtrcity.models import City
+from dtrprofile.forms import UserEditProfileForm
+from dtrprofile.models import USERFLAG_TYPES
 from dtrprofile.models import (UserPic, UserMsg, UserFlag,
                                Talk, TalkHashtag, TalkUsername, UserProfile)
-from dtrprofile.models import USERFLAG_TYPES
 from dtrprofile.serializers import UserMsgSerializer, InboxSerializer
 from dtrprofile.utils import get_client_ip
 
@@ -68,7 +54,7 @@ def homepage(request, template_name="dtrprofile/site_index.es.html"):
     if request.user.is_authenticated():
         return HttpResponsePermanentRedirect(settings.LOGIN_REDIRECT_URL)
     # Anon users get a nice home page.
-    return render_to_response(template_name, context=RequestContext(request))
+    return render(request, template_name)
 
 
 # Private Messages
@@ -611,7 +597,7 @@ def profile_api_view(request, q, use):
         if request.body:
             jsonstr = request.body.decode("utf-8")
 
-            if type(jsonstr) != unicode:
+            if type(jsonstr) != str:
                 jsonstr = jsonstr.decode('utf-8')   # bytes -> Unicode
 
             body = json.loads(jsonstr)

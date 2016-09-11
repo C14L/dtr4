@@ -1,22 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import (unicode_literals, absolute_import, division,
-                        print_function)
-
-"""dtr4 URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.8/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Add an import:  from blog import urls as blog_urls
-    2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
-"""
 import os
 from django.conf import settings
 from django.conf.urls import include, url, i18n
@@ -27,7 +8,6 @@ from django.http import HttpResponse
 from dtrcity import views as city_views
 from dtrprofile import views as profile_views
 from dtrseo import views as seo_views
-
 
 # Define routes
 urlpatterns = [
@@ -160,7 +140,6 @@ urlpatterns = [
 # rest_urlpatterns = format_suffix_patterns(rest_urlpatterns)
 
 if not settings.PRODUCTION:
-    # Serve the ng-app files during dev
     # noinspection PyUnusedLocal
     def app_base_view(request):
         fname = os.path.join(settings.BASE_DIR, '../dtr4-ui/index.html')

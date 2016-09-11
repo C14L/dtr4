@@ -1,30 +1,21 @@
-# -*- coding: utf-8 -*-
-from __future__ import (unicode_literals, absolute_import, division,
-                        print_function)
-
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.http import Http404
+from django.http import HttpResponseNotFound            # 404
+from django.http import HttpResponsePermanentRedirect   # 301
+from django.shortcuts import get_object_or_404, render
+from django.utils.translation import get_language
 from django.views.decorators.cache import cache_page
+
+from dtrcity.models import Region, City, AltName
+from dtrprofile.models import UserProfile
 
 """
 This app mainly provides landing pages for all dater3 areas, and makes sure
 that well-indexed pages from the EL Ligue PHP version remain indexed under the
 original URL, or are properly redirected.
 """
-
-from django.conf import settings
-from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-from django.http import Http404
-from django.http import HttpResponsePermanentRedirect   # 301
-from django.http import HttpResponseNotFound            # 404
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
-from django.utils.translation import get_language
-
-from dtrcity.models import Region, City, AltName
-from dtrprofile.models import UserProfile
-# from dtrforum.models import Board, Post
-# from dtrseo.models import OldThread
-# from dtrglue import utils
 
 
 # noinspection PyUnusedLocal
@@ -58,49 +49,68 @@ def redir_old_forum_threads(req, threadid):
 
 @cache_page(60 * 60 * 24 * 365)
 def users_alphabetically(req):  # URL path: /browse.php?begin=ab
-    d = {'letter': req.GET.get('begin', '').lower()}
+    ctx = {'letter': req.GET.get('begin', '').lower()}
 
-    if len(d['letter']) < 2:
+    if len(ctx['letter']) < 2:
         tpl = 'dtrseo/list_of_letters.html'
     else:
         tpl = 'dtrseo/list_of_users_by_letter.html'
-        d['userprofiles'] = UserProfile.objects.filter(
-            user__username__istartswith=d['letter'], user__is_active=True,
-            pic__isnull=False).order_by('user__username').prefetch_related(
-            'user', 'city')[:100]
-    return render_to_response(tpl, d, context_instance=RequestContext(req))
+
+        ctx['userprofiles'] = UserProfile.objects.filter(
+            user__username__istartswith=ctx['letter'],
+            user__is_active=True,
+            pic__isnull=False
+        ).order_by('user__username').prefetch_related('user', 'city')[:100]
+
+    return render(req, tpl, ctx)
 
 
 @cache_page(60 * 60 * 24 * 365)
 def users_f_m(req, tpl='dtrseo/list_of_users_f_m.html'):  # 20==woman
-    return render_to_response(tpl, {'userprofiles': UserProfile.objects.filter(
-        gender__in=(4, 5), user__is_active=True, pic__isnull=False).order_by(
-        '-user__last_login').prefetch_related('user')[:100]},
-        context_instance=RequestContext(req))
+    ctx = {
+        'userprofiles': UserProfile.objects.filter(
+            gender__in=(4, 5),
+            user__is_active=True,
+            pic__isnull=False
+        ).order_by('-user__last_login').prefetch_related('user')[:100]
+    }
+    return render(req, tpl, ctx)
 
 
 @cache_page(60 * 60 * 24 * 365)
 def users_m_f(req, tpl='dtrseo/list_of_users_m_f.html'):
-    return render_to_response(tpl, {'userprofiles': UserProfile.objects.filter(
-        gender__in=(1, 2), user__is_active=True, pic__isnull=False).order_by(
-        '-user__last_login').prefetch_related('user')[:100]},
-        context_instance=RequestContext(req))
+    ctx = {
+        'userprofiles': UserProfile.objects.filter(
+            gender__in=(1, 2),
+            user__is_active=True,
+            pic__isnull=False
+        ).order_by('-user__last_login').prefetch_related('user')[:100]
+    }
+    return render(req, tpl, ctx)
 
 
 @cache_page(60 * 60 * 24 * 365)
 def users_f_pics(req, tpl='dtrseo/list_of_users_f_pics.html'):
-    return render_to_response(tpl, {'userprofiles': UserProfile.objects.filter(
-        gender__in=(4, 5), user__is_active=True, pic__isnull=False).order_by(
-        '-user__last_login').prefetch_related('user')[:100]},
-        context_instance=RequestContext(req))
+    ctx = {
+        'userprofiles': UserProfile.objects.filter(
+            gender__in=(4, 5),
+            user__is_active=True,
+            pic__isnull=False
+        ).order_by('-user__last_login').prefetch_related('user')[:100]
+    }
+    return render(req, tpl, ctx)
 
 
 @cache_page(60 * 60 * 24 * 365)
 def users_m_pics(req, tpl='dtrseo/list_of_users_m_pics.html'):
-    return render_to_response(tpl, {'userprofiles': UserProfile.objects.filter(
-        gender__in=(1, 2), user__is_active=True, pic__isnull=False).order_by(
-        '-user__last_login').prefetch_related('user')[:100]},
-        context_instance=RequestContext(req))
+    ctx = {
+        'userprofiles': UserProfile.objects.filter(
+            gender__in=(1, 2),
+            user__is_active=True,
+            pic__isnull=False
+        ).order_by('-user__last_login').prefetch_related('user')[:100]
+    }
+    return render(req, tpl, ctx)
 
 
 # noinspection PyUnusedLocal
@@ -148,16 +158,23 @@ def citymx(req, city_short, city_name, tpl='dtrseo/es_citymx.html'):
         return HttpResponseNotFound()
     city = City.objects.get(pk=abbr_cities[city_short])
     cities = City.get_cities_around_city(city)
-    d = {
+    ctx = {
         'userprofiles': UserProfile.objects.filter(
-            gender__in=[1, 2, 4, 5], city__in=cities, user__is_active=True,
-            pic__isnull=False).order_by('-user__last_login').prefetch_related(
-            'user', 'city')[:48],
+            gender__in=[1, 2, 4, 5],
+            city__in=cities,
+            user__is_active=True,
+            pic__isnull=False
+        ).order_by('-user__last_login').prefetch_related('user', 'city')[:48],
+
         'city': get_object_or_404(
-            AltName, geoname_id=abbr_cities[city_short], is_main=1, type=3,
-            language=(get_language() or settings.LANGUAGE_CODE)[:2]),
-        }
-    return render_to_response(tpl, d, context_instance=RequestContext(req))
+            AltName,
+            geoname_id=abbr_cities[city_short],
+            is_main=1,
+            type=3,
+            language=(get_language() or settings.LANGUAGE_CODE)[:2]
+        ),
+    }
+    return render(req, tpl, ctx)
 
 
 @cache_page(60 * 60 * 24 * 365)
@@ -180,34 +197,45 @@ def country_list(req, tpl='dtrseo/list_of_country.html'):
                                 language=(get_language() or
                                           settings.LANGUAGE_CODE)[:2],
                                 is_main=True).order_by('name')
-    return render_to_response(tpl, {'country_altnames': ca, },
-                              context_instance=RequestContext(req))
+    return render(req, tpl, {'country_altnames': ca})
 
 
 @cache_page(60 * 60 * 24 * 365)
 def users_by_country(req, country, tpl='dtrseo/list_of_users_by_country.html'):
     """Show list of regions of one country with some user profiles."""
     country_altname = get_object_or_404(
-        AltName, slug=country, is_main=True, type=1,
-        language=(get_language() or settings.LANGUAGE_CODE)[:2])
+        AltName,
+        slug=country,
+        is_main=True,
+        type=1,
+        language=(get_language() or settings.LANGUAGE_CODE)[:2]
+    )
     region_ids = [x.id for x in Region.objects.filter(
         country__pk=country_altname.geoname_id)]
     regions = AltName.objects.filter(
-        type=2, language=(get_language() or settings.LANGUAGE_CODE)[:2],
-        is_main=True, geoname_id__in=region_ids).order_by('name')[:100]
-    return render_to_response(tpl, {'country': country_altname,
-                                    'region_altnames': regions,
-                                    }, context_instance=RequestContext(req))
+        type=2,
+        language=(get_language() or settings.LANGUAGE_CODE)[:2],
+        is_main=True,
+        geoname_id__in=region_ids
+    ).order_by('name')[:100]
+
+    ctx = {'country': country_altname, 'region_altnames': regions}
+    return render(req, tpl, ctx)
 
 
 def users_by_country_region(req, country, region,
                             tpl='dtrseo/list_of_users_by_region.html'):
     """Show list of cities from a region/country with some profiles."""
     country_altname = get_object_or_404(
-        AltName, slug=country, is_main=True, type=1,
-        language=(get_language() or settings.LANGUAGE_CODE)[:2])
+        AltName,
+        slug=country,
+        is_main=True,
+        type=1,
+        language=(get_language() or settings.LANGUAGE_CODE)[:2]
+    )
     region_ids = [x.id for x in Region.objects.filter(
         country__pk=country_altname.geoname_id)]  # All regions of the country.
+
     try:
         # This should be able to use get_object_or_404() but there is data
         # inconsistency in the AltName table when countries have two regions
@@ -221,28 +249,45 @@ def users_by_country_region(req, country, region,
         # unique. Seriously, why would a country have two regions with the same
         # name, anyways?!
         region_altname = AltName.objects.filter(
-            slug=region, type=2, is_main=True, geoname_id__in=region_ids,
-            language=(get_language() or settings.LANGUAGE_CODE)[:2])[0]
+            slug=region,
+            type=2,
+            is_main=True,
+            geoname_id__in=region_ids,
+            language=(get_language() or settings.LANGUAGE_CODE)[:2]
+        )[0]
+
     except IndexError:
         raise Http404()
+
     # region_altname = get_object_or_404(AltName, slug=region, type=2,
     #                                language=get_language(), is_main=True,
     #                                geoname_id__in=region_ids)
     region_altnames = AltName.objects.filter(
-        type=2, language=(get_language() or settings.LANGUAGE_CODE)[:2],
-        is_main=True, geoname_id__in=region_ids).order_by('name')[:100]
+        type=2,
+        language=(get_language() or settings.LANGUAGE_CODE)[:2],
+        is_main=True,
+        geoname_id__in=region_ids
+    ).order_by('name')[:100]
+
     city_ids = [x.id for x in City.objects.filter(  # Other cities of region.
-            region__pk=region_altname.geoname_id).order_by('-population')[:50]]
+        region__pk=region_altname.geoname_id
+    ).order_by('-population')[:50]]
+
     city_altnames = AltName.objects.filter(
-            type=3, language=(get_language() or settings.LANGUAGE_CODE)[:2],
-            is_main=True, geoname_id__in=city_ids).order_by('name')[:100]
-    return render_to_response(tpl, {
-                        # 'userprofiles': userprofiles,
-                        'country': country_altname,
-                        'region': region_altname,
-                        'regions': region_altnames,
-                        'cities': city_altnames,
-                    }, context_instance=RequestContext(req))
+        type=3,
+        language=(get_language() or settings.LANGUAGE_CODE)[:2],
+        is_main=True,
+        geoname_id__in=city_ids
+    ).order_by('name')[:100]
+
+    ctx = {
+        # 'userprofiles': userprofiles,
+        'country': country_altname,
+        'region': region_altname,
+        'regions': region_altnames,
+        'cities': city_altnames,
+    }
+    return render(req, tpl, ctx)
 
 
 @cache_page(60 * 60 * 24 * 365)
@@ -251,16 +296,21 @@ def users_by_altname_url(req, crc_url,
     """Shows a list of userprofiles from a city by its AltName.url value."""
     try:
         altname = AltName.objects.filter(
-            url=crc_url, type=3, is_main=True,
-            language=(get_language() or settings.LANGUAGE_CODE)[:2])[0]
+            url=crc_url,
+            type=3,
+            is_main=True,
+            language=(get_language() or settings.LANGUAGE_CODE)[:2]
+        )[0]
+
     except IndexError:
         raise Http404
+
     userprofiles = UserProfile.objects.filter(
-        city=altname.geoname_id).order_by('-user__last_login').prefetch_related(
-        'user', 'city')[:50]
-    return render_to_response(
-        tpl, {'userprofiles': userprofiles, 'city': altname},
-        context_instance=RequestContext(req))
+        city=altname.geoname_id
+    ).order_by('-user__last_login').prefetch_related('user', 'city')[:50]
+
+    ctx = {'userprofiles': userprofiles, 'city': altname}
+    return render(req, tpl, ctx)
 
 
 """
@@ -271,9 +321,9 @@ def forum_archive(req, tpl="dtrseo/forum_archive.html"):
         where=['NOT status & %s'], params=[del_id]).count()
     recount = Post.objects.filter(thread__isnull=False).extra(
         where=['NOT status & %s'], params=[del_id]).count()
-    return render_to_response(tpl, {
+    return render(req, tpl, {
         'count': count,
         'recount': recount,
         #'pages': range(int(count/per_page)+1, 0, -1),
-    }, context_instance=RequestContext(req))
+    })
 """

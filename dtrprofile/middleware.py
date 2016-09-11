@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import (unicode_literals, absolute_import, division,
-                        print_function)
-
 import cProfile
 import sys
 from datetime import datetime
-from random import random
 from time import sleep
 from time import time
 
@@ -13,6 +8,7 @@ import os
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.utils.timezone import utc
+from random import random
 
 try:
     from StringIO import StringIO

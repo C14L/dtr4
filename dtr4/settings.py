@@ -1,14 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import (unicode_literals, absolute_import, division,
-                        print_function)
-
-"""
-Django settings for dtr4 project using Django 1.8.3.
-https://docs.djangoproject.com/en/1.8/topics/settings/
-https://docs.djangoproject.com/en/1.8/ref/settings/
-https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
-"""
-
 import os
 import re
 import pymysql
@@ -19,7 +8,6 @@ pymysql.install_as_MySQLdb()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEBUG = os.path.exists('/islocal.txt')
 PRODUCTION = not DEBUG
-TEMPLATE_DEBUG = DEBUG
 
 ENABLE_PROFILER = False
 ENABLE_DEBUG_TOOLBAR = False
