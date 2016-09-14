@@ -1286,8 +1286,7 @@ def pictures_list(request):
     below_id = int(request.GET.get('below_id', 0))
     if not count or count < 1 or count > 500:
         count = 50
-    pics = UserPic.objects.all().order_by('-created')\
-                                .select_related('user__username')
+    pics = UserPic.objects.all().order_by('-created').select_related('user')
     if below_id:
         pics = pics.filter(id__lt=below_id)
     for pic in pics[:count]:
