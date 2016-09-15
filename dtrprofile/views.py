@@ -894,6 +894,7 @@ class SearchAPIView(View):
 
         page_size = int(request.GET.get('page_size', 20))
         page = int(request.GET.get('page', 1))
+        page = 1 if page < 1 else page
         gender = int(request.GET.get('gender', 1))
         # list of usernames to exclude (e.g. profileuser's)
         exclude = request.GET.get('exclude', [])
