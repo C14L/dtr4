@@ -4,11 +4,15 @@ from __future__ import (unicode_literals, absolute_import, division,
 
 """Make JS translation files for profile choices and tr() calls.
 
+   --------------------------------------------------------------------------
+--> TODO: Need to manually copy the resulting files over to the dtr4-ui app! <--
+   --------------------------------------------------------------------------
+
 Profile choices: From the user profile options defined in
-    "settings_single_choices.py", create language specific javascript
+    "settings_single_choices.py", create language specific javascript JSON
     files for all languages defined in the settings.LANGUAGES setting.
 
-    The resulting javascript file for the currently set language is then
+    The resulting JSON file for the currently set language is then
     imported by the client side app, so that profile choices can be
     displayed in the set local language.
 
@@ -44,16 +48,15 @@ import codecs
 import json
 import os.path
 import re
-import sys
-
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.core.files import File
 from django.utils import translation
 
 import dtr4.settings_single_choices as single_choices
 
+
+# noinspection PyPep8Naming
 class Command(BaseCommand):
 
     args = ""
@@ -64,7 +67,7 @@ class Command(BaseCommand):
                                                  settings.LANGUAGES])))
         # Complite re to lookup tr() strings.
         RE_TR_STRINGS = re.compile(r"\Wtr\(('|\")(.+?)\1(\s*,\s*\[.+?\])?\)")
-        CH_PREPEND = "window.TR_CHOICES = "
+        CH_PREPEND = ""  # This is now plain JSON to be loaded via JS fetch().
         TR_PREPEND = "window.TR_LANGUAGE = "
 
         for lang in settings.LANGUAGES:
@@ -75,15 +78,19 @@ class Command(BaseCommand):
 
             # Make the "tr-choices-LL.js" file.
 
-            outfile = os.path.join(appstatic,'tr-choices-{0}.js'.format(code))
+            outfile = os.path.join(appstatic, 'tr-choices-{0}.js'.format(code))
             tr_choices = {}
-            with translation.override(code):      # switch language temporarily
+            with translation.override(code):  # switch language temporarily
                 for tr in single_choices.JS_TRANSLATIONS_CHOICES:
                     tr_choices[tr] = []
+
                     for choice in getattr(single_choices, tr):
-                        print("Choice '{}' has type '{}'".format(choice[1], type(choice[1])))
+                        print("Choice '{}' has type '{}'".format(
+                            choice[1], type(choice[1])))
+
                         if choice[1] == '': # skip empty
                             continue
+
                         # translate to current language from English.
                         translated = translation.ugettext(choice[1])
                         tr_item = (choice[0], translated)
@@ -99,7 +106,7 @@ class Command(BaseCommand):
             # Make the "tr-language-LL.js" file.
             # TR_LANGUAGE=[ {'msgid':'profile','msgstr':'perfil'}, ... ]
 
-            outfile = os.path.join(appstatic,'tr-language-{0}.js'.format(code))
+            outfile = os.path.join(appstatic, 'tr-language-{0}.js'.format(code))
             ngappdir = os.path.join(settings.BASE_DIR, "ng-app")
             files = [os.path.join(ngappdir, "index.html"),
                      os.path.join(ngappdir, "dtr-controllers.js")] + \
@@ -116,11 +123,11 @@ class Command(BaseCommand):
                         m = RE_TR_STRINGS.search(ln)
                         if m and m.group(2) not in msglist:
                             msglist.append(m.group(2))
-                            #if m.group(3) is not None: print(m.groups())
+                            # if m.group(3) is not None: print(m.groups())
 
             st = 'Found {} tr strings in {} html files.'
             print(st.format(len(msglist), filecount))
-            #print(msglist)
+            # print(msglist)
             # If a translations files already exists, read its content
             # to avoid overwriting any existing translations.
             try:
