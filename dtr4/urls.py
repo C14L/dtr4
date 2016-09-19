@@ -26,6 +26,7 @@ urlpatterns = [
 
     # Homepage, that redirects either to login age or to ng app.
     url(r'^$', profile_views.homepage, name='home'),
+    url(r'^status/?$', profile_views.status_page, name='status'),
 
     # - - - JSON API endpoints - - - - - - - - - - - - - - - - - - - - - - - -
 

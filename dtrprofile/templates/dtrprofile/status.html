@@ -1,0 +1,77 @@
+<!DOCTYPE html><!-- dtrprofile/templates/dtrprofile/site_index.es -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Status Page ~o EL LIGUE</title>
+    <link rel="icon" href="/static/img/icon.png" type="image/png">
+    <style>
+
+      body { margin: 0; padding: 0; }
+      h1 { text-align: center; padding: 16px; margin: 0; background: red; color: white; opacity: 1; }
+      h3 > span { font-weight: normal; }
+      .dataline { display: flex; flex-flow: row nowrap; }
+      .dataline > div { flex: 1 1 auto; align-self: stretch; text-align: center; }
+
+    </style>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages': ['corechart']});
+      google.charts.setOnLoadCallback(function(){
+
+        var chart1 = new google.visualization.LineChart(document.getElementById('curve_chart_1'));
+        var data1 = google.visualization.arrayToDataTable({{dailies_aggregated_1|safe}});
+        var options1 = { title: 'Site stats', curveType: '', legend: { position: 'bottom' } };
+        chart1.draw(data1, options1);
+
+        var chart2 = new google.visualization.LineChart(document.getElementById('curve_chart_2'));
+        var data2 = google.visualization.arrayToDataTable({{dailies_aggregated_2|safe}});
+        var options2 = { title: 'Site stats', curveType: '', legend: { position: 'bottom' } };
+        chart2.draw(data2, options2);
+
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Status Page</h1>
+
+    <div id="curve_chart_1" style="width: 100%; height: 400px"></div>
+    <div class="dataline">
+      <div>
+        <h2>Messages sent</h2>
+        <h3>past year <span>({{msgs_sent_past_12m}} total, avg {{msgs_sent_past_12m_avg_mon}} per month, {{msgs_sent_past_12m_avg_day}} per day)</span></h3>
+        <h3>past 30 days <span>({{msgs_sent_past_30d}} total, avg {{msgs_sent_past_30d_avg_day}} per day)</span></h3>
+      </div>
+      <div>
+        <h2>Talk sent</h2>
+        <h3>past year <span>({{talk_sent_past_12m}} total, avg {{talk_sent_past_12m_avg_mon}} per month, {{talk_sent_past_12m_avg_day}} per day)</span></h3>
+        <h3>past 30 days <span>({{talk_sent_past_30d}} total, avg {{talk_sent_past_30d_avg_day}} per day)</span></h3>
+      </div>
+      <div>
+        <h2>Flags</h2>
+        <h3>past year <span>({{flags_past_12m}} total, avg {{flags_past_12m_avg_mon}} per month, {{flags_past_12m_avg_day}} per day)</span></h3>
+        <h3>past 30 days <span>({{flags_past_30d}} total, avg {{flags_past_30d_avg_day}} per day)</span></h3>
+      </div>
+    </div>
+    <hr>
+    <div id="curve_chart_2" style="width: 100%; height: 400px"></div>
+    <div class="dataline">
+      <div>
+        <h2>Signups</h2>
+        <h3>past year <span>({{signup_past_12m}} total, avg {{signup_past_12m_avg_mon}} per month, {{signup_past_12m_avg_day}} per day)</span></h3>
+        <h3>past 30 days <span>({{signup_past_30d}} total, avg {{signup_past_30d_avg_day}} per day)</span></h3>
+      </div>
+      <div>
+        <h2>Logins</h2>
+        <h3>past year <span>({{login_past_12m}} total, avg {{login_past_12m_avg_mon}} per month, {{login_past_12m_avg_day}} per day)</span></h3>
+        <h3>past 30 days <span>({{login_past_30d}} total, avg {{login_past_30d_avg_day}} per day)</span></h3>
+      </div>
+      <div>
+        <h2>Activity</h2>
+        <h3>past year <span>({{active_past_12m}} total, avg {{active_past_12m_avg_mon}} per month, {{active_past_12m_avg_day}} per day)</span></h3>
+        <h3>past 30 days <span>({{active_past_30d}} total, avg {{active_past_30d_avg_day}} per day)</span></h3>
+      </div>
+    </div>
+  </body>
+</html>
