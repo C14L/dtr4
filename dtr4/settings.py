@@ -86,28 +86,11 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-
-    # 'allauth.socialaccount.providers.facebook',
-    # 'allauth.socialaccount.providers.google',
-    # 'allauth.socialaccount.providers.instagram',
-    # 'allauth.socialaccount.providers.linkedin',
-    # 'allauth.socialaccount.providers.linkedin_oauth2',
-    # 'allauth.socialaccount.providers.soundcloud',
-    # 'allauth.socialaccount.providers.twitter',
-    # 'allauth.socialaccount.providers.vimeo',
-
     'rest_framework',
-
-    # Make settings accessible from within templates
-    # 'dtrprofile.templatetags.settings_value',
-
+    'channels',
     'dtrcity',
     'dtrprofile',
     'dtrseo',
-
-    # Add later for production
-    # django_compressor
-    # 'compressor',
 ]
 
 if ENABLE_DEBUG_TOOLBAR:
@@ -164,6 +147,16 @@ TEMPLATES = [
         },
     },
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+        "ROUTING": "dtr4.routing.channel_routing",
+    },
+}
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')
