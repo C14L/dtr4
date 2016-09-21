@@ -1,12 +1,12 @@
-# -*- coding: utf-8 -*-
-from __future__ import (unicode_literals, absolute_import, division,
-                        print_function)
-
 """Make JS translation files for profile choices and tr() calls.
 
+
    --------------------------------------------------------------------------
+
 --> TODO: Need to manually copy the resulting files over to the dtr4-ui app! <--
+
    --------------------------------------------------------------------------
+
 
 Profile choices: From the user profile options defined in
     "settings_single_choices.py", create language specific javascript JSON
@@ -72,7 +72,7 @@ class Command(BaseCommand):
 
         for lang in settings.LANGUAGES:
             code, name = lang[0], lang[1]
-            appdir =os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            appdir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
             appstatic = os.path.join(appdir, 'static')
             print('Processing language "{0}" ({1}) .'.format(code, name))
 
@@ -88,7 +88,7 @@ class Command(BaseCommand):
                         print("Choice '{}' has type '{}'".format(
                             choice[1], type(choice[1])))
 
-                        if choice[1] == '': # skip empty
+                        if choice[1] == '':  # skip empty
                             continue
 
                         # translate to current language from English.
@@ -134,7 +134,7 @@ class Command(BaseCommand):
                 with codecs.open(outfile, 'r', encoding="utf-8") as fh:
                     currlist = json.loads(fh.read().replace(TR_PREPEND, ""))
                     print("Found tr file with {} items.".format(len(currlist)))
-            except ValueError as e:  # Nothing to JSON decode
+            except ValueError:  # Nothing to JSON decode
                 currlist = []
                 print("No current translations file found.")
 
@@ -149,7 +149,7 @@ class Command(BaseCommand):
             tr_preserved_count = 0
 
             for msg in msglist:
-                item = {'msgid':msg,'msgstr':msg}
+                item = {'msgid': msg, 'msgstr': msg}
                 # Now check if there is a translation for this already
                 # in currlist.
                 for curr in currlist:

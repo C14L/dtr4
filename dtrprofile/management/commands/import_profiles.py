@@ -1,5 +1,6 @@
-
-"""Import all user accounts and user profile data."""
+"""
+Import all user accounts and user profile data.
+"""
 
 from datetime import datetime
 
@@ -14,20 +15,18 @@ from dtrprofile.models_flag import UserFlag
 from dtrprofile.models_profile import UserPic, UserProfile
 from dtrprofile.models_usermsg import UserMsg
 
-print('Beginning import of OLD elligue data.')
 
-# Get a connect to the old elligue database.
-conn = pymysql.connect( host='localhost', port=3306,
-                        user='root', passwd='pla', db='elligue')
+print('Beginning import of OLD elligue data.')
+conn = pymysql.connect(host='localhost', port=3306,
+                       user='root', passwd='pla', db='elligue')
 try:
     crsr = conn.cursor()
 except:
     raise Exception('No database connection!')
-
 print('OLD database "elligue" connected.')
 
 
-# Run command.
+# noinspection PyMethodMayBeStatic,PyBroadException
 class Command(BaseCommand):
     args = ''
     help = 'Imports old user profiles from "elligue" database tables.'
@@ -37,11 +36,7 @@ class Command(BaseCommand):
         self.import_dtrprofile_userpic()
         self.import_dtrprofile_userprofile()
         self.import_dtrprofile_usermsg()
-        self.import_dtrprofile_flag() # like, friend, favorite, block
-
-    # --------------------------------------------------------------------------
-    # --------------------------------------------------------------------------
-    # --------------------------------------------------------------------------
+        self.import_dtrprofile_flag()  # like, friend, favorite, block
 
     # noinspection PyMethodMayBeStatic
     def import_auth_user(self):
@@ -51,7 +46,8 @@ class Command(BaseCommand):
         cursor.execute('SELECT COUNT(*) FROM auth_user')
         count_old = cursor.fetchone()[0]
         count_new = User.objects.count()
-        print('Counted {0} in OLD, and {1} in NEW auth_user table.'.format(count_old, count_new))
+        print('Counted {0} in OLD, and {1} in NEW auth_user table.'.format(
+            count_old, count_new))
 
         if count_old > count_new:
             print('...so find and import the missing users:')
@@ -62,19 +58,23 @@ class Command(BaseCommand):
                 # Check if the user already exists.
                 try:
                     user = User.objects.get(pk=row[0])
-                    print('User {} already exists, not imported again.'.format(user.pk))
+                    print('User {} exists, not imported again.'.format(user.pk))
                 except:
                     # if not, import the auth_user data and create the user.
-                    user = User.objects.create_user(row[4], id=row[0], email=row[7])
+                    user = User.objects.create_user(
+                        row[4], id=row[0], email=row[7])
 
                     user.password = row[1]
-                    user.last_login = row[2].replace(microsecond=0).replace(tzinfo=utc)
-                    user.first_name=row[5]
-                    user.last_name=row[6]
-                    user.date_joined = row[10].replace(microsecond=0).replace(tzinfo=utc)
+                    user.last_login = row[2].replace(microsecond=0).replace(
+                        tzinfo=utc)
+                    user.first_name = row[5]
+                    user.last_name = row[6]
+                    user.date_joined = row[10].replace(microsecond=0).replace(
+                        tzinfo=utc)
                     user.save()
 
-                    print('Added user {} to auth_user and import data.'.format(user.pk))
+                    print('Added user {} to auth_user and '
+                          'import data.'.format(user.pk))
         else:
             print('No more users to import.')
 
@@ -87,8 +87,6 @@ class Command(BaseCommand):
         print('Done!')
         print('Finished auth_user table.')
 
-    # --------------------------------------------------------------------------
-
     def import_dtrprofile_userpic(self):
         print('Starting import of UserPic images...')
 
@@ -97,7 +95,8 @@ class Command(BaseCommand):
         cursor.execute('SELECT COUNT(*) FROM dtrprofile_userpic')
         count_old = cursor.fetchone()[0]
         count_new = UserPic.objects.count()
-        print('Counted {0} in OLD, and {1} in NEW UserPic table.'.format(count_old, count_new))
+        print('Counted {0} in OLD, and {1} in NEW UserPic table.'.format(
+            count_old, count_new))
 
         if count_old > count_new:
             print('...so find and import the missing pics:')
@@ -108,7 +107,8 @@ class Command(BaseCommand):
                 # Check if the user already exists.
                 try:
                     pic = UserPic.objects.get(pk=row[0])
-                    print( 'UserPic {} already exists, not imported again.'.format(pic.pk) )
+                    print('UserPic {} already exists, not imported '
+                          'again.'.format(pic.pk))
                 except:
                     # row[0]#id       row[1]#user_id       row[2]#pic
                     # row[3]#status   row[4]#filesize      row[5]#width
@@ -118,23 +118,21 @@ class Command(BaseCommand):
                                   created=row[7].replace(tzinfo=utc),
                                   created_ip=row[8], text=row[9])
                     pic.save()
-
                     print('Added pic {} to UserPic.'.format(pic.pk))
         else:
             print('No more pics to import.')
-
         print('Finished dtrprofile_userpic --> UserPic table.')
 
     # --------------------------------------------------------------------------
 
     def import_dtrprofile_userprofile(self):
         print('Starting import of UserProfile data...')
-
         cursor = conn.cursor()
         cursor.execute('SELECT COUNT(*) FROM dtrprofile_userprofile')
         count_old = cursor.fetchone()[0]
         count_new = UserProfile.objects.count()
-        print('Counted {0} in OLD, and {1} in NEW dtrprofile_userprofile table.'.format(count_old, count_new))
+        print('Counted {0} in OLD, and {1} in NEW dtrprofile_userprofile '
+              'table.'.format(count_old, count_new))
 
         print('Updating or creating all profiles with imported data.')
         cursor = conn.cursor()
@@ -167,29 +165,29 @@ class Command(BaseCommand):
 
             profile.dob = row[42]
 
-            # Gender needs fixing, because now gender and orientation are combined!
+            # Gender needs fixing, b/c now gender + orientation are combined!
             # row[45] => old gender --- row[46] => old orientation
-            profile.gender = 0 # set default.
+            profile.gender = 0  # set default.
             tr_gender = ((10, 10, 1), (10, 20, 2), (10, 30, 11), (10, 40, 11),
                          (20, 10, 4), (20, 20, 5), (20, 30, 11), (20, 40, 11),
-                         (30, 10, 11), (30, 20, 11),(30, 30, 11), (30, 40, 11),
+                         (30, 10, 11), (30, 20, 11), (30, 30, 11), (30, 40, 11),
                          (40, 10, 11), (40, 20, 11), (40, 30, 11), (40, 40, 11))
             for tr in tr_gender:
                 if row[45] == tr[0] and row[46] == tr[1]:
                     profile.gender = tr[2]
 
-            profile.crc = row[47] # Never used, only to try and find the city later.
+            profile.crc = row[47]  # Never used, only to try find city later
             profile.lat = row[48]
             profile.lng = row[49]
 
             # For city and country, check if a City or Country with this
             # geoname_id actually exists!
             try:
-                profile.country_id = Country.objects.get(pk=row[52]).pk # row # checked
+                profile.country_id = Country.objects.get(pk=row[52]).pk
             except:
                 profile.country_id = None
             try:
-                profile.city_id = City.objects.get(pk=row[50]).pk # row # checked
+                profile.city_id = City.objects.get(pk=row[50]).pk
             except:
                 profile.city_id = None
 
@@ -203,13 +201,13 @@ class Command(BaseCommand):
             profile.aboutquotes = row[61]
             profile.aboutsports = row[62]
 
-            # --> Check all these before import that they stay withn CHOICE range!
+            # --> Check these before import that they stay withn CHOICE range
             if row[43] in [v[0] for v in single_choices.HEIGHT_CHOICE]:
                 profile.height = row[43]
             if row[44] in [v[0] for v in single_choices.WEIGHT_CHOICE]:
                 profile.weight = row[44]
-            profile.eyecolor = int(row[63])/10 # Convert from 10, 20, 30, ... into 1, 2, 3, ...
-            profile.haircolor = int(row[64])/10
+            profile.eyecolor = int(row[63])/10   # Convert from 10, 20, 30, ...
+            profile.haircolor = int(row[64])/10  # into 1, 2, 3, ...
 
             profile.relationship_status = int(row[65])/10
             profile.longest_relationship = int(row[72])/10
@@ -231,28 +229,33 @@ class Command(BaseCommand):
             profile.jobfield = int(row[90])/10
             profile.income = 0
 
-            #profile.lookingfor --> row[86]
-            if row[86] == 0x0000000000000001: profile.lookingfor = 1 # friends only
-            if row[86] == 0x0000000000000002: profile.lookingfor = 2 # serious relationship
-            if row[86] == 0x0000000000000004: profile.lookingfor = 3 # casual dating
-            if row[86] == 0x0000000000000008: profile.lookingfor = 4 # passion
-            if row[86] == 0x0000000000000010: profile.lookingfor = 5 # casual sex
-            if row[86] == 0x0000000000000020: profile.lookingfor = 6 # not sure yet
-            if row[86] == 0x0000000000000040: profile.lookingfor = 7 # marriage
+            # profile.lookingfor --> row[86]
+            if row[86] == 0x0000000000000001:
+                profile.lookingfor = 1  # friends only
+            if row[86] == 0x0000000000000002:
+                profile.lookingfor = 2  # serious relationship
+            if row[86] == 0x0000000000000004:
+                profile.lookingfor = 3  # casual dating
+            if row[86] == 0x0000000000000008:
+                profile.lookingfor = 4  # passion
+            if row[86] == 0x0000000000000010:
+                profile.lookingfor = 5  # casual sex
+            if row[86] == 0x0000000000000020:
+                profile.lookingfor = 6  # not sure yet
+            if row[86] == 0x0000000000000040:
+                profile.lookingfor = 7  # marriage
 
-            #looks = row[73]
-            #figure = row[74]
-            #fitness = row[75]
-            #speaks_languages = row[87]
-            #ethnicity = row[88]
-            #political_ideology = row[89]
+            # looks = row[73]
+            # figure = row[74]
+            # fitness = row[75]
+            # speaks_languages = row[87]
+            # ethnicity = row[88]
+            # political_ideology = row[89]
 
             profile.save()
-            print('New profile {} created or udated with imported data.'.format(profile.pk))
-
+            print('New profile {} created or udated with imported '
+                  'data.'.format(profile.pk))
         print('Finished dtrprofile_userprofile table.')
-
-    # --------------------------------------------------------------------------
 
     def import_dtrprofile_usermsg(self):
         print('Starting import of UserMsg data...')
@@ -262,7 +265,8 @@ class Command(BaseCommand):
         count_old = cursor.fetchone()[0]
         count_new = UserMsg.objects.count()
         i, todo = 0, (count_old - count_new)
-        print('Counted {0} in OLD, and {1} in NEW dtrprofile_usermsg table.'.format(count_old, count_new))
+        print('Counted {0} in OLD, and {1} in NEW dtrprofile_usermsg '
+              'table.'.format(count_old, count_new))
 
         if count_old > count_new:
             print('...so find and import the missing msgs:')
@@ -271,25 +275,26 @@ class Command(BaseCommand):
             try:
                 pk = UserMsg.objects.all().order_by('pk').last().pk
                 cursor = conn.cursor()
-                cursor.execute('SELECT * FROM dtrprofile_usermsg WHERE id > {0}'.format(pk))
+                cursor.execute('SELECT * FROM dtrprofile_usermsg WHERE '
+                               'id > {0}'.format(pk))
             except:
                 cursor.execute('SELECT * FROM dtrprofile_usermsg')
 
-            # 0 | id           | int(11)     | NO   | PRI | NULL    | auto_increment |
-            # 1 | from_user_id | int(11)     | YES  | MUL | NULL    |                |
-            # 2 | to_user_id   | int(11)     | YES  | MUL | NULL    |                |
-            # 3 | status       | smallint(6) | NO   | MUL | NULL    |                |
-            # 4 | created      | datetime    | NO   |     | NULL    |                |
-            # 5 | created_ip   | char(15)    | NO   |     | NULL    |                |
-            # 6 | text         | longtext    | NO   |     | NULL    |                |
+            # 0 | id           | int(11)     | NO   | PRI | NULL    | auto_inc|
+            # 1 | from_user_id | int(11)     | YES  | MUL | NULL    |         |
+            # 3 | status       | smallint(6) | NO   | MUL | NULL    |         |
+            # 2 | to_user_id   | int(11)     | YES  | MUL | NULL    |         |
+            # 4 | created      | datetime    | NO   |     | NULL    |         |
+            # 5 | created_ip   | char(15)    | NO   |     | NULL    |         |
+            # 6 | text         | longtext    | NO   |     | NULL    |         |
 
             for row in cursor:
-                i = i + 1
+                i += 1
                 msg = UserMsg(pk=row[0])
 
                 # check if it was not deleted by receiver
                 # 0x0001 --> from_deleted ; 0x0002 --> to_deleted
-                if not (row[3] & 0x0002): # row[3] == status
+                if not (row[3] & 0x0002):  # row[3] == status
                     # Try to fetch users.
                     try:
                         from_user = User.objects.get(pk=row[1])
@@ -317,21 +322,24 @@ class Command(BaseCommand):
 
     def import_dtrprofile_flag(self):
         print('Starting import of UserFlag data...')
-        print('Flags have to be converted, there is no way to count-and-compare them.')
+        print('Flags have to be converted, there is no way to '
+              'count-and-compare them.')
         print('Each time we need to trunate the new table and start over.')
         UserFlag.objects.all().delete()
         print('All NEW UserFlag data deleted for fresh import.')
 
         cursor = conn.cursor()
-        cursor.execute('SELECT COUNT(*) FROM dtrflag_flag WHERE otype=2') # only flags on profiles
+        cursor.execute('SELECT COUNT(*) FROM dtrflag_flag '
+                       'WHERE otype=2')  # only flags on profiles
         count_old = cursor.fetchone()[0]
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM dtrflag_flag WHERE otype=2 ORDER BY id ASC') # only flags on profiles
-        i = 0 # rows worked on
-        j = 0 # individual flags imported.
+        cursor.execute('SELECT * FROM dtrflag_flag WHERE otype=2 '
+                       'ORDER BY id ASC')  # only flags on profiles
+        i = 0  # rows worked on
+        j = 0  # individual flags imported.
 
         for row in cursor:
-            i = i + 1
+            i += 1
             print('{0}/{1} ~ '.format(i, count_old), end='', flush=True)
 
             try:
@@ -339,9 +347,10 @@ class Command(BaseCommand):
                 receiver = User.objects.get(pk=row[4])
             except User.DoesNotExist:
                 print('user not found, skip entry.', flush=True)
-                continue # skip if either user does not exist.
+                continue  # skip if either user does not exist.
 
-            print('{0} -> {1} ~ '.format(sender.pk, receiver.pk), end='', flush=True)
+            print('{0} -> {1} ~ '.format(sender.pk, receiver.pk),
+                  end='', flush=True)
 
             # All this needs to be converted, differently for every FLAG TYPE!
             # 1--friend ------- 0x0100 ( NOT 2 )
@@ -349,34 +358,36 @@ class Command(BaseCommand):
             # 3--favourite ---- 0x0200 -- NO ENTRIES, SKIP!
             # 4--block -------- 0x0080
 
-            if row[5] & 0x0080: # block - 4
+            if row[5] & 0x0080:  # block - 4
                 print('"block" flag found! ', end='', flush=True)
+                # noinspection PyUnusedLocal
                 flag = UserFlag(sender=sender, receiver=receiver, flag_type=4)
                 print('user {0} BLOCKED by user {1}, skip other flags.'.format(
                                 receiver.username, sender.username), flush=True)
-                j = j + 1
-                continue # blocked is blocked, no other relationship possible.
+                j += 1
+                continue  # blocked is blocked, no other relationship possible.
 
-            if row[5] & 0x0010: # like - 2
+            if row[5] & 0x0010:  # like - 2
                 print('"like" flag found... ', end='', flush=True)
                 # This is a reciprocal flag, so first check if there is already
                 # a flag set coming the otehr way!
                 try:
                     # Roles reversed!
-                    flag = UserFlag.objects.get(sender=receiver,
-                                                receiver=sender, flag_type=2)
+                    flag = UserFlag.objects.get(sender=receiver, flag_type=2,
+                                                receiver=sender)
                     flag.confirmed = datetime.utcnow().replace(tzinfo=utc)
                     flag.save()
                     print('this was a MATCH! ', end='', flush=True)
                 except:
                     # Roles straight again.
-                    flag = UserFlag.objects.create(sender=sender,
-                                                 receiver=receiver, flag_type=2)
+                    # noinspection PyUnusedLocal
+                    flag = UserFlag.objects.create(sender=sender, flag_type=2,
+                                                   receiver=receiver)
                     print('added! ', end='', flush=True)
                 # Count flags added.
-                j = j + 1
+                j += 1
 
-            if row[5] & 0x0100: # friend - 1
+            if row[5] & 0x0100:  # friend - 1
                 print('"friend" flag found! ', end='', flush=True)
                 # Again, check for reciprocal.
                 try:
@@ -388,11 +399,12 @@ class Command(BaseCommand):
                     print('confirmed friends! ', end='', flush=True)
                 except:
                     # Roles straight again.
-                    flag = UserFlag.objects.create(sender=sender,
-                                                 receiver=receiver, flag_type=1)
+                    # noinspection PyUnusedLocal
+                    flag = UserFlag.objects.create(sender=sender, flag_type=1,
+                                                   receiver=receiver)
                     print('friend invite added! ', end='', flush=True)
                 # Count flags added.
-                j = j + 1
+                j += 1
 
             print(' done!', flush=True)
 
@@ -409,8 +421,3 @@ class Command(BaseCommand):
 
         print('All done.')
         print('Finished dtrprofile_userflag table.')
-
-    # --------------------------------------------------------------------------
-
-
-
