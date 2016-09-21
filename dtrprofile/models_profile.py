@@ -4,123 +4,21 @@ from math import floor
 import os
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Q
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
-from django.utils.timezone import now as timezone_now
+from django.urls import reverse
 from django.utils.timezone import utc
 from django.utils.translation import get_language
 
-import dtr4.settings_single_choices as single_choices
+from dtr4 import settings_single_choices as single_choices
 from dtrcity.models import City, Country, AltName
 from image_with_thumbnail_field import ImageWithThumbsField
+from django.utils.timezone import now as timezone_now
 
 
 def nowtime():
     return timezone_now
-
-
-USERFLAG_IS_ONE_WAY = False
-USERFLAG_IS_TWO_WAY = True
-USERFLAG_TYPES = (
-    # mutual, invite/confirm "friend" relationship
-    (1, 'friend',   USERFLAG_IS_TWO_WAY),
-    # mutual, like and like back to get a romantic "match".
-    (2, 'like',     USERFLAG_IS_TWO_WAY),
-    # block another user so they can't see my profile or send messages anymore.
-    (3, 'block',    USERFLAG_IS_ONE_WAY),
-    # you can only have 5 favorites at a time!
-    (4, 'favorite', USERFLAG_IS_ONE_WAY),
-    # last time sender viewed the profile of receiver.
-    (5, 'viewed',   USERFLAG_IS_ONE_WAY),
-)
-USERFLAG_TYPES_CHOICES = [(x[0], x[1]) for x in USERFLAG_TYPES]
-
-
-class UserFlag(models.Model):
-    """Set flags between user profiles: fav, like/match, block."""
-
-    sender = models.ForeignKey(
-        User, db_index=True, related_name='has_flagged')
-    receiver = models.ForeignKey(
-        User, db_index=True, related_name='was_flagged')
-    flag_type = models.PositiveIntegerField(choices=USERFLAG_TYPES_CHOICES)
-    # Time the flag was set.
-    created = models.DateTimeField(default=nowtime())
-    # Time mutual flag was set for reciprocal relations.
-    confirmed = models.DateTimeField(default=None, null=True)
-
-    class Meta:
-        index_together = [
-            ['sender', 'receiver'],
-            ['receiver', 'sender'],
-            ['flag_type', 'receiver', 'sender'],
-            ['flag_type', 'sender', 'receiver'],
-        ]
-        unique_together = ['sender', 'receiver', 'flag_type']
-
-    def __init__(self, *args, **kwargs):
-        super(UserFlag, self).__init__(*args, **kwargs)
-
-    def __str__(self):
-        s = 'Flag {0}: by {1} to {2} type "{3}".'
-        return s.format(self.pk, self.sender.username,
-                        self.receiver.username, self.flag_type)
-
-    @classmethod  # TODO: DELETE THIS??
-    def get_flags(cls, user1, user2):
-        return UserFlag.objects.filter(sender=user1, receiver=user2)
-
-    @classmethod
-    def last_viewed(cls, user1, user2):
-        """Return date of the last "viewed" flag, or None if never."""
-        f = UserFlag.objects.filter(sender=user1, receiver=user2, flag_type=5)
-        if f:
-            return f[0].created
-        else:
-            return None
-
-    @classmethod
-    def all_between_users(cls, user1, user2):
-        """Return all flags between two users."""
-        return UserFlag.objects.filter(Q(sender=user1, receiver=user2) |
-                                       Q(sender=user2, receiver=user1))
-
-    @classmethod
-    def get_one_way_flags(cls, user1, user2):
-        """Return all one-way flags between two users."""
-        one_way_choices = [y[0] for y in USERFLAG_TYPES if not y[2]]
-        return UserFlag.all_between_users(user1, user2)\
-                       .filter(flag_type__in=one_way_choices)
-
-    @classmethod
-    def get_two_way_flags(cls, user1, user2):
-        """Return all two-way flags between two users."""
-        two_way_choices = [y[0] for y in USERFLAG_TYPES if y[2]]
-        return UserFlag.all_between_users(user1, user2)\
-                       .filter(flag_type__in=two_way_choices)
-
-    @classmethod
-    def get_flag(cls, flag_name, user1, user2):
-        """Return a specific flag between two users.
-
-        flag_name: one of the defined flag names, e.g. "like", "block".
-        user1, user2: django.auth.models.User objects.
-
-        Raise DoesNotExist exception if the flag doesn't exist.
-        """
-        try:
-            # Find the flag name in the USERFLAG_TYPES list.
-            flag_type, two_way_flag = [(y[0], y[2]) for y in
-                                       USERFLAG_TYPES if y[1] == flag_name][0]
-        except IndexError:
-            raise AttributeError('No flag by this name.')
-        # Fetch exactly one object, anything else would be an exception.
-        return UserFlag.objects.get(Q(sender=user1, receiver=user2) |
-                                    Q(sender=user2, receiver=user1),
-                                    flag_type=flag_type)
 
 
 class UserPic(models.Model):
@@ -172,68 +70,6 @@ class UserPic(models.Model):
         super(UserPic, self).save(*args, **kwargs)
 
 
-class UserMsg(models.Model):
-    """Store private messages between users."""
-
-    from_user = models.ForeignKey(User, related_name='msg_sent',
-                                  null=True, on_delete=models.SET_NULL)
-    to_user = models.ForeignKey(User, related_name='msg_received',
-                                null=True, on_delete=models.SET_NULL)
-    # Set True when user opens profile page and messages are displayed.
-    is_read = models.BooleanField(default=False)
-    # Set True if user replies or manually sets it to "done".
-    is_replied = models.BooleanField(default=False)
-    # Set True if the sending user was blocked by receiver.
-    # TODO: remove and handle in UserFlag only!
-    is_blocked = models.BooleanField(default=False)
-    # Time and IP the message was sent.
-    created = models.DateTimeField()
-    created_ip = models.CharField(default='', max_length=15, blank=True)
-    # The actual text of the message.
-    text = models.TextField()
-
-    class Meta:
-        index_together = [['from_user', 'to_user'], ['to_user', 'from_user']]
-
-    def __str__(self):
-        s = 'Message [{}] from "{}" ({}) to "{}" ({}) on "{}".'
-        return s.format(self.id, self.from_user.username, self.from_user.id,
-                        self.to_user.username, self.to_user.id, self.created)
-
-    def save(self, *args, **kwargs):
-        if not self.created:
-            self.created = nowtime()
-        super(UserMsg, self).save(*args, **kwargs)
-
-    @classmethod
-    def set_is_read_all(cls, to_user):
-        """Set all messages received by 'to_user' to is_read=True."""
-        for row in UserMsg.objects.filter(to_user=to_user, is_read=False):
-            # TODO: there's a more efficient way to do this!
-            # "bulk update" something.
-            row.is_read = True
-            row.save()
-
-    @classmethod
-    def set_is_read(cls, from_user, to_user):
-        """Set all msgs by 'from_user' to 'to_user' to is_read=True."""
-        for row in UserMsg.objects.filter(from_user=from_user, to_user=to_user):
-            # TODO: there's a more efficient way to do this!
-            # "bulk update" something.
-            row.is_read = True
-            row.save()
-
-    @classmethod
-    def unset_is_read(cls, from_user, to_user):
-        """Sets *last* msg by from_user to to_user to is_read=False."""
-        msg = UserMsg.objects.filter(from_user=from_user, to_user=to_user)\
-                             .order_by('-created').first()
-        if msg is not None:
-            msg.is_read = False
-            msg.save()
-
-
-# noinspection PyBroadException
 class UserProfile(models.Model):
     """All user profile info is here.
 
@@ -576,14 +412,12 @@ class UserProfile(models.Model):
                 list(f2.prefetch_related('profile')))
 
 
-# noinspection PyUnusedLocal
 @receiver(post_save, sender=User)
 def create_profile_for_user(sender, instance=None, created=False, **kwargs):
     if created:
         UserProfile.objects.get_or_create(user=instance)
 
 
-# noinspection PyUnusedLocal
 @receiver(pre_delete, sender=User)
 def delete_profile_for_user(sender, instance=None, **kwargs):
     if instance:
@@ -591,40 +425,3 @@ def delete_profile_for_user(sender, instance=None, **kwargs):
         user_profile.delete()
 
 
-################################################################################
-
-
-class Talk(models.Model):
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL,
-                             db_index=True, related_name='talks')
-    created = models.DateTimeField()
-    created_ip = models.CharField(default='', max_length=15)
-    parent = models.ForeignKey('self', db_index=True, null=True,
-                               default=None, related_name='children')
-    child_counter = models.SmallIntegerField(default=0)
-    views_counter = models.SmallIntegerField(default=0)
-    hashtag_counter = models.SmallIntegerField(default=0)
-    username_counter = models.SmallIntegerField(default=0)
-    is_blocked = models.BooleanField(default=False)
-    text = models.TextField()
-
-    class Meta:
-        pass
-
-    def __init__(self, *args, **kwargs):
-        super(Talk, self).__init__(*args, **kwargs)
-
-    def __str__(self):
-        return self.text
-
-
-class TalkHashtag(models.Model):
-    # the hashtag withOUT the "#" hash.
-    tag = models.CharField(max_length=50, db_index=True)
-    # ref to talk post id
-    talk = models.ForeignKey(Talk, db_index=True, related_name="hashtag")
-
-
-class TalkUsername(models.Model):
-    user = models.ForeignKey(User, db_index=True, related_name="mentioned_in")
-    talk = models.ForeignKey(Talk, db_index=True, related_name="mentions")

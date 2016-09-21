@@ -14,7 +14,7 @@ from django.db import connection
 
 from dtrflag.models import Flag
 from dtrglue import utils
-from dtrprofile.models import UserProfile
+from dtrprofile.models_profile import UserProfile
 from dtrprofile.views import get_user_friend_invites_received, \
                              get_user_friend_invites_sent, \
                              get_user_friends

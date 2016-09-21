@@ -5,6 +5,13 @@ from django.contrib import admin
 from django.contrib.auth.views import logout as logout_view
 from django.http import HttpResponse
 
+import dtrprofile.views_flag
+import dtrprofile.views_inbox
+import dtrprofile.views_profile
+import dtrprofile.views_search
+import dtrprofile.views_status
+import dtrprofile.views_talk
+import dtrprofile.views_usermsg
 from dtrcity import views as city_views
 from dtrprofile import views as profile_views
 from dtrseo import views as seo_views
@@ -26,7 +33,7 @@ urlpatterns = [
 
     # Homepage, that redirects either to login age or to ng app.
     url(r'^$', profile_views.homepage, name='home'),
-    url(r'^status/?$', profile_views.status_page, name='status'),
+    url(r'^status/?$', dtrprofile.views_status.status_page, name='status'),
 
     # - - - JSON API endpoints - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -39,53 +46,53 @@ urlpatterns = [
 
     # GET a list of flagged users
     url(r'^api/v1/lists/(?P<listname>[a-zA-Z0-9_-]{2,50}).json$',
-        profile_views.profile_flag_list),
+        dtrprofile.views_flag.profile_flag_list),
     # POST or DELETE a flag on a user.
     url(r'^api/v1/flag/(?P<flag_name>\w{1,20})/'
         r'(?P<username>[a-zA-Z0-9_-]{3,30}).json$',
-        profile_views.profile_flag),
+        dtrprofile.views_flag.profile_flag),
 
     # Talk
 
     url(r'^api/v1/talk/list.json$',
-        profile_views.talk_list),
+        dtrprofile.views_talk.talk_list),
     url(r'^api/v1/talk/post/(?P<post_id>\d{1,11}).json$',
-        profile_views.talk_post),
+        dtrprofile.views_talk.talk_post),
     url(r'^api/v1/talk/topic/(?P<hashtag>\w{2,50}).json$',
-        profile_views.talk_hashtag),
+        dtrprofile.views_talk.talk_hashtag),
     url(r'^api/v1/talk/people/(?P<username>[a-zA-Z0-9_-]{3,30}).json$',
-        profile_views.talk_username),
+        dtrprofile.views_talk.talk_username),
     url(r'^api/v1/talk/popular-tags.json$',
-        profile_views.talk_popular_tags),
+        dtrprofile.views_talk.talk_popular_tags),
     url(r'^api/v1/talk/popular-users.json$',
-        profile_views.talk_popular_users),
+        dtrprofile.views_talk.talk_popular_users),
 
     # Profile
 
     url(r'^api/v1/authuser/pics/(?P<pic_id>\d{1,11}).json$',
-        profile_views.profile_pics_item),
+        dtrprofile.views_profile.profile_pics_item),
     url(r'^api/v1/authuser/pics.json$',
-        profile_views.profile_pics_list),
+        dtrprofile.views_profile.profile_pics_list),
     url(r'^api/v1/authuser.json$',
-        profile_views.profile_api_view, kwargs={'use': 'authuser', 'q': None}),
+        dtrprofile.views_profile.profile_api_view, kwargs={'use': 'authuser', 'q': None}),
     url(r'^api/v1/profile/(?P<q>[a-zA-Z0-9_-]{3,30}).json$',
-        profile_views.profile_api_view, kwargs={'use': 'username'}),
+        dtrprofile.views_profile.profile_api_view, kwargs={'use': 'username'}),
     url(r'^api/v1/user/(?P<q>\d{1,11}).json$',
-        profile_views.profile_api_view, kwargs={'use': 'user_id'}),
+        dtrprofile.views_profile.profile_api_view, kwargs={'use': 'user_id'}),
 
     # Search
 
     url(r'^api/v1/search.json$',
-        profile_views.SearchAPIView.as_view(), name='search_api'),
+        dtrprofile.views_search.SearchAPIView.as_view(), name='search_api'),
 
     # Inbox/Messages
 
     url(r'^api/v1/inbox/(?P<t>recv|sent|unread|allread).json$',
-        profile_views.InboxList.as_view(), name='inbox-list'),
+        dtrprofile.views_inbox.InboxList.as_view(), name='inbox-list'),
     url(r'^api/v1/inbox/msg/(?P<pk>\d+).json$',
-        profile_views.InboxItem.as_view(), name='inbox-item'),
+        dtrprofile.views_inbox.InboxItem.as_view(), name='inbox-item'),
     url(r'^api/v1/msgs/(?P<username>[a-zA-Z0-9_-]{3,30}).json$',
-        profile_views.UserMsgList.as_view(), name='usermsgs-list'),
+        dtrprofile.views_usermsg.UserMsgList.as_view(), name='usermsgs-list'),
 
     # Country/City
 

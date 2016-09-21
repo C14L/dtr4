@@ -9,7 +9,7 @@ from django.utils.translation import get_language
 from django.views.decorators.cache import cache_page
 
 from dtrcity.models import Region, City, AltName
-from dtrprofile.models import UserProfile
+from dtrprofile.models_profile import UserProfile
 
 """
 This app mainly provides landing pages for all dater3 areas, and makes sure

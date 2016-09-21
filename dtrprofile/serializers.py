@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from dtrprofile.models import UserMsg
+from dtrprofile.models_usermsg import UserMsg
 
 
 class UserMsgSerializer(serializers.ModelSerializer):

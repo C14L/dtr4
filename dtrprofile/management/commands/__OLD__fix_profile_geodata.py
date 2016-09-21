@@ -14,7 +14,7 @@ well-defined and valid geo info attached, i.e., "city", "region", "country",
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
-from dtrprofile.models import UserProfile
+from dtrprofile.models_profile import UserProfile
 from dtrcity.models import Country, Region, City, AltName
 
 class Command(BaseCommand):

@@ -1,28 +1,20 @@
 
 """Import all user accounts and user profile data."""
 
-import pymysql
-import os.path
-#import csv
-import sys
-import re
-#import unicodedata
-#import time
 from datetime import datetime
 
-from django.conf import settings
+import pymysql
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
-from django.core.files import File
-from django.core.files.images import ImageFile
-from django.template.defaultfilters import slugify
 from django.utils.timezone import utc
 
-from dtrcity.models import City, Country
-from dtrprofile.models import UserProfile, UserPic, UserMsg, UserFlag
 import dtr4.settings_single_choices as single_choices
+from dtrcity.models import City, Country
+from dtrprofile.models_flag import UserFlag
+from dtrprofile.models_profile import UserPic, UserProfile
+from dtrprofile.models_usermsg import UserMsg
 
-print( 'Beginning import of OLD elligue data.' )
+print('Beginning import of OLD elligue data.')
 
 # Get a connect to the old elligue database.
 conn = pymysql.connect( host='localhost', port=3306,
@@ -32,7 +24,8 @@ try:
 except:
     raise Exception('No database connection!')
 
-print( 'OLD database "elligue" connected.' )
+print('OLD database "elligue" connected.')
+
 
 # Run command.
 class Command(BaseCommand):
@@ -50,6 +43,7 @@ class Command(BaseCommand):
     # --------------------------------------------------------------------------
     # --------------------------------------------------------------------------
 
+    # noinspection PyMethodMayBeStatic
     def import_auth_user(self):
         # 1. Read auth_user items from OLD and add to NEW, preserving pk value.
         # Check how many items we have in OLD and NEW auth_user tables.
@@ -68,7 +62,7 @@ class Command(BaseCommand):
                 # Check if the user already exists.
                 try:
                     user = User.objects.get(pk=row[0])
-                    print( 'User {} already exists, not imported again.'.format(user.pk) )
+                    print('User {} already exists, not imported again.'.format(user.pk))
                 except:
                     # if not, import the auth_user data and create the user.
                     user = User.objects.create_user(row[4], id=row[0], email=row[7])
@@ -323,7 +317,6 @@ class Command(BaseCommand):
 
     def import_dtrprofile_flag(self):
         print('Starting import of UserFlag data...')
-        from dtrprofile.models import USERFLAG_TYPES # like, friend, favorite, block
         print('Flags have to be converted, there is no way to count-and-compare them.')
         print('Each time we need to trunate the new table and start over.')
         UserFlag.objects.all().delete()

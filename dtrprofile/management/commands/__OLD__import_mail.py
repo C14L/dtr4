@@ -19,7 +19,7 @@ from django.utils.encoding import force_unicode, iri_to_uri
 from django.utils.html import strip_tags
 from django.utils.timezone import utc
 
-from dtrprofile.models import UserMsg
+from dtrprofile.models_usermsg import UserMsg
 from dtrglue import utils
 
 IMPORT_MAIL_FROM_ROW = 1 # Start row within the time limit.

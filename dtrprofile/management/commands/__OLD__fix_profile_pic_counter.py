@@ -6,16 +6,11 @@ main profile avatar picture set.
 
 """
 
-from datetime import datetime
+from django.core.management.base import BaseCommand
+from django.db import connection
 
-from django.conf import settings
-from django.contrib.auth.models import User
-from django.core.management.base import BaseCommand, CommandError
-from django.core.files import File
-from django.db import connection, transaction
+from dtrprofile.models_profile import UserPic, UserProfile
 
-from dtrprofile.models import UserProfile, UserPic
-from dtrglue import utils
 
 class Command(BaseCommand):
 

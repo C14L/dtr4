@@ -1,6 +1,6 @@
 from django import forms
 
-from dtrprofile.models import UserProfile
+from dtrprofile.models_profile import UserProfile
 
 
 class UserEditProfileForm(forms.ModelForm):

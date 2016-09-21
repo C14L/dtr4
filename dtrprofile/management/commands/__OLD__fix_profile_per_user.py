@@ -8,7 +8,8 @@ Make sure that every User has a UserProfile. Create it if necessary.
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
-from dtrprofile.models import UserProfile
+from dtrprofile.models_profile import UserProfile
+
 
 class Command(BaseCommand):
 

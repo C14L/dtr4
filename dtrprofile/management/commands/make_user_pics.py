@@ -9,7 +9,8 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.files import File
 
-from dtrprofile.models import UserPic
+from dtrprofile.models_profile import UserPic
+
 
 class Command(BaseCommand):
     args = ''
