@@ -1,12 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
-from django.utils.timezone import now as timezone_now
 
-
-def nowtime():
-    return timezone_now
-
+from dtrprofile.utils import nowtime
 
 USERFLAG_IS_ONE_WAY = False
 USERFLAG_IS_TWO_WAY = True
@@ -107,4 +103,3 @@ class UserFlag(models.Model):
         return UserFlag.objects.get(Q(sender=user1, receiver=user2) |
                                     Q(sender=user2, receiver=user1),
                                     flag_type=flag_type)
-

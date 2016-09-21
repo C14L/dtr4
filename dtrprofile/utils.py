@@ -1,5 +1,10 @@
 import re
 from django.utils.text import slugify as dj_slugify
+from django.utils.timezone import now as timezone_now
+
+
+def nowtime():
+    return timezone_now
 
 
 def slugify(s):

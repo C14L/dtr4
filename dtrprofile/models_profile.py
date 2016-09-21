@@ -13,12 +13,8 @@ from django.utils.translation import get_language
 
 from dtr4 import settings_single_choices as single_choices
 from dtrcity.models import City, Country, AltName
+from dtrprofile.utils import nowtime
 from image_with_thumbnail_field import ImageWithThumbsField
-from django.utils.timezone import now as timezone_now
-
-
-def nowtime():
-    return timezone_now
 
 
 class UserPic(models.Model):

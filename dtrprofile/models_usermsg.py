@@ -1,11 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from django.utils.timezone import now as timezone_now
-
-
-def nowtime():
-    return timezone_now
+from dtrprofile.utils import nowtime
 
 
 class UserMsg(models.Model):
