@@ -337,7 +337,7 @@ class UserProfile(models.Model):
         except IndexError:
             return ''
 
-    # noinspection PyTypeChecker
+    # noinspection PyTypeChecker,PyBroadException
     def get_age(self):
         try:
             delta = date.today() - self.dob
@@ -345,6 +345,7 @@ class UserProfile(models.Model):
         except:
             return ''
 
+    # noinspection PyBroadException
     def get_western_zodiac(self):
         try:
             mdd = int(self.dob.strftime('%m%d'))
@@ -353,6 +354,7 @@ class UserProfile(models.Model):
         except:
             return 0
 
+    # noinspection PyBroadException
     def get_eastern_zodiac(self):
         try:
             ymd = int(self.dob.strftime('%Y%m%d'))
@@ -408,16 +410,16 @@ class UserProfile(models.Model):
                 list(f2.prefetch_related('profile')))
 
 
+# noinspection PyUnusedLocal
 @receiver(post_save, sender=User)
 def create_profile_for_user(sender, instance=None, created=False, **kwargs):
     if created:
         UserProfile.objects.get_or_create(user=instance)
 
 
+# noinspection PyUnusedLocal
 @receiver(pre_delete, sender=User)
 def delete_profile_for_user(sender, instance=None, **kwargs):
     if instance:
         user_profile = UserProfile.objects.get(user=instance)
         user_profile.delete()
-
-

@@ -63,5 +63,3 @@ class UserMsg(models.Model):
         if msg is not None:
             msg.is_read = False
             msg.save()
-
-

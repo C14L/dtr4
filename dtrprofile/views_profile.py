@@ -182,8 +182,10 @@ def profile_api_view(request, q, use):
         # delete user's profile. Either user's own profile or authuser is_staff
         # and deletes another user's profile.
         if request.user.is_staff:
+            # noinspection PyUnusedLocal
             ownprofile = False
         elif request.user.id == user.id:
+            # noinspection PyUnusedLocal
             ownprofile = True
         else:
             return HttpResponseForbidden()

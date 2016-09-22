@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -7,10 +6,9 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponseNotFound, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.utils.timezone import utc
 from django.views.decorators.http import require_http_methods
 
-from dtrprofile.models_flag import USERFLAG_TYPES, UserFlag
+from dtrprofile.models_flag import UserFlag
 from dtrprofile.models_profile import UserProfile
 from dtrprofile.models_usermsg import UserMsg
 
@@ -138,83 +136,18 @@ def profile_flag_list(request, listname):
 def profile_flag(request, flag_name, username):
     data = []
     user = get_object_or_404(User, username=username)
-    try:
-        flag_type, flag_name, two_way_flag = [x for x in USERFLAG_TYPES
-                                              if x[1] == flag_name][0]
-    except IndexError:
-        # The requested flag_name does not exist.
-        return HttpResponseNotFound()
 
     if request.method == 'POST':
-        # Check if flag or confirm already exists.
-        flag = None
-
+        # Set a flag on another user.
         try:
-            # check if authuser already set the flag
-            flag = UserFlag.objects.get(flag_type=flag_type,
-                                        sender=request.user, receiver=user)
-        except UserFlag.DoesNotExist:
-            pass
-
-        # If not and this is two-way, check if authuser confirmed a flag
-        if flag is None and two_way_flag:
-            try:
-                flag = UserFlag.objects.get(flag_type=flag_type,
-                                            sender=user, receiver=request.user)
-            except UserFlag.DoesNotExist:
-                pass
-
-        # If no flag exists yet, add a new flag
-        if flag is None:
-            flag = UserFlag()
-            flag.flag_type = flag_type
-            flag.sender = request.user
-            flag.receiver = user
-            flag.created = datetime.utcnow().replace(tzinfo=utc)
-            flag.save()
-
-        # or for two-way, if there was an unconfirmed flag, confirm it
-        elif flag is not None and flag.sender == user and not flag.confirmed:
-            flag.confirmed = datetime.utcnow().replace(tzinfo=utc)
-            flag.save()
-
-        if flag_name == 'block':
-            # EVIL SHORTCUT!!! if "block" flag is set, set "UserMsg.is_blocked"
-            # on all msgs that have authuser as "to_user", user as "from_user".
-            # TODO: Remove this and lookup the "blocked" status between users
-            # each time messages are loaded.
-            UserMsg.objects.filter(to_user=request.user,
-                                   from_user=user).update(is_blocked=True)
+            UserFlag.set_flag(flag_name, sender=request.user, receiver=user)
+        except IndexError:
+            return HttpResponseNotFound()
 
     elif request.method == 'DELETE':
-
-        flag = UserFlag.get_flag(flag_name, request.user, user)
-        # done = False
-
-        if two_way_flag:
-            if flag.receiver == request.user and flag.confirmed:
-                flag.confirmed = None
-                flag.save()
-
-            elif flag.sender == request.user:
-                old_confirmed = flag.confirmed
-                flag.delete()
-
-                if flag.confirmed:
-                    # if was confirmed, so we need to remove this flag, and set
-                    # a new flag with the previous receiver as sender.
-                    UserFlag.objects.create(
-                        sender=user, receiver=request.user,
-                        flag_type=flag_type, created=old_confirmed)
-        else:
-            # for a one-way, just delete it.
-            flag.delete()
-
-        if flag_name == 'block':
-            # EVIL SHORTCUT --> if "block" flag is removed, also remove all
-            # "UserMsg.is_blocked" on msgs that have authuser as "to_user" and
-            # user as "from_user".
-            UserMsg.objects.filter(to_user=request.user,
-                                   from_user=user).update(is_blocked=False)
+        try:
+            UserFlag.remove_flag(flag_name, sender=request.user, receiver=user)
+        except IndexError:
+            return HttpResponseNotFound()
 
     return HttpResponse(json.dumps(data), {'content_type': 'application/json'})

@@ -1,7 +1,11 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
+from django.utils.timezone import utc
 
+from dtrprofile.models_usermsg import UserMsg
 from dtrprofile.utils import nowtime
 
 USERFLAG_IS_ONE_WAY = False
@@ -103,3 +107,85 @@ class UserFlag(models.Model):
         return UserFlag.objects.get(Q(sender=user1, receiver=user2) |
                                     Q(sender=user2, receiver=user1),
                                     flag_type=flag_type)
+
+    @classmethod
+    def get_flag_type(cls, flag_name):
+        """Return [flag_type, flag_name, two_way_flag] by flag name."""
+        return [x for x in USERFLAG_TYPES if x[1] == flag_name][0]
+
+    @classmethod
+    def set_flag(cls, flag_name, sender, receiver):
+
+        flag_type, flag_name, two_way_flag = cls.get_flag_type(flag_name)
+
+        # Check if flag or confirm already exists.
+        flag = None
+        try:
+            flag = UserFlag.objects.get(flag_type=flag_type,
+                                        sender=sender, receiver=receiver)
+        except UserFlag.DoesNotExist:
+            pass
+
+        # If not and this is two-way, check if authuser confirmed a flag
+        if flag is None and two_way_flag:
+            try:
+                flag = UserFlag.objects.get(flag_type=flag_type,
+                                            sender=receiver, receiver=sender)
+            except UserFlag.DoesNotExist:
+                pass
+
+        # If no flag exists yet, add a new flag
+        if flag is None:
+            flag = UserFlag()
+            flag.flag_type = flag_type
+            flag.sender = sender
+            flag.receiver = receiver
+            flag.created = datetime.utcnow().replace(tzinfo=utc)
+            flag.save()
+
+        # or for two-way, if there was an unconfirmed flag, confirm it
+        elif flag is not None and flag.sender == receiver \
+                and not flag.confirmed:
+            flag.confirmed = datetime.utcnow().replace(tzinfo=utc)
+            flag.save()
+
+        if flag_name == 'block':
+            # EVIL SHORTCUT!!! if "block" flag is set, set "UserMsg.is_blocked"
+            # on all msgs that have authuser as "to_user", user as "from_user".
+            # TODO: Remove this and lookup the "blocked" status between users
+            # each time messages are loaded.
+            UserMsg.objects.filter(to_user=sender,
+                                   from_user=receiver).update(is_blocked=True)
+
+    @classmethod
+    def remove_flag(cls, flag_name, sender, receiver):
+
+        flag_type, flag_name, two_way = UserFlag.get_flag_type(flag_name)
+
+        flag = UserFlag.get_flag(flag_name, sender, receiver)
+
+        if two_way:
+            if flag.receiver == sender and flag.confirmed:
+                flag.confirmed = None
+                flag.save()
+
+            elif flag.sender == sender:
+                old_confirmed = flag.confirmed
+                flag.delete()
+
+                if flag.confirmed:
+                    # if was confirmed, so we need to remove this flag, and set
+                    # a new flag with the previous receiver as sender.
+                    UserFlag.objects.create(
+                        sender=receiver, receiver=sender,
+                        flag_type=flag_type, created=old_confirmed)
+        else:
+            # for a one-way, just delete it.
+            flag.delete()
+
+        if flag_name == 'block':
+            # EVIL SHORTCUT --> if "block" flag is removed, also remove all
+            # "UserMsg.is_blocked" on msgs that have authuser as "to_user" and
+            # user as "from_user".
+            UserMsg.objects.filter(to_user=sender,
+                                   from_user=receiver).update(is_blocked=False)
