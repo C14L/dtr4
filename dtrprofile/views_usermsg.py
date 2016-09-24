@@ -26,7 +26,7 @@ def can_send_msg(sender, receiver):
     sender User object of message author, most likely request.user
     receiver User object of message receipient.
     """
-    f_block = UserMsg.get_flag_type('block')
+    f_block = UserFlag.get_flag_type('block')[0]
     return not UserFlag.objects.filter(
         # Careful: "receiver" of flag is "sender" of message.
         receiver=sender, sender=receiver, flag_type=f_block).exists()
