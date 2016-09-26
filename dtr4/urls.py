@@ -148,11 +148,25 @@ urlpatterns = [
 # rest_urlpatterns = format_suffix_patterns(rest_urlpatterns)
 
 if not settings.PRODUCTION:
+    app_path = os.path.join(settings.BASE_DIR, '..', 'dtr4-ui')
+
     # noinspection PyUnusedLocal
     def app_base_view(request):
-        fname = os.path.join(settings.BASE_DIR, '../dtr4-ui/index.html')
-        with open(fname, 'r') as fh:
-            return HttpResponse(fh.read())
+        f = os.path.join(app_path, 'dist', request.path.lstrip('/'))
+        mime = 'text/html'
+
+        if os.path.isfile(f):
+            print('FILE EXISTS: {}'.format(f))
+            if f.endswith('.js'):
+                mime = 'application/javascript'
+            elif f.endswith('.css'):
+                mime = 'text/css'
+        else:
+            print('FILE NOT FOUND: {}'.format(f))
+            f = os.path.join(app_path, 'dist', 'app', 'index.html')
+
+        with open(f, 'r') as fh:
+            return HttpResponse(fh.read(), content_type=mime)
 
     from django.conf.urls.static import static
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
