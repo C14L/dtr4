@@ -161,11 +161,15 @@ if not settings.PRODUCTION:
                 mime = 'application/javascript'
             elif f.endswith('.css'):
                 mime = 'text/css'
+            elif f.endswith('.woff'):
+                mime = 'application/font-woff'
+            elif f.endswith('.ttf'):
+                mime = 'application/font-sfnt'
         else:
             print('FILE NOT FOUND: {}'.format(f))
             f = os.path.join(app_path, 'dist', 'app', 'index.html')
 
-        with open(f, 'r') as fh:
+        with open(f, 'rb') as fh:
             return HttpResponse(fh.read(), content_type=mime)
 
     from django.conf.urls.static import static
