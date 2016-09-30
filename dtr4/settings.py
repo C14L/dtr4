@@ -162,11 +162,13 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')
 
 if not PRODUCTION:
+    pass
     # The Angular app is here. On the live system, the app is served by
     # nginx directly, same as the other static files.
-    STATICFILES_DIRS = (
-        os.path.join(BASE_DIR, '../dtr4-ui'),
-    )
+    # STATICFILES_DIRS = (
+    #     # os.path.join(BASE_DIR, '../dtr4-ui'),
+    #     # os.path.join(BASE_DIR, '../www'),
+    # )
 
 # Email config
 EMAIL_SUBJECT_PREFIX = 'El Ligue: '  # For system emails to ADMINS+MANAGERS.
