@@ -36,13 +36,16 @@ def ws_disconnect(message):
     Group('talk_channel').add(message.reply_channel)
 
 
-"""
+def usermsg_init():
+    pass
+    # TODO: Return an initial list of past messages between the users.
+    #       Currently still done via HTTP.
 
-For now, use the current funcitons in views.py to receive Talk and Inbox
-messages via HTTP and then sent them to the appropriate channel, either the
-individual user's channel, or the common `talk_channel`.
 
-Once that works, a second step would be to use WS also for sending, and to
-implement the entire send/receive logic here. More on that tomorrow...
-
-"""
+def usermsg_receive():
+    pass
+    # sender_group = get_group_name_for_user(request.user)
+    # receiver_group = get_group_name_for_user(user)
+    # resp = {'action': 'usermsg.receive', 'msg_list': [serializer.data]}
+    # ChannelsGroup(sender_group).send({'text': json.dumps(resp)})
+    # ChannelsGroup(receiver_group).send({'text': json.dumps(resp)})

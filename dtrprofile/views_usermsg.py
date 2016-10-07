@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -14,7 +16,9 @@ from django.utils.translation import get_language
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from channels import Group as ChannelsGroup
 
+from dtrprofile.consumers import get_group_name_for_user
 from dtrprofile.models_flag import UserFlag
 from dtrprofile.models_usermsg import UserMsg
 from dtrprofile.serializers import UserMsgSerializer
@@ -127,6 +131,7 @@ class UserMsgList(APIView):
     @method_decorator(login_required)
     def post(self, request, username):
         """Send a private message from request.user to user."""
+        use_channels = 'channels' in settings.INSTALLED_APPS
 
         after = request.POST.get('after', None)
         user = get_object_or_404(User, username=username)
@@ -142,27 +147,35 @@ class UserMsgList(APIView):
         data['created'] = timezone_now()
         serializer = UserMsgSerializer(data=data)
 
-        if serializer.is_valid():
-            serializer.save()
+        if not serializer.is_valid():
+            # Something went wrong in the serializer.
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
-            # Send notification email to receipient.
-            send_new_msg_email(request, user, data['text'])
+        serializer.save()
 
-            # Return ALL posts since last check (after) NOT only this one.
-            if after is None:
-                # get the last ten or so to make sure we catch up.
-                usermsgs = fetch_usermsgs(request.user, user, count=10)
-            else:
-                # return all messages after the last the user received.
-                usermsgs = fetch_usermsgs(request.user, user, after)
-            #
-            # TODO: this should return all new messages since "after" but it
-            #       doesn't for some reason. 2014-12-19
-            #
+        # Send notification email to receipient.
+        send_new_msg_email(request, user, data['text'])
 
-            serializer = UserMsgSerializer(usermsgs, many=True)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # Something went wrong in the serializer.
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # If Channels is installed, and receiver is connected, push the message.
+        if use_channels:
+            # sender_group = get_group_name_for_user(request.user)
+            receiver_group = get_group_name_for_user(user)
+            resp = {'action': 'usermsg.receive', 'msg_list': [serializer.data]}
+            # ChannelsGroup(sender_group).send({'text': json.dumps(resp)})
+            ChannelsGroup(receiver_group).send({'text': json.dumps(resp)})
 
-
+        # If Channels isn't installed, use HTTP to return recent posts.
+        # Return ALL posts since last check (after) NOT only this one.
+        if after is None:
+            # get the last ten or so to make sure we catch up.
+            usermsgs = fetch_usermsgs(request.user, user, count=10)
+        else:
+            # return all messages after the last the user received.
+            usermsgs = fetch_usermsgs(request.user, user, after)
+        #
+        # TODO: this should return all new messages since "after" but it
+        #       doesn't for some reason. 2014-12-19
+        #
+        serializer = UserMsgSerializer(usermsgs, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
