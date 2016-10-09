@@ -30,10 +30,8 @@ def talk_fetch_posts(request, after=None, before=None, count=None, group='all'):
         count = settings.DTR_TALK_PAGE_SIZE
 
     # Create the inicial posts object with all posts.
-    posts = Talk.objects.filter(is_blocked=False,
-                                user__isnull=False).order_by('-created')
-
-    # TODO: Add prefetch for "user" field.
+    posts = Talk.objects.filter(is_blocked=False, user__isnull=False)\
+        .order_by('-created').prefetch_related('user', 'user__profile')
 
     # Limit posts list by before or after a certain date.
     if before:
