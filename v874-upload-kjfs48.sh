@@ -13,7 +13,6 @@ echo "fixing any chmod problems..."
 find ${SRC} -type d -print0 | xargs -0 chmod 755
 find ${SRC} -type f -print0 | xargs -0 chmod 644
 chmod -R 755 ${SRC}/manage.py
-# chmod -R 755 ${SRC}/v600-*.sh
 chmod -R 755 ${SRC}/v874-*.sh
 
 read -rsp "Press [ENTER] to start..."
