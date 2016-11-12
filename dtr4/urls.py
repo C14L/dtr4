@@ -32,8 +32,16 @@ urlpatterns = [
     url(r'^accounts/', include('allauth.urls')),
 
     # Homepage, that redirects either to login age or to ng app.
-    url(r'^$', profile_views.homepage, name='home'),
-    url(r'^status/?$', dtrprofile.views_status.status_page, name='status'),
+    url(r'^$',
+        profile_views.homepage, name='home'),
+    url(r'^status/?$',
+        dtrprofile.views_status.status_page, name='status'),
+    url(r'^status/messages/?$',
+        dtrprofile.views_status.status_messages, name='status_messages'),
+    url(r'^status/messages/detail/?$',
+        dtrprofile.views_status.status_messages_user_msgs_json),
+    url(r'^status/messages/userlist/?$',
+        dtrprofile.views_status.status_messages_userlist_json),
 
     # - - - JSON API endpoints - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Status Page ~o EL LIGUE</title>
+    <link rel="icon" href="/static/img/icon.png" type="image/png">
+    <style>
+
+      body { --userlist-width: 500px; margin: 0; padding: 0; display: flex; flex-flow: row wrap; height: 100vh; }
+      header, header nav, header button, .userlist, .messages-details { position: fixed; }
+
+      header { top: 0; right: 0; bottom: 64px; left: 0; background: red; overflow: hidden; }
+      header h1 { text-align: center; padding: 0; margin: 0;  color: white; line-height: 64px; }
+      header h1 a { color: inherit; text-decoration: inherit; }
+      header nav { line-height: 64px; top: 0; left: 0; bottom: 0; }
+      header nav span { margin-left: 20px; }
+      header button { top: 20px; right: 20px; }
+
+      .userlist { top: 64px; right: var(--userlist-width); bottom: 0; left: 0; background-color: #E0E0E0; overflow-y: scroll; }
+      .userlist table { width: var(--userlist-width); }
+      .userlist td { white-space: nowrap; padding: 5px; }
+      .userlist tr { cursor: pointer; }
+      .userlist tr:nth-child(even) td { background-color: #F0F0F0; }
+      .userlist tr.selected td { background-color: red; color: white; }
+
+      .messages-details { top: 64px; right: 0; bottom: 0; left: var(--userlist-width); background-color: #E0E0E0; overflow-y: scroll; }
+      .messages-details > div { margin: 10px; padding: 10px; background-color: #F0F0F0; }
+      .messages-details .username,
+      .messages-details .created,
+      .messages-details .created_ip,
+      .messages-details .is_replied { color: #999; display: inline; }
+      .messages-details .text { font-size: 1rem; }
+
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <span onclick="showUserlist('most')">most messages</span>
+        <span onclick="showUserlist('recent')">recently sent</span>
+      </nav>
+      <h1><a href="/status/">Messages Status Page</a></h1>
+      <button disabled id="user-delete-btn">delete profile</button>
+    </header>
+
+    <div id="userlist" class="userlist"></div>
+
+    <div id="messages-details" class="messages-details"></div>
+
+    <div class="messages-detail-template">
+      <div class="username"></div>
+      <div class="created"></div>
+      <div class="created_ip"></div>
+      <div class="is_replied"></div>
+      <div class="text"></div>
+    </div>
+
+    <script>
+
+var csrftoken = read_cookie('csrftoken');
+var elHeader = document.getElementsByTagName('header')[0];
+var elH1 = document.getElementsByTagName('h1')[0];
+var elDeleteBtn = document.getElementById('user-delete-btn');
+
+var el = document.getElementById('messages-details');
+var elTpl = document.getElementsByClassName('messages-detail-template')[0];
+var elUserlist = document.getElementById('userlist');
+
+var listname = 'most';  // current list
+var pageUserlist = 0;   // cuurent page
+var isLoading = false;  // userlist loading
+
+
+elUserlist.onscroll = function (event) {
+  var sh = elUserlist.scrollHeight;
+  var st = elUserlist.scrollTop;
+  var oh = elUserlist.offsetHeight;
+  var distFromBottom = sh - st - oh;
+
+  if (distFromBottom < 100) { // close to list end: load more
+    if ( ! isLoading) {
+      isLoading = true;
+      loadUserlist().then(function (response) {
+        renderUserlist(response);
+        isLoading = false;
+      }).catch(function (err) {
+        console.log('USERLIST ERROR:', err);
+        isLoading = false;
+      });
+    }
+  }
+}
+
+
+/**
+ * On the userlist, highlight only the selected row.
+ */
+function setSelected (target) {
+  var elsTr = elUserlist.querySelectorAll('table tr');
+  elsTr.forEach(function (o) { o.classList.remove('selected'); });
+  target.classList.add('selected');
+}
+
+
+function renderUserlist (userlist) {
+  var elTable = document.createElement('table');
+
+  for (var i=0; i<userlist.length; i++) {
+    var u = userlist[i];
+    var elTr = document.createElement('tr');
+    elTr.addEventListener('click', showMsgsForUser);
+
+    var elTdLineNumber = document.createElement('td');
+    var elTdUsername = document.createElement('td');
+    var elTdCount = document.createElement('td');
+    var elTdDate1 = document.createElement('td');
+    var elTdDate2 = document.createElement('td');
+
+    elTdLineNumber.classList.add('forloop-counter');
+    elTdUsername.classList.add('username');
+    elTdCount.classList.add('count');
+    elTdDate1.classList.add('date_joined');
+    elTdDate2.classList.add('last_login');
+
+    elTdLineNumber.appendChild(document.createTextNode((i+1) + '.'));
+    elTdUsername.appendChild(document.createTextNode(u[1]));
+    elTdCount.appendChild(document.createTextNode(u[0]));
+    elTdDate1.appendChild(document.createTextNode(u[2].slice(0,10)));
+    elTdDate2.appendChild(document.createTextNode(u[3].slice(0,10)));
+
+    elTr.appendChild(elTdLineNumber);
+    elTr.appendChild(elTdUsername);
+    elTr.appendChild(elTdCount);
+    elTr.appendChild(elTdDate1);
+    elTr.appendChild(elTdDate2);
+
+    elTable.appendChild(elTr);
+  }
+
+  elUserlist.appendChild(elTable);
+}
+
+
+function loadUserlist () {
+  return new Promise(function (resolve, reject) {
+    req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+      if (req.readyState === XMLHttpRequest.DONE) {
+        if (req.status === 200) {
+          resolve(JSON.parse(req.responseText).userlist);
+        } else {
+          reject('error loading userlist');
+        }
+      }
+    }
+    pageUserlist += 1;
+    req.open('GET', '/status/messages/userlist?q=' + listname + '&page=' + pageUserlist);
+    req.send();
+  });
+}
+
+
+function showUserlist (_listname) {
+  pageUserlist = 0;
+  listname = _listname;
+  elUserlist.innerText = 'Loading ' + listname + '...';
+  loadUserlist().then(function (response) {
+    elUserlist.innerText = '';
+    userlistLoaded(response);
+  });
+}
+
+
+function userlistLoaded (response) {
+  elH1.innerHTML = '<a href="/status/">Messages Status Page</a>';
+  elDeleteBtn.disabled = true;
+  elDeleteBtn.innerText = 'delete profile';
+  el.innerHTML = '';  // clear list of messages
+  elUserlist.innerText = '';
+  renderUserlist(response);
+}
+
+
+function showMsgsForUser (event) {
+  var target = event.target.parentNode;
+  var username = target.getElementsByClassName('username')[0].innerText;
+  var url = '/status/messages/detail/?u=' + username;
+  var elTable = elUserlist.getElementsByTagName('table')[0];
+
+  elH1.innerHTML = '<a href="/app/profile/' + username + '">' + username + '</a>';
+  elDeleteBtn.innerText = 'delete ' + username;
+  elDeleteBtn.disabled = false;
+
+  elDeleteBtn.onclick = function (evt) {
+    elDeleteBtn.disabled = true;
+
+    maybeDeleteUser(username)
+      .then(function (response) {
+        console.log('User ' + username + ' successfully deleted.');
+        elH1.innerHTML = '<a href="/status/">Messages Status Page</a>';
+        elDeleteBtn.innerText = 'delete profile';
+        el.innerHTML = '';  // clear list of messages
+        elTable.removeChild(target);  // remove from userlist
+      }).catch(function (err) {
+        console.log('Error: ' + err);
+        elDeleteBtn.disabled = false;
+      });
+  };
+
+  setSelected(target);
+  el.innerText = 'Loading...';
+  req = new XMLHttpRequest();
+
+  req.onreadystatechange = function () {
+    if (req.readyState === XMLHttpRequest.DONE && req.status === 200) {
+      el.innerText = '';
+      var msgs = JSON.parse(req.responseText).msgs;
+
+      for (msg of msgs) {
+        var tpl = elTpl.cloneNode(true);
+
+        var _created = document.createTextNode(msg.created);
+        var _created_ip = document.createTextNode(msg.created_ip);
+        var _is_replied = document.createTextNode(msg.is_replied);
+        var _username = document.createTextNode(msg.to_user__username);
+        var _text = document.createTextNode(msg.text);
+
+        tpl.getElementsByClassName('created')[0].appendChild(_created);
+        tpl.getElementsByClassName('created_ip')[0].appendChild(_created_ip);
+        tpl.getElementsByClassName('is_replied')[0].appendChild(_is_replied);
+        tpl.getElementsByClassName('username')[0].appendChild(_username);
+        tpl.getElementsByClassName('text')[0].appendChild(_text);
+
+        el.appendChild(tpl);
+      }
+    }
+  };
+
+  req.open('GET', url);
+  req.send();
+}
+
+
+function maybeDeleteUser (username) {
+  return new Promise(function (resolve, reject) {
+    var url = '/api/v1/profile/' + username + '.json';
+
+    if ( confirm('Delete user account: ' + username) ) {
+      console.log('Deleting user: ' + username);
+      req = new XMLHttpRequest();
+      req.onreadystatechange = function () {
+        if (req.readyState === XMLHttpRequest.DONE && req.status === 200) {
+          resolve('profile deleted');
+        }
+      };
+      req.open('DELETE', url);
+      req.setRequestHeader('X-CSRFToken', csrftoken);
+      req.send();
+    } else {
+      reject('user canceled');
+    }
+  });
+}
+
+
+function read_cookie (k, r) {
+  return (r = RegExp('(^|; )' + encodeURIComponent(k) + '=([^;]*)').exec(document.cookie)) ? r[2] : null;
+}
+
+
+showUserlist();
+
+    </script>
+  </body>
+</html>

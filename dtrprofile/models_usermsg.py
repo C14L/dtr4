@@ -19,7 +19,7 @@ class UserMsg(models.Model):
     # TODO: remove and handle in UserFlag only!
     is_blocked = models.BooleanField(default=False)
     # Time and IP the message was sent.
-    created = models.DateTimeField()
+    created = models.DateTimeField(db_index=True)
     created_ip = models.CharField(default='', max_length=15, blank=True)
     # The actual text of the message.
     text = models.TextField()

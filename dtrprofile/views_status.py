@@ -3,19 +3,102 @@ import json
 from datetime import time as dt_time, datetime, date, timedelta
 
 import pytz as pytz
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
-from django.db.models import Count
-from django.shortcuts import render
+from django.db.models import Count, Max, CharField, Value
+from django.http.response import JsonResponse
+from django.shortcuts import render, get_object_or_404
 
-from dtrprofile.models_usermsg import UserMsg
 from dtrprofile.models_flag import UserFlag
 from dtrprofile.models_profile import UserProfile
 from dtrprofile.models_talk import Talk
+from dtrprofile.models_usermsg import UserMsg
+
+
+per_page = 100
+
+
+def date_from_isoformat(s):
+    y, m, d = [int(x) for x in s[:10].split('-', 2)]
+    return date(y, m, d)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def status_messages_user_msgs_json(request):
+    """Return latest messages by user for spam review by admin."""
+    limit = request.GET.get('limit', 100)
+    username = request.GET.get('u', None)
+    user = get_object_or_404(User, username=username)
+    msgs = list(UserMsg.objects.filter(from_user=user).order_by('-pk').values(
+        'to_user__username', 'is_replied', 'created', 'created_ip',
+        'text')[:limit])
+    return JsonResponse({'msgs': msgs})
+
+
+def status_messages_heavy_senders(from_date=None, to_date=None, page=1):
+    """Count messages-per-user for all-time"""
+    page = int(page) or 1
+    _first, _last = (page-1) * per_page, page * per_page
+
+    if not from_date:
+        from_date = '1970-01-01'
+    if not to_date:
+        to_date = date.today().isoformat()
+
+    dt_from = datetime.combine(from_date, dt_time(0, 0)).replace(tzinfo=pytz.utc)
+    dt_to = datetime.combine(to_date, dt_time(23, 59)).replace(tzinfo=pytz.utc)
+
+    return UserMsg.objects.all()\
+        .filter(created__gte=dt_from)\
+        .filter(created__lte=dt_to)\
+        .values('from_user')\
+        .annotate(count=Count('from_user'))\
+        .order_by('-count')\
+        .values_list('count', 'from_user__username', 'from_user__date_joined',
+                     'from_user__last_login')[_first:_last]
+
+
+def status_messages_recent_senders(page=1):
+    page = int(page) or 1
+    _first, _last = (page-1) * per_page, page * per_page
+
+    return UserMsg.objects.values('from_user')\
+        .annotate(max_created=Max('created'))\
+        .annotate(count=Value('-', output_field=CharField()))\
+        .order_by('-max_created')\
+        .values_list('count', 'from_user__username',
+                     'max_created', 'from_user__date_joined')[_first:_last]
+
+
+def status_messages_userlist_json(request):
+    from_date = date_from_isoformat(request.GET.get('from', '1970-01-01'))
+    to_date = date_from_isoformat(request.GET.get('to', date.today().isoformat()))
+    page = request.GET.get('page', 1)
+    q = request.GET.get('q', 'most')
+
+    if q == 'recent':
+        data = status_messages_recent_senders(page)
+    else:
+        # default: 'most'
+        data = status_messages_heavy_senders(from_date, to_date, page)
+
+    return JsonResponse({
+        'userlist': list(data),
+    })
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def status_messages(request, template_name="dtrprofile/status_messages.html"):
+    return render(request, template_name, {})
 
 
 def status_page(request, template_name="dtrprofile/status.html"):
 
     def per_day_for_range_from_model(day_from, day_until, model, field):
+        """
+        For model, counts items-per-day for a secified date range, with
+        field being the date field to look through.
+        """
         noon = dt_time(12, 0)  # Set all to noon.
         d1 = datetime.combine(day_from, noon).replace(tzinfo=pytz.utc)
         d2 = datetime.combine(day_until, noon).replace(tzinfo=pytz.utc)
