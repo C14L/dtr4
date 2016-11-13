@@ -24,7 +24,7 @@ test -d ${RUNDIR} || mkdir -p ${RUNDIR}
 ### DAPHNE #####################################################################
 ################################################################################
 
-exec ${DJANGODIR}/../venv/bin/daphne dtr4.asgi:channel_layer -u=${SOCKFILE}
+exec ${DJANGODIR}/../venv/bin/daphne dtr4.asgi:channel_layer -u=${SOCKFILE} &
 
 exec python ${DJANGODIR}/manage.py runworker
 
