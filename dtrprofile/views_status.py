@@ -23,18 +23,6 @@ def date_from_isoformat(s):
     return date(y, m, d)
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def status_messages_user_msgs_json(request):
-    """Return latest messages by user for spam review by admin."""
-    limit = request.GET.get('limit', 100)
-    username = request.GET.get('u', None)
-    user = get_object_or_404(User, username=username)
-    msgs = list(UserMsg.objects.filter(from_user=user).order_by('-pk').values(
-        'to_user__username', 'is_replied', 'created', 'created_ip',
-        'text')[:limit])
-    return JsonResponse({'msgs': msgs})
-
-
 def status_messages_heavy_senders(from_date=None, to_date=None, page=1):
     """Count messages-per-user for all-time"""
     page = int(page) or 1
@@ -70,6 +58,19 @@ def status_messages_recent_senders(page=1):
                      'max_created', 'from_user__date_joined')[_first:_last]
 
 
+@user_passes_test(lambda u: u.is_staff)
+def status_messages_user_msgs_json(request):
+    """Return latest messages by user for spam review by admin."""
+    limit = request.GET.get('limit', 100)
+    username = request.GET.get('u', None)
+    user = get_object_or_404(User, username=username)
+    msgs = list(UserMsg.objects.filter(from_user=user).order_by('-pk').values(
+        'to_user__username', 'is_replied', 'created', 'created_ip',
+        'text')[:limit])
+    return JsonResponse({'msgs': msgs})
+
+
+@user_passes_test(lambda u: u.is_staff)
 def status_messages_userlist_json(request):
     from_date = date_from_isoformat(request.GET.get('from', '1970-01-01'))
     to_date = date_from_isoformat(request.GET.get('to', date.today().isoformat()))
@@ -87,7 +88,6 @@ def status_messages_userlist_json(request):
     })
 
 
-@user_passes_test(lambda u: u.is_superuser)
 def status_messages(request, template_name="dtrprofile/status_messages.html"):
     return render(request, template_name, {})
 
